@@ -36,6 +36,8 @@ int feedback_neutro = 0;
 int feedback_negativo = 0;
 // end FEEDBACK include section
 
+int co2Pin = A5;
+
 unsigned int startMillis;
 unsigned int currentMillis;
 const unsigned long period = 1000;
@@ -140,7 +142,7 @@ void loop() {
   float co2;
 
   // read co2
-  co2=analogRead(A3);
+  co2=analogRead(co2Pin);
   
   // read the state of the pushbutton value:
   feedback_positivo = digitalRead(positiveButtonPin);
@@ -164,15 +166,16 @@ void loop() {
     ble.println( co2, 1 );*/
     
     // TO BE EVALUATED
-    ble.write(0xff); //16 bit for start sequence
-		ble.write(0x06); //16 bit for number of paramenters sent
-		ble.write((int) temperature); //16 bit for temperature
-	  ble.write((int) humidity); //16 bit for humidity
-    ble.write((int) co2); //16 bit for co2
-    ble.write(feedback_positivo); //16 bit for feedback
-    ble.write(feedback_neutro); //16 bit for feedback
-    ble.write(feedback_negativo); //16 bit for feedback
-		ble.write(0xfe); //16 bit for stop sequence
+    Serial.println("LEggo");
+    ble.print(0xff); //16 bit for start sequence
+		ble.print(0x06); //16 bit for number of paramenters sent
+		ble.print((int) temperature); //16 bit for temperature
+	  ble.print((int) humidity); //16 bit for humidity
+    ble.print((int) co2); //16 bit for co2
+    ble.print(feedback_positivo); //16 bit for feedback
+    ble.print(feedback_neutro); //16 bit for feedback
+    ble.print(feedback_negativo); //16 bit for feedback
+		ble.print(0xfe); //16 bit for stop sequence
 
     //feedback=0; //set to 0 after send positive feedback
     feedback_positivo = 0;
