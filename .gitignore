@@ -1,1 +1,3 @@
-flask/.idea
+**/__pycache__
+**/.idea
+flask/secrets.env
