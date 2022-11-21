@@ -121,13 +121,12 @@ void setup() {
  * Poll for a measurement, keeping the state machine alive.  Returns
  * true if a measurement is available.
  */
-static bool measure_environment( float *temperature, float *humidity, float *co2 ){
+static bool measure_environment( float *temperature, float *humidity ){
   static unsigned long measurement_timestamp = millis( );
 
   /* Measure once every four seconds. */
   if( millis( ) - measurement_timestamp > period ){
     if( dht_sensor.measure( temperature, humidity ) == true ){
-      co2=analogRead(co2Pin);
       measurement_timestamp = millis( );
       return( true );
     }
@@ -143,8 +142,8 @@ void loop() {
   float co2;
 
   // read co2
-  //co2=analogRead(co2Pin); // TENTO DI LEGGERE LA CO2 ALL'INTERNO DELLA FUNZIONE measure_environment ANZICHE'
-                            // IN QUI NELLA LOOP() - TESTALO
+  co2=analogRead(co2Pin);
+  
   // read the state of the pushbutton value:
   feedback_positivo = digitalRead(positiveButtonPin);
   feedback_neutro = digitalRead(neutralButtonPin);
@@ -152,7 +151,7 @@ void loop() {
 
   /* Measure temperature and humidity.  If the functions returns
      true, then a measurement is available. */
-  if( measure_environment( &temperature, &humidity, &co2) == true ){
+  if( measure_environment( &temperature, &humidity ) == true ){
     /*Serial.print( "T = " );
     Serial.print( temperature, 1 );
     Serial.print( " deg. C, H = " );
