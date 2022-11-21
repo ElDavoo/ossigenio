@@ -42,6 +42,7 @@ unsigned int startMillis;
 unsigned int currentMillis;
 const unsigned long period = 1000;
 //int val = 0; //not required here
+float co2;
 
 // A small helper
 void error(const __FlashStringHelper*err) {
@@ -127,6 +128,7 @@ static bool measure_environment( float *temperature, float *humidity ){
   /* Measure once every four seconds. */
   if( millis( ) - measurement_timestamp > period ){
     if( dht_sensor.measure( temperature, humidity ) == true ){
+      co2=analogRead(co2Pin);
       measurement_timestamp = millis( );
       return( true );
     }
@@ -139,10 +141,10 @@ void loop() {
   // put your main code here, to run repeatedly:
   float temperature;
   float humidity;
-  float co2;
+  //float co2;
 
   // read co2
-  co2=analogRead(co2Pin);
+  //co2=analogRead(co2Pin);
   
   // read the state of the pushbutton value:
   feedback_positivo = digitalRead(positiveButtonPin);
