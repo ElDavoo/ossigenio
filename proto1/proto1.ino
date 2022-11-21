@@ -36,7 +36,11 @@ int feedback_neutro = 0;
 int feedback_negativo = 0;
 // end FEEDBACK include section
 
+// start MQ135 section
+#include "MQ135.h"
 int co2Pin = A5;
+MQ135 mqSensor(co2Pin);
+// end MQ135 section
 
 unsigned int startMillis;
 unsigned int currentMillis;
@@ -48,6 +52,14 @@ float co2;
 void error(const __FlashStringHelper*err) {
   Serial.println(err);
   while (1);
+}
+
+// TO BE USED ONLY FOR DEV PURPOSE
+// TO BE DELETED FOR PRUDUCTION
+// IT'S PURPOSE IS TO RETRIEVE CORRECT R0 VALUE FOR CO2
+float co2_r0_init(){
+  float resistanceZero = mqSensor.getRZeroCO(); //TEMPORARY!
+  return resistanceZero;
 }
 
 void ble_setup(){
@@ -168,7 +180,7 @@ void loop() {
     ble.println( co2, 1 );*/
     
     // TO BE EVALUATED
-    Serial.println("LEggo");
+    //Serial.println("LEggo");
     ble.print(0xff); //16 bit for start sequence
 		ble.print(0x06); //16 bit for number of paramenters sent
 		ble.print((int) temperature); //16 bit for temperature
@@ -177,8 +189,8 @@ void loop() {
     ble.print(feedback_positivo); //16 bit for feedback
     ble.print(feedback_neutro); //16 bit for feedback
     ble.print(feedback_negativo); //16 bit for feedback
+    ble.print(co2_r0_init()); //ONLY FOR DEV PURPOSE
 		ble.print(0xfe); //16 bit for stop sequence
-
     //feedback=0; //set to 0 after send positive feedback
     feedback_positivo = 0;
     feedback_neutro = 0;
