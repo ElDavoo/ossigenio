@@ -58,7 +58,7 @@ void error(const __FlashStringHelper*err) {
 // TO BE DELETED FOR PRUDUCTION
 // IT'S PURPOSE IS TO RETRIEVE CORRECT R0 VALUE FOR CO2
 float co2_r0_init(){
-  float resistanceZero = mqSensor.getRZeroCO(); //TEMPORARY!
+  float resistanceZero = mqSensor.getRZeroCO2(); //TEMPORARY!
   return resistanceZero;
 }
 
