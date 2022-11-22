@@ -5,12 +5,14 @@
 @license  GNU GPLv3
 
 First version of an Arduino Library for the MQ135 gas sensor
-TODO: Review the correction factor calculation. This currently relies on
-the datasheet but the information there seems to be wrong.
+TODO (completed): Review the correction factor calculation. This currently 
+relies on the datasheet but the information there seems to be wrong.
 
 @section  HISTORY
 
 v1.0 - First release
+v2.0 - New Corrected version by Zesteros
+v2.1 - Correct atmospheric co2 level for October 2022
 */
 /**************************************************************************/
 

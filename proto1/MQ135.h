@@ -63,7 +63,8 @@ v1.0 - First release
 /// Atmospheric CO Level for calibration purposes
 #define atmCO 1
 /// Atmospheric CO2 level for calibration purposes
-#define atmCO2 407.57
+// #define atmCO2 407.57 // 2015
+#define atmCO2 415.31 // October 2022
 /// Atmospheric Ethanol Level for calibration purposes https://www.mathesongas.com/pdfs/msds/00224106.pdf
 #define atmEthanol 22.5
 /// Atmospheric NH4 level for calibration purposes
