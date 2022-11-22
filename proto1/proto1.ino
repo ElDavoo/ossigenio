@@ -64,7 +64,7 @@ float co2_r0_init(){
 
 void ble_setup(){
   //while (!Serial);  // required for Flora & Micro (seems didn't required for Adafruit Feather 32u4 Bluefruit LE)
-  delay(500);
+  //delay(500);
 
   Serial.begin(115200);
   Serial.println(F("Adafruit Bluefruit Command <-> Data Mode Example"));
@@ -178,7 +178,9 @@ void loop() {
     ble.print( humidity, 1 );
     ble.print( "%, CO2 = " );
     ble.println( co2, 1 );*/
-    
+    float resistance = mqSensor.getResistance();
+    //co2 = mqSensor.getCO2(resistance);
+    co2 = mqSensor.getCO2PPM();
     // TO BE EVALUATED
     //Serial.println("LEggo");
     ble.print(0xff); //16 bit for start sequence
@@ -191,6 +193,7 @@ void loop() {
     ble.print(feedback_negativo); //16 bit for feedback
     ble.print(co2_r0_init()); //ONLY FOR DEV PURPOSE
 		ble.print(0xfe); //16 bit for stop sequence
+    //Serial.println(co2_r0_init());
     //feedback=0; //set to 0 after send positive feedback
     feedback_positivo = 0;
     feedback_neutro = 0;
