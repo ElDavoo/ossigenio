@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'AQM'),
     );
   }
 }
@@ -58,6 +60,25 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      // Ask for bluettoth_scan permission using the permission library
+      // https://pub.dev/packages/permission_handler
+      Permission.bluetoothScan.request();
+
+
+      //Create a new instance of FlutterBlue
+      FlutterBlue flutterBlue = FlutterBlue.instance;
+      //Start scanning
+      flutterBlue.startScan(timeout: Duration(seconds: 4));
+      //Listen to scan results
+      var subscription = flutterBlue.scanResults.listen((results) {
+        // do something with scan results
+        for (ScanResult r in results) {
+          print('${r.device.name} found! rssi: ${r.rssi}');
+        }
+      });
+      // Stop scanning
+      flutterBlue.stopScan();
+
     });
   }
 
@@ -73,7 +94,17 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
+        leading: Icon(Icons.no_accounts),
         title: Text(widget.title),
+        actions: [
+          Container(
+            width: 30,
+            child: Image.asset(
+              'assets/images/profile_pic.png',
+            ),
+          ),
+          Icon(Icons.more_vert),
+        ],
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
