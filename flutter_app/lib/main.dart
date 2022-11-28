@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -204,20 +206,6 @@ Permission.location,
         // in the middle of the parent.
       Column(
 
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
 
@@ -250,15 +238,29 @@ Permission.location,
                 ),
               ),
             ),
+            TextButton(
+              onPressed: _scand,
+              child: Container(
+                color: Colors.blue,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: const Text(
+                  'add random item',
+                  style: TextStyle(color: Colors.white, fontSize: 13.0),
+                ),
+              ),
+            ),
+            Expanded(child:
             // Add a list view to display the scan results
             ListView.builder(
-              shrinkWrap: true,
+              shrinkWrap: false,
               itemCount: propList.length,
+              key: GlobalKey(),
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(propList[index]),
                 );
               },
+            ),
             ),
           ],
 
@@ -272,6 +274,13 @@ Permission.location,
     );
   }
 
+  void _scand(){
+    // Add a random number to the list
+    setState(() {
+      propList.add(Random().nextInt(100).toString());
+    });
+  }
+
   void _scan() {
     //Create a new instance of FlutterBlue
     FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -282,8 +291,7 @@ Permission.location,
       // do something with scan results
       setState(() {
         for (ScanResult r in results) {
-          print('${r.device.name} found! rssi: ${r.rssi}');
-          propList.add(r.device.name);
+          propList.add('${r.device.name} - ${r.rssi} - ${r.device.id} - ${r.device.type}');
         }
       });
     });
