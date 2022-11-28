@@ -51,12 +51,14 @@ void getMsg3(){
     ble.print(0xa3); //questo valore qui è stampato come ___ nel monitor seriale
 	ble.print(MODEL); 
 	ble.print(VERSION); 
+    ble.print(0);
 
     uint8_t message[4];
 
     message[0] = (uint8_t) 0xa3;
     message[1] = (uint8_t) MODEL;
     message[2] = (uint8_t) VERSION;
+    message[3] = (uint8_t) 0;
 
     int crc = checksumCalculator(message,4);
     ble.print(0xff); //PLACEHOLDER per separare il valore di co2 dal crc
