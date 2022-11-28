@@ -22,6 +22,7 @@ In case of a string, the length of the string must be prefixed.
 (draw-box "CRC8")
 (draw-bottom)
 ```
+![image](https://user-images.githubusercontent.com/7345120/204289800-326c3dc8-2627-4496-a3aa-bab6e0fb735e.png)
 
 ### Data types
 
