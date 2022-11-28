@@ -1,5 +1,5 @@
-#ifndef serialProtocol_H
-#define serialProtocol_H
+#ifndef SERIALPROTOCOL_H_
+#define SERIALPROTOCOL_H_ 
 #if ARDUINO >= 100
  #include "Arduino.h"
 #else

@@ -28,9 +28,9 @@ v1.0 - First release
 /// R0 for CO **measured with 24hrs of exposure**
 #define r0CO 69.65
 /// R0 for CO2 **realized 24 hrs of exposure**
-//#define r0CO2 553.232 
-//#define r0CO2 25.5
-#define r0CO2 32.5 // MMMMMMMHHH 
+//#define r0CO2 5553.232 
+#define r0CO2 21.56
+//#define r0CO2 32.5 // MMMMMMMHHH 
 /// R0 for Ethanol **measured with 24hrs of exposure**
 #define r0Ethanol 240.293
 /// R0 for Ammonium **measured with 24hrs of exposure**
