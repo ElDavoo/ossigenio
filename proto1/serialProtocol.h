@@ -8,4 +8,5 @@
 
 char getCRC8(const char *data,int length);
 char getMsg1(int temp, int humidity, int co2);
+char getMsg3();
 #endif

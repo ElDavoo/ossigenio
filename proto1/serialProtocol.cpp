@@ -32,13 +32,20 @@ char getMsg1(int temp, int humidity, int co2) {
     message_crced[4] = (crc>>32) & 0xff;
 
     return message_crced;
-    /*
-    ble.print(0xA1); //START SEQUENCE
-	ble.print(0x06); //LENGTH OF MESSAGE
-	ble.print(temp); //TEMPERATURE
-	ble.print(humidity); //HUMIDITY
-    ble.print(co2); //CO2
-	ble.print(); //CRC8
-    */
-    
+}
+
+char getMsg3(){
+    int i;
+    char message[4];
+    char message_crced[5];
+
+    message[0] = 0xA3;
+    message[1] = (1>>8) & 0xff;
+    message[2] = (1>>16) & 0xff;
+    message[3] = (0>>24) & 0xff;
+    char crc = CRC8(message,4);
+    for(i=0; i<4; i++) message_crced[i]=message[i];
+    message_crced[4] = (crc>>32) & 0xff;
+
+    return message_crced;
 }
