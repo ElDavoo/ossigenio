@@ -1,5 +1,9 @@
 /*
+/*!
 air-quality-monitor
+@file     proto1.ino
+@author   Antonio Solida
+@license  GNU GPLv3
 A monitor for air quality, made for IoT and 3D Intelligent Systems @ UniMORE AA 2022-2023.
 Please do not divulgate.
 */

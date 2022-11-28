@@ -1,3 +1,19 @@
+/**************************************************************************/
+/*!
+@file     serialProtocol.cpp
+@author   Antonio Solida
+@license  GNU GPLv3
+
+First version of serial data parser for air-quality-monitor prototype
+
+@section  HISTORY
+
+v0.0.1 - First release
+v0.0.2 - crc8 e getMsg1 initial implementation
+v0.0.3 - getMsg3 initial implementation
+v0.0.4 - getMsg0 initial implementation - ONLY FOR DEBUG USE
+*/
+/**************************************************************************/
 #include "serialProtocol.h"
 
 char CRC8(const char *data,int length) {
@@ -16,6 +32,10 @@ char CRC8(const char *data,int length) {
       data++;
    }
    return crc;
+}
+
+char getMsg0(int temp, int humidity, int raw_data){
+    //TO BE IMPLEMENTED
 }
 
 char getMsg1(int temp, int humidity, int co2) {
