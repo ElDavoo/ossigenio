@@ -42,10 +42,13 @@ int co2Pin = A5;
 MQ135 mqSensor(co2Pin);
 // end MQ135 section
 
+// start serial parsing section
+#include "serialProtocol.h"
+// end serial parsing section
+
 unsigned int startMillis;
 unsigned int currentMillis;
 const unsigned long period = 1000;
-//int val = 0; //not required here
 float co2;
 
 // A small helper
@@ -166,24 +169,11 @@ void loop() {
   /* Measure temperature and humidity.  If the functions returns
      true, then a measurement is available. */
   if( measure_environment( &temperature, &humidity ) == true ){
-    /*Serial.print( "T = " );
-    Serial.print( temperature, 1 );
-    Serial.print( " deg. C, H = " );
-    Serial.print( humidity, 1 );
-    Serial.print( "%, CO2 = " );
-    Serial.println( val );*/
-    /*ble.print( "T = " );
-    ble.print( temperature, 1 );
-    ble.print( " deg. C, H = " );
-    ble.print( humidity, 1 );
-    ble.print( "%, CO2 = " );
-    ble.println( co2, 1 );*/
     float resistance = mqSensor.getResistance();
-    //co2 = mqSensor.getCO2(resistance);
     co2 = mqSensor.getCO2PPM();
     // TO BE EVALUATED
     //Serial.println("LEggo");
-    ble.print(0xff); //16 bit for start sequence
+    /*ble.print(0xff); //16 bit for start sequence
 		ble.print(0x06); //16 bit for number of paramenters sent
 		ble.print((int) temperature); //16 bit for temperature
 	  ble.print((int) humidity); //16 bit for humidity
@@ -197,7 +187,8 @@ void loop() {
     //feedback=0; //set to 0 after send positive feedback
     feedback_positivo = 0;
     feedback_neutro = 0;
-    feedback_negativo = 0;
+    feedback_negativo = 0;*/
+    ble.print(getMsg1((int) temperature,(int) humidity,(int) co2));
     
   }
 
