@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'AQM'),
+      home: const MyHomePage(title: 'Air Quality Monitor'),
     );
   }
 }
@@ -78,8 +78,30 @@ class _MyHomePageState extends State<MyHomePage> {
       });
       // Stop scanning
       flutterBlue.stopScan();
-
     });
+  }
+
+  Future<void> _requestPermissions() async {
+    // Ask for bluettoth_scan permission using the permission library
+    // https://pub.dev/packages/permission_handler
+    // You can request multiple permissions at once.
+    Map<Permission, PermissionStatus> statuses = await [
+    Permission.bluetoothScan,
+Permission.location,
+    ].request();
+
+    // check if status is null
+    if (statuses[Permission.bluetoothScan] != null) {
+      if(statuses[Permission.bluetoothScan]!.isDenied){ //check each permission status after.
+        print("Location permission is denied.");
+      }
+
+      if(statuses[Permission.locationWhenInUse]!.isDenied){ //check each permission status after.
+        print("Camera permission is denied.");
+      }
+    }
+
+
   }
 
   @override
@@ -96,20 +118,16 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         leading: Icon(Icons.no_accounts),
         title: Text(widget.title),
-        actions: [
-          Container(
-            width: 30,
-            child: Image.asset(
-              'assets/images/profile_pic.png',
-            ),
-          ),
+        actions: const [
           Icon(Icons.more_vert),
         ],
       ),
       body: Center(
+
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
         child: Column(
+
           // Column is also a layout widget. It takes a list of children and
           // arranges them vertically. By default, it sizes itself to fit its
           // children horizontally, and tries to be as tall as its parent.
@@ -133,8 +151,21 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            TextButton(
+              onPressed: _requestPermissions,
+              child: Container(
+                color: Colors.green,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: const Text(
+                  'Request permission',
+                  style: TextStyle(color: Colors.white, fontSize: 13.0),
+                ),
+              ),
+            ),
           ],
+
         ),
+
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
