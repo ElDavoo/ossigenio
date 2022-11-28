@@ -6,8 +6,22 @@ The serial protocol aims to have these characteristics:
 - Message version system
 
 ### Limitations
-A single payload is limited to 255 bytes (length FF)
-Program has to hardcode which data are being sent and where.
+A single payload is limited to 255 bytes (length FF).  
+Program has to hardcode which data are being sent and where.  
+Only 16 message types can exist, and they must be hardcoded in the program.  
+
+### The first byte
+
+The first byte is AX, where X is the message type (from 0 to F).  
+For example A0,A1...AF.  
+
+### The second byte
+
+The second byte is the length of the payload (so from the first byte of the payload to the last). The CRC is excluded.  
+
+### CRC8
+
+CRC8 (which?) is used as checksum, **including the header and the length.**
 
 In case of a string, the length of the string must be prefixed.
 
@@ -22,6 +36,7 @@ In case of a string, the length of the string must be prefixed.
 (draw-box "CRC8")
 (draw-bottom)
 ```
+![image](https://user-images.githubusercontent.com/7345120/204289800-326c3dc8-2627-4496-a3aa-bab6e0fb735e.png)
 
 ### Data types
 
