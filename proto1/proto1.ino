@@ -186,13 +186,13 @@ void loop() {
     ble.print(feedback_neutro); //16 bit for feedback
     ble.print(feedback_negativo); //16 bit for feedback
     ble.print(co2_r0_init()); //ONLY FOR DEV PURPOSE
-		ble.print(0xfe); //16 bit for stop sequence
+		ble.print(0xfe);*/ //16 bit for stop sequence
     //Serial.println(co2_r0_init());
     //feedback=0; //set to 0 after send positive feedback
     feedback_positivo = 0;
     feedback_neutro = 0;
-    feedback_negativo = 0;*/
-    ble.print(getMsg1((int) temperature,(int) humidity,(int) co2));
+    feedback_negativo = 0;
+    getMsg1((int) temperature,(int) humidity,(int) co2);
     
   }
 

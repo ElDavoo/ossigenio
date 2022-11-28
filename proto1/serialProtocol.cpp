@@ -12,60 +12,66 @@ v0.0.1 - First release
 v0.0.2 - crc8 e getMsg1 initial implementation
 v0.0.3 - getMsg3 initial implementation
 v0.0.4 - getMsg0 initial implementation - ONLY FOR DEBUG USE
+v0.0.5 - rewrited getMsg1 and getMsg3
 */
 /**************************************************************************/
 #include "serialProtocol.h"
+#include "Adafruit_BLE.h"
+#include "Adafruit_BluefruitLE_SPI.h"
+#include "Adafruit_BluefruitLE_UART.h"
+#include "BluefruitConfig.h"
+extern Adafruit_BluefruitLE_SPI ble;
 
-char CRC8(const char *data,int length) {
-   char crc = 0x00;
-   char extract;
-   char sum;
-   for(int i=0;i<length;i++){
-      extract = *data;
-      for (char tempI = 8; tempI; tempI--) {
-        sum = (crc ^ extract) & 0x01;
-        crc >>= 1;
-        if (sum)
-           crc ^= 0x8C;
-        extract >>= 1;
-      }
-      data++;
-   }
-   return crc;
-}
+#define MODEL 0.1
+#define VERSION 0.1
 
-char getMsg0(int temp, int humidity, int raw_data){
+void getMsg0(int temp, int humidity, int raw_data){
     //TO BE IMPLEMENTED
 }
 
-char getMsg1(int temp, int humidity, int co2) {
-    int i;
-    char message[4];
-    char message_crced[5];
+void getMsg1(int temp, int humidity, int co2) {
+    ble.print(0xa1); //questo valore qui è stampato come 161 nel monitor seriale
+	ble.print(temp); 
+	ble.print(humidity); 
+    ble.print(co2);
 
-    message[0] = 0xA1;
-    message[1] = (temp>>8)  & 0xff;
-    message[2] = (humidity>>16) & 0xff;
-    message[3] = (co2>>24) & 0xff;
-    char crc = CRC8(message,4);
-    for(i=0; i<4; i++) message_crced[i]=message[i];
-    message_crced[4] = (crc>>32) & 0xff;
+    uint8_t message[4];
 
-    return message_crced;
+    message[0] = (uint8_t) 0xA1;
+    message[1] = (uint8_t) temp;
+    message[2] = (uint8_t) humidity;
+    message[3] = (uint8_t) co2;
+
+    int crc = checksumCalculator(message,4);
+    ble.print(0xff); //PLACEHOLDER per separare il valore di co2 dal crc
+    ble.print(crc);
 }
 
-char getMsg3(){
-    int i;
-    char message[4];
-    char message_crced[5];
+void getMsg3(){
+    ble.print(0xa3); //questo valore qui è stampato come ___ nel monitor seriale
+	ble.print(MODEL); 
+	ble.print(VERSION); 
 
-    message[0] = 0xA3;
-    message[1] = (1>>8) & 0xff;
-    message[2] = (1>>16) & 0xff;
-    message[3] = (0>>24) & 0xff;
-    char crc = CRC8(message,4);
-    for(i=0; i<4; i++) message_crced[i]=message[i];
-    message_crced[4] = (crc>>32) & 0xff;
+    uint8_t message[4];
 
-    return message_crced;
+    message[0] = (uint8_t) 0xa3;
+    message[1] = (uint8_t) MODEL;
+    message[2] = (uint8_t) VERSION;
+
+    int crc = checksumCalculator(message,4);
+    ble.print(0xff); //PLACEHOLDER per separare il valore di co2 dal crc
+    ble.print(crc);
+}
+
+uint8_t checksumCalculator(uint8_t *data, uint8_t length){
+   uint8_t curr_crc = 0x0000;
+   uint8_t sum1 = (uint8_t) curr_crc;
+   uint8_t sum2 = (uint8_t) (curr_crc >> 8);
+   int index;
+   for(index = 0; index < length; index = index+1)
+   {
+      sum1 = (sum1 + data[index]) % 255;
+      sum2 = (sum2 + sum1) % 255;
+   }
+   return (sum2 << 8) | sum1;
 }

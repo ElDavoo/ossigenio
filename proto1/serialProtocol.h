@@ -19,8 +19,8 @@ v0.0.1 - First release
  #include "WProgram.h"
 #endif
 
-char getCRC8(const char *data,int length);
-char getMsg0(int temp, int humidity, int raw_data);
-char getMsg1(int temp, int humidity, int co2);
-char getMsg3();
+//char CRC8(const char *data,int length);
+uint8_t checksumCalculator(uint8_t *data, uint8_t length);
+void getMsg0(int temp, int humidity, int raw_data);
+void getMsg1(int temp, int humidity, int co2);
 #endif
