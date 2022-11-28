@@ -33,6 +33,7 @@ In case of a string, the length of the string must be prefixed.
 (draw-box "aVersion")
 (draw-box "Len")
 (draw-gap "payload")
+(draw-box "0xff - end payload mark")
 (draw-box "CRC8")
 (draw-bottom)
 ```
