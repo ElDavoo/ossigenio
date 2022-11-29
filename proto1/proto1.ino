@@ -195,6 +195,4 @@ void loop() {
     getMsg1((int) temperature,(int) humidity,(int) co2);
     
   }
-
-  //ble.print("ciao");
 }

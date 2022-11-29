@@ -23,5 +23,6 @@ v0.0.1 - First release
 uint8_t checksumCalculator(uint8_t *data, uint8_t length);
 void getMsg0(int temp, int humidity, int raw_data);
 void getMsg1(int temp, int humidity, int co2);
+void getMsg2(/*NOT YET IMPLEMENTED*/);
 void getMsg3();
 #endif

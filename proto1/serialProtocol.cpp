@@ -26,43 +26,76 @@ extern Adafruit_BluefruitLE_SPI ble;
 #define VERSION 0.1
 
 void getMsg0(int temp, int humidity, int raw_data){
-    //TO BE IMPLEMENTED
-}
-
-void getMsg1(int temp, int humidity, int co2) {
-    ble.print(0xa1); //questo valore qui è stampato come 161 nel monitor seriale
-	ble.print(temp); 
-	ble.print(humidity); 
-    ble.print(co2);
+    char buffer[5];
+    ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
+    sprintf(buffer, "%0.5d", temp);
+	ble.print(buffer); 
+	sprintf(buffer, "%0.5d", humidity);
+	ble.print(buffer); 
+    sprintf(buffer, "%0.5d", raw_data);
+	ble.print(buffer); 
 
     uint8_t message[4];
 
-    message[0] = (uint8_t) 0xA1;
+    message[0] = (uint8_t) 0xAA80;
     message[1] = (uint8_t) temp;
     message[2] = (uint8_t) humidity;
     message[3] = (uint8_t) co2;
 
     int crc = checksumCalculator(message,4);
-    ble.print(0xff); //PLACEHOLDER per separare il valore di co2 dal crc
-    ble.print(crc);
+    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+    sprintf(buffer, "%0.5d", crc);
+	ble.print(buffer); 
 }
 
-void getMsg3(){
-    ble.print(0xa3); //questo valore qui è stampato come ___ nel monitor seriale
-	ble.print(MODEL); 
-	ble.print(VERSION); 
-    ble.print(0);
+void getMsg1(int temp, int humidity, int co2) {
+    char buffer[5];
+    ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
+    sprintf(buffer, "%0.5d", temp);
+	ble.print(buffer); 
+	sprintf(buffer, "%0.5d", humidity);
+	ble.print(buffer); 
+    sprintf(buffer, "%0.5d", co2);
+	ble.print(buffer); 
 
     uint8_t message[4];
 
-    message[0] = (uint8_t) 0xa3;
+    message[0] = (uint8_t) 0xAA81;
+    message[1] = (uint8_t) temp;
+    message[2] = (uint8_t) humidity;
+    message[3] = (uint8_t) co2;
+
+    int crc = checksumCalculator(message,4);
+    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+    sprintf(buffer, "%0.5d", crc);
+	ble.print(buffer); 
+}
+
+void getMsg2(/*NOT YET IMPLEMENTED*/){
+    //TO DO
+}
+
+void getMsg3(){
+    char buffer[5];
+    ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
+	sprintf(buffer, "%0.5d", MODEL);
+	ble.print(buffer);  
+	sprintf(buffer, "%0.5d", VERSION);
+	ble.print(buffer);  
+    sprintf(buffer, "%0.5d", 0); //battery value
+	ble.print(buffer); 
+
+    uint8_t message[4];
+
+    message[0] = (uint8_t) 0xAA83;
     message[1] = (uint8_t) MODEL;
     message[2] = (uint8_t) VERSION;
     message[3] = (uint8_t) 0;
 
     int crc = checksumCalculator(message,4);
-    ble.print(0xff); //PLACEHOLDER per separare il valore di co2 dal crc
-    ble.print(crc);
+    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc
+    sprintf(buffer, "%0.5d", crc);
+	ble.print(buffer); 
 }
 
 uint8_t checksumCalculator(uint8_t *data, uint8_t length){
