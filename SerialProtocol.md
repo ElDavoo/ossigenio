@@ -96,4 +96,4 @@ The sensor should send a
 1 
 message every 
 30
-seconds.
+seconds (indeed, every 30 loop cycles. Millis() and micros() seems broken so we are going to use this workaround; perdonaci Dio dell'informatica).
