@@ -52,7 +52,7 @@ MQ135 mqSensor(co2Pin);
 
 unsigned int startMillis;
 unsigned int currentMillis;
-const unsigned long period = 1000;
+#define period 5000
 float co2;
 
 // A small helper
@@ -61,9 +61,11 @@ void error(const __FlashStringHelper*err) {
   while (1);
 }
 
-// TO BE USED ONLY FOR DEV PURPOSE
-// TO BE DELETED FOR PRUDUCTION
-// IT'S PURPOSE IS TO RETRIEVE CORRECT R0 VALUE FOR CO2
+/* 
+  TO BE USED ONLY FOR DEV PURPOSE
+  TO BE DELETED FOR PRUDUCTION
+  IT'S PURPOSE IS TO RETRIEVE CORRECT R0 VALUE FOR CO2
+*/
 float co2_r0_init(){
   float resistanceZero = mqSensor.getRZeroCO2(); //TEMPORARY!
   return resistanceZero;
@@ -96,7 +98,7 @@ void ble_setup(){
   /* Disable command echo from Bluefruit */
   ble.echo(false);
 
-  Serial.println("Requesting Bluefruit info:");
+  Serial.println(F("Requesting Bluefruit info:"));
   /* Print Bluefruit information */
   ble.info();
 
@@ -141,58 +143,110 @@ void setup() {
  * Poll for a measurement, keeping the state machine alive.  Returns
  * true if a measurement is available.
  */
-static bool measure_environment( float *temperature, float *humidity ){
+/*static bool measure_environment( float *temperature, float *humidity ){
   static unsigned long measurement_timestamp = millis( );
 
-  /* Measure once every four seconds. */
   if( millis( ) - measurement_timestamp > period ){
     if( dht_sensor.measure( temperature, humidity ) == true ){
-      co2=analogRead(co2Pin);
+      //co2=analogRead(co2Pin);
       measurement_timestamp = millis( );
       return( true );
     }
   }
-
   return( false );
-}
+}*/
 
 void loop() {
   // put your main code here, to run repeatedly:
   float temperature;
   float humidity;
-  //float co2;
+  String c;
 
-  // read co2
-  //co2=analogRead(co2Pin);
-  
   // read the state of the pushbutton value:
   feedback_positivo = digitalRead(positiveButtonPin);
   feedback_neutro = digitalRead(neutralButtonPin);
   feedback_negativo = digitalRead(negativeButtonPin);
+  // WHEN one of the feedback buttons will be equal to HIGH, proto1 will send feedback message
+  // along with ambiental data
+  // PLACEHOLDER
+  // SECTION WORK IN PROGRESS
+  //
+  //
+  //
+  //
+  /*while(ble.available()){
+    //int c = ble.read();
+    c = ble.readString();
+  }*/
+  c = ble.readString();
 
-  /* Measure temperature and humidity.  If the functions returns
-     true, then a measurement is available. */
-  if( measure_environment( &temperature, &humidity ) == true ){
+  /*
+  For other types of messages, proto1 will wait for external input and sends they
+  according to it.
+  */
+  // PLACEHOLDER
+  // SECTION WORK IN PROGRESS
+  //
+  ble.flush();
+  /*switch(c.charAt(0)){ //FORSE IL COSTRUTTO SWITCH MANDA IN PAPPA IL FIRMWARE
+    case '0':
+      delay(1000);
+      if( dht_sensor.measure( &temperature, &humidity ) == true ){
+        int raw = mqSensor.getResistance();
+        getMsg0((int) temperature, (int) humidity, (int) raw);
+      }
+      break;
+
+    case '1':
+      delay(1000);
+      if( dht_sensor.measure( &temperature, &humidity ) == true ){
+        co2 = mqSensor.getCO2PPM();
+        getMsg1((int) temperature,(int) humidity,(int) co2);
+      }
+      break;
+
+    case '3':
+      getMsg3();
+      break;
+  }*/
+  //c.compareTo("f");
+  /*if (c.charAt(0) == 'f') {
+    if( dht_sensor.measure( &temperature, &humidity ) == true ){
+      int raw = mqSensor.getResistance();
+      getMsg0((int) temperature, (int) humidity, raw);
+    }
+  }
+  if (c.charAt(0) == 'e') {
+    if( dht_sensor.measure( &temperature, &humidity ) == true ){
+      co2 = mqSensor.getCO2PPM();
+      getMsg1((int) temperature,(int) humidity,(int) co2);
+    }
+  }
+  if (c.charAt(0) == 'c') getMsg3();*/ //VERSION MESSAGE
+  //
+  //
+
+  /*
+  In this section proto1 will send measurement data every 30 seconds
+  For dev purpose, now it sends every second
+  */
+  /*if( measure_environment( &temperature, &humidity ) == true ){
     float resistance = mqSensor.getResistance();
     co2 = mqSensor.getCO2PPM();
-    // TO BE EVALUATED
-    //Serial.println("LEggo");
-    /*ble.print(0xff); //16 bit for start sequence
-		ble.print(0x06); //16 bit for number of paramenters sent
-		ble.print((int) temperature); //16 bit for temperature
-	  ble.print((int) humidity); //16 bit for humidity
-    ble.print((int) co2); //16 bit for co2
-    ble.print(feedback_positivo); //16 bit for feedback
-    ble.print(feedback_neutro); //16 bit for feedback
-    ble.print(feedback_negativo); //16 bit for feedback
-    ble.print(co2_r0_init()); //ONLY FOR DEV PURPOSE
-		ble.print(0xfe);*/ //16 bit for stop sequence
-    //Serial.println(co2_r0_init());
-    //feedback=0; //set to 0 after send positive feedback
-    feedback_positivo = 0;
-    feedback_neutro = 0;
-    feedback_negativo = 0;
+    //feedback_positivo = 0; //DEPRECATED
+    //feedback_neutro = 0; //DEPRECATED
+    //feedback_negativo = 0; //DEPRECATED
     getMsg1((int) temperature,(int) humidity,(int) co2);
     
+  }*/
+  // EXPERIMENTAL!
+  static unsigned long measurement_timestamp = millis( );
+  if( millis( ) - measurement_timestamp > period ){
+    if( dht_sensor.measure( &temperature, &humidity ) == true ){
+      co2 = mqSensor.getCO2PPM();
+      getMsg1((int) temperature,(int) humidity,(int) co2);
+      measurement_timestamp = millis( );
+    }
   }
+
 }

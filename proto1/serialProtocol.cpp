@@ -22,12 +22,14 @@ v0.0.5 - rewrited getMsg1 and getMsg3
 #include "BluefruitConfig.h"
 extern Adafruit_BluefruitLE_SPI ble;
 
-#define MODEL 0.1
-#define VERSION 0.1
+#define MODEL 1
+#define VERSION 1
 
 void getMsg0(int temp, int humidity, int raw_data){
     char buffer[5];
-    ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
+    //ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
+    ble.write(0xAA);
+    ble.write(0x80);
     sprintf(buffer, "%0.5d", temp);
 	ble.print(buffer); 
 	sprintf(buffer, "%0.5d", humidity);
@@ -40,7 +42,7 @@ void getMsg0(int temp, int humidity, int raw_data){
     message[0] = (uint8_t) 0xAA80;
     message[1] = (uint8_t) temp;
     message[2] = (uint8_t) humidity;
-    message[3] = (uint8_t) co2;
+    message[3] = (uint8_t) raw_data;
 
     int crc = checksumCalculator(message,4);
     ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
@@ -50,7 +52,9 @@ void getMsg0(int temp, int humidity, int raw_data){
 
 void getMsg1(int temp, int humidity, int co2) {
     char buffer[5];
-    ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
+    //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
+    ble.write(0xAA);
+    ble.write(0x81);
     sprintf(buffer, "%0.5d", temp);
 	ble.print(buffer); 
 	sprintf(buffer, "%0.5d", humidity);
@@ -77,7 +81,9 @@ void getMsg2(/*NOT YET IMPLEMENTED*/){
 
 void getMsg3(){
     char buffer[5];
-    ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
+    //ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
+    ble.write(0xAA);
+    ble.write(0x83);
 	sprintf(buffer, "%0.5d", MODEL);
 	ble.print(buffer);  
 	sprintf(buffer, "%0.5d", VERSION);

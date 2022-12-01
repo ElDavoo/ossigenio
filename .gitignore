@@ -2,3 +2,4 @@
 **/.idea
 flask/secrets.env
 mqtt.passwords
+proto1/build/*
