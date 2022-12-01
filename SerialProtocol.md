@@ -33,11 +33,47 @@ In case of a string, the length of the string must be prefixed.
 (draw-box "aVersion")
 (draw-box "Len")
 (draw-gap "payload")
-(draw-box "0xff - end payload mark")
 (draw-box "CRC8")
 (draw-bottom)
 ```
-![image](https://user-images.githubusercontent.com/7345120/204289800-326c3dc8-2627-4496-a3aa-bab6e0fb735e.png)
+![image](https://user-images.githubusercontent.com/4050967/204576738-7696bc1a-cf01-4922-8fbb-d043fcafbe89.jpg)
+
+### Messages explanation
+#### msg0 packet
+
+1. Start string (AA)
+2. Length (number of fields = 8)
+3. Message type (0)
+4. Payload
+	1. temperature
+	2. humidity
+	3. raw_data
+5. End string (FFFF)
+6. CRC8 value
+
+#### msg1 packet
+
+1. Start string (AA)
+2. Length (number of fields = 8)
+3. Message type (1)
+4. Payload
+	1. temperature
+	2. humidity
+	3. co2
+5. End string (FFFF)
+6. CRC8 value
+
+#### msg3 packet
+
+1. Start string (AA)
+2. Length (number of fields = 8)
+3. Message type (3)
+4. Payload
+	1. model
+	2. version
+	3. battery
+5. End string (FFFF)
+6. CRC8 value
 
 ### Data types
 
