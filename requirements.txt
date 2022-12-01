@@ -1,0 +1,3 @@
+-Adafruit_BLE (available in Arduino library manager)
+-Adafruit DHT11 (available in Arduino library manager)
+-MQ135 (external)

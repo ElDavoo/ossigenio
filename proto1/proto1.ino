@@ -25,10 +25,11 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 // end BLE section
 
 // start DHT11 include section
-#include <dht_nonblocking.h>
-#define DHT_SENSOR_TYPE DHT_TYPE_11
-static const int DHT_SENSOR_PIN = 5;
-DHT_nonblocking dht_sensor( DHT_SENSOR_PIN, DHT_SENSOR_TYPE );
+#include <DHT.h>
+#include <DHT_U.h>
+#define DHTTYPE    DHT11
+DHT_Unified dht(5, DHTTYPE);
+uint32_t delayMS;
 // end DHT11 section
 
 // start FEEDBACK include section
@@ -50,9 +51,10 @@ MQ135 mqSensor(co2Pin);
 #include "serialProtocol.h"
 // end serial parsing section
 
-unsigned int startMillis;
-unsigned int currentMillis;
-#define period 5000
+//unsigned long startMillis;
+//unsigned long currentMillis;
+//const unsigned long period = 10000;
+int count=0;
 float co2;
 
 // A small helper
@@ -75,7 +77,7 @@ void ble_setup(){
   //while (!Serial);  // required for Flora & Micro (seems didn't required for Adafruit Feather 32u4 Bluefruit LE)
   //delay(500);
 
-  Serial.begin(115200);
+  Serial.begin(4800);
   Serial.println(F("Adafruit Bluefruit Command <-> Data Mode Example"));
   Serial.println(F("------------------------------------------------"));
 
@@ -133,34 +135,26 @@ void setup() {
   // put your setup code here, to run once:
   //Serial.begin(9600);
   ble_setup();
+  dht.begin();
+  sensor_t sensor;
+  delayMS = sensor.min_delay / 1000;
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
   pinMode(negativeButtonPin, INPUT);
-  //startMillis = millis();
 }
-
-/*
- * Poll for a measurement, keeping the state machine alive.  Returns
- * true if a measurement is available.
- */
-/*static bool measure_environment( float *temperature, float *humidity ){
-  static unsigned long measurement_timestamp = millis( );
-
-  if( millis( ) - measurement_timestamp > period ){
-    if( dht_sensor.measure( temperature, humidity ) == true ){
-      //co2=analogRead(co2Pin);
-      measurement_timestamp = millis( );
-      return( true );
-    }
-  }
-  return( false );
-}*/
 
 void loop() {
   // put your main code here, to run repeatedly:
   float temperature;
   float humidity;
-  String c;
+  sensors_event_t event;
+  delay(delayMS / 1000);
+  /*dht.temperature().getEvent(&event);
+  //dht.humidity().getEvent(&event);
+  temperature=event.temperature;
+  dht.humidity().getEvent(&event);
+  humidity=event.relative_humidity;
+  getMsg1((int) temperature,(int) humidity,(int) co2);*/
 
   // read the state of the pushbutton value:
   feedback_positivo = digitalRead(positiveButtonPin);
@@ -174,12 +168,13 @@ void loop() {
   //
   //
   //
-  /*while(ble.available()){
-    //int c = ble.read();
-    c = ble.readString();
-  }*/
-  c = ble.readString();
-
+  String c = ble.readString();
+  count++;
+  //ble.print(count);
+  if(count >= 30) {
+    c='e';
+    count=0;
+  }
   /*
   For other types of messages, proto1 will wait for external input and sends they
   according to it.
@@ -187,42 +182,23 @@ void loop() {
   // PLACEHOLDER
   // SECTION WORK IN PROGRESS
   //
-  ble.flush();
-  /*switch(c.charAt(0)){ //FORSE IL COSTRUTTO SWITCH MANDA IN PAPPA IL FIRMWARE
-    case '0':
-      delay(1000);
-      if( dht_sensor.measure( &temperature, &humidity ) == true ){
-        int raw = mqSensor.getResistance();
-        getMsg0((int) temperature, (int) humidity, (int) raw);
-      }
-      break;
-
-    case '1':
-      delay(1000);
-      if( dht_sensor.measure( &temperature, &humidity ) == true ){
-        co2 = mqSensor.getCO2PPM();
-        getMsg1((int) temperature,(int) humidity,(int) co2);
-      }
-      break;
-
-    case '3':
-      getMsg3();
-      break;
-  }*/
-  //c.compareTo("f");
-  /*if (c.charAt(0) == 'f') {
-    if( dht_sensor.measure( &temperature, &humidity ) == true ){
-      int raw = mqSensor.getResistance();
-      getMsg0((int) temperature, (int) humidity, raw);
-    }
+  if (c.charAt(0) == 'f') {
+    dht.temperature().getEvent(&event);
+    temperature=event.temperature;
+    dht.humidity().getEvent(&event);
+    humidity=event.relative_humidity;
+    int raw = mqSensor.getResistance();
+    getMsg0((int) temperature, (int) humidity, raw);
   }
   if (c.charAt(0) == 'e') {
-    if( dht_sensor.measure( &temperature, &humidity ) == true ){
-      co2 = mqSensor.getCO2PPM();
-      getMsg1((int) temperature,(int) humidity,(int) co2);
-    }
+    dht.temperature().getEvent(&event);
+    temperature=event.temperature;
+    dht.humidity().getEvent(&event);
+    humidity=event.relative_humidity;
+    co2 = mqSensor.getCO2PPM();
+    getMsg1((int) temperature,(int) humidity,(int) co2);
   }
-  if (c.charAt(0) == 'c') getMsg3();*/ //VERSION MESSAGE
+  if (c.charAt(0) == 'c') getMsg3(); //VERSION MESSAGE
   //
   //
 
@@ -239,14 +215,16 @@ void loop() {
     getMsg1((int) temperature,(int) humidity,(int) co2);
     
   }*/
-  // EXPERIMENTAL!
-  static unsigned long measurement_timestamp = millis( );
-  if( millis( ) - measurement_timestamp > period ){
-    if( dht_sensor.measure( &temperature, &humidity ) == true ){
-      co2 = mqSensor.getCO2PPM();
-      getMsg1((int) temperature,(int) humidity,(int) co2);
-      measurement_timestamp = millis( );
-    }
-  }
-
+  // EXPERIMENTAL! Millis() and micros() seembs broken here; we won't use they :|
+  //currentMillis = micros();
+  /*if( count>=30 ){
+    delay(delayMS / 1000);
+    dht.temperature().getEvent(&event);
+    temperature=event.temperature;
+    dht.humidity().getEvent(&event);
+    humidity=event.relative_humidity;
+    co2 = mqSensor.getCO2PPM();
+    getMsg1((int) temperature,(int) humidity,(int) co2);
+    count=0;
+  } else count++;*/
 }
