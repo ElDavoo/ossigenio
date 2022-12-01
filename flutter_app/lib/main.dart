@@ -284,6 +284,7 @@ Permission.location,
   void _scan() {
     //Create a new instance of FlutterBlue
     FlutterBlue flutterBlue = FlutterBlue.instance;
+    propList.add(flutterBlue.toString());
     //Start scanning
     flutterBlue.startScan(timeout: Duration(seconds: 4));
     //Listen to scan results
@@ -292,10 +293,9 @@ Permission.location,
       setState(() {
         for (ScanResult r in results) {
           propList.add('${r.device.name} - ${r.rssi} - ${r.device.id} - ${r.device.type}');
+          results.remove(r);
         }
       });
     });
-    // Stop scanning
-    flutterBlue.stopScan();
   }
 }
