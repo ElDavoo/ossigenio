@@ -35,15 +35,14 @@ uint32_t delayMS;
 // start FEEDBACK include section
 #define positiveButtonPin 2
 #define neutralButtonPin 3
-#define negativeButtonPin 6
-int feedback_positivo = 0;
-int feedback_neutro = 0;
-int feedback_negativo = 0;
+#define negativeButtonPin 1
+volatile uint8_t feedback = 0;
 // end FEEDBACK include section
 
 // start MQ135 section
 #include "MQ135.h"
-int co2Pin = A5;
+//int co2Pin = A5;
+#define co2Pin A5
 MQ135 mqSensor(co2Pin);
 // end MQ135 section
 
@@ -137,42 +136,47 @@ void setup() {
   ble_setup();
   dht.begin();
   sensor_t sensor;
-  delayMS = sensor.min_delay / 1000;
+  //delayMS = sensor.min_delay / 1000; // min_delay= ???
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
   pinMode(negativeButtonPin, INPUT);
+  attachInterrupt(1, positive, RISING); //INT1 ASSOCIATO AL PIN 2 -> positiveButtonPin
+  attachInterrupt(0, neutral, RISING); //INT0 ASSOCIATO AL PIN 3 -> neutralButtonPin
+  attachInterrupt(3, negative, RISING); //INT3 ASSOCIATO AL PIN 1 -> negativeButtonPin
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
+  ble.print("OK");
   float temperature;
   float humidity;
   sensors_event_t event;
-  delay(delayMS / 1000);
-  /*dht.temperature().getEvent(&event);
-  //dht.humidity().getEvent(&event);
-  temperature=event.temperature;
-  dht.humidity().getEvent(&event);
-  humidity=event.relative_humidity;
-  getMsg1((int) temperature,(int) humidity,(int) co2);*/
+  //delay(delayMS / 1000); //
+  delay(1000);
+  /*
+  Wait the necessary time to have the temperature and humidity values sampled. 
+  It would be more correct to use the millis() function instead of the delay() 
+  but on this board it gives overflow problems and we don't understand why; 
+  maybe hardware problem? We will only find out by living.
+  */
 
-  // read the state of the pushbutton value:
-  feedback_positivo = digitalRead(positiveButtonPin);
-  feedback_neutro = digitalRead(neutralButtonPin);
-  feedback_negativo = digitalRead(negativeButtonPin);
-  // WHEN one of the feedback buttons will be equal to HIGH, proto1 will send feedback message
-  // along with ambiental data
-  // PLACEHOLDER
-  // SECTION WORK IN PROGRESS
-  //
-  //
-  //
-  //
+  // feedback interrupt result management
+  if (feedback == 1 || feedback == 2 || feedback == 3) {
+    dht.temperature().getEvent(&event);
+    temperature=event.temperature;
+    dht.humidity().getEvent(&event);
+    humidity=event.relative_humidity;
+    co2 = mqSensor.getCO2PPM();
+    getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
+    feedback = 0;
+  }
+  
+  // ble read section
   String c = ble.readString();
   count++;
-  //ble.print(count);
-  if(count >= 30) {
-    c='e';
+  ble.print(count);
+  if(count >= 30) { //every 30 cycles, more or less, it will setup c to send getMsg1
+    c='e';          //independently of command sent
     count=0;
   }
   /*
@@ -206,15 +210,6 @@ void loop() {
   In this section proto1 will send measurement data every 30 seconds
   For dev purpose, now it sends every second
   */
-  /*if( measure_environment( &temperature, &humidity ) == true ){
-    float resistance = mqSensor.getResistance();
-    co2 = mqSensor.getCO2PPM();
-    //feedback_positivo = 0; //DEPRECATED
-    //feedback_neutro = 0; //DEPRECATED
-    //feedback_negativo = 0; //DEPRECATED
-    getMsg1((int) temperature,(int) humidity,(int) co2);
-    
-  }*/
   // EXPERIMENTAL! Millis() and micros() seembs broken here; we won't use they :|
   //currentMillis = micros();
   /*if( count>=30 ){

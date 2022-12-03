@@ -75,6 +75,19 @@ In case of a string, the length of the string must be prefixed.
 5. End string (FFFF)
 6. CRC8 value
 
+#### msg4 packet
+
+1. Start string (AA)
+2. Length (number of fields = 9)
+3. Message type (4)
+4. Payload
+	1. temperature
+	2. humidity
+	3. co2
+	4. feedback value (positive=1, neutral=2, negative=3);
+5. End string (FFFF)
+6. CRC8 value
+
 ### Data types
 
 Int = 16 bits

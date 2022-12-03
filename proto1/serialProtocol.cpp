@@ -21,6 +21,7 @@ v0.0.5 - rewrited getMsg1 and getMsg3
 #include "Adafruit_BluefruitLE_UART.h"
 #include "BluefruitConfig.h"
 extern Adafruit_BluefruitLE_SPI ble;
+extern volatile uint8_t feedback;
 
 #define MODEL 1
 #define VERSION 1
@@ -104,6 +105,34 @@ void getMsg3(){
 	ble.print(buffer); 
 }
 
+void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
+    char buffer[5];
+    //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
+    ble.write(0xAA);
+    ble.write(0x94);
+    sprintf(buffer, "%0.5d", temp);
+	ble.print(buffer); 
+	sprintf(buffer, "%0.5d", humidity);
+	ble.print(buffer); 
+    sprintf(buffer, "%0.5d", co2);
+	ble.print(buffer); 
+    sprintf(buffer, "%0.5d", feedback);
+	ble.print(buffer); 
+
+    uint8_t message[5];
+
+    message[0] = (uint8_t) 0xAA81;
+    message[1] = (uint8_t) temp;
+    message[2] = (uint8_t) humidity;
+    message[3] = (uint8_t) co2;
+    message[4] = (uint8_t) feedback;
+
+    int crc = checksumCalculator(message,5);
+    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+    sprintf(buffer, "%0.5d", crc);
+	ble.print(buffer); 
+}
+
 uint8_t checksumCalculator(uint8_t *data, uint8_t length){
    uint8_t curr_crc = 0x0000;
    uint8_t sum1 = (uint8_t) curr_crc;
@@ -115,4 +144,17 @@ uint8_t checksumCalculator(uint8_t *data, uint8_t length){
       sum2 = (sum2 + sum1) % 255;
    }
    return (sum2 << 8) | sum1;
+}
+
+void positive(){
+    ble.print("Think positive!");
+    feedback=1;
+}
+void neutral(){
+    ble.print("N");
+    feedback=2;
+}
+void negative(){
+    ble.print(":(");
+    feedback=3;
 }

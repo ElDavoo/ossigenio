@@ -25,4 +25,9 @@ void getMsg0(int temp, int humidity, int raw_data);
 void getMsg1(int temp, int humidity, int co2);
 void getMsg2(/*NOT YET IMPLEMENTED*/);
 void getMsg3();
+void getMsg4(int temp, int humidity, int co2, uint8_t feedback);
+
+void positive();
+void neutral();
+void negative();
 #endif
