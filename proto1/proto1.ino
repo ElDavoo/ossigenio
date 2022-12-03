@@ -203,6 +203,16 @@ void loop() {
     getMsg1((int) temperature,(int) humidity,(int) co2);
   }
   if (c.charAt(0) == 'c') getMsg3(); //VERSION MESSAGE
+  if (c.charAt(0) == 'b') { //forced sending feedback message -- Debug purpose only
+    dht.temperature().getEvent(&event);
+    temperature=event.temperature;
+    dht.humidity().getEvent(&event);
+    humidity=event.relative_humidity;
+    co2 = mqSensor.getCO2PPM();
+    feedback = 123;
+    getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
+    feedback = 0;
+  }
   //
   //
 
