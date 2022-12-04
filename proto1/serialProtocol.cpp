@@ -147,14 +147,14 @@ uint8_t checksumCalculator(uint8_t *data, uint8_t length){
 }
 
 void positive(){
-    ble.print("Think positive!");
+    //ble.print("Think positive!"); //DEBUG
     feedback=1;
 }
 void neutral(){
-    ble.print("N");
+    //ble.print("N"); //DEBUG
     feedback=2;
 }
 void negative(){
-    ble.print(":(");
+    //ble.print(":("); //DEBUG
     feedback=3;
 }

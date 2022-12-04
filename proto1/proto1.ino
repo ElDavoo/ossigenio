@@ -110,9 +110,9 @@ void ble_setup(){
   ble.verbose(false);  // debug info is a little annoying after this point!
 
   /* Wait for connection */
-  while (! ble.isConnected()) {
+  /*while (! ble.isConnected()) {
       delay(500);
-  }
+  }*/
 
   Serial.println(F("******************************"));
 
