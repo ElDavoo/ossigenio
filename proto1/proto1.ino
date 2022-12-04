@@ -6,6 +6,7 @@ air-quality-monitor
 @license  GNU GPLv3
 A monitor for air quality, made for IoT and 3D Intelligent Systems @ UniMORE AA 2022-2023.
 Please do not divulgate.
+v0.1: first Release Candidate (202212041625)
 */
 
 // start BLE include section
@@ -41,7 +42,6 @@ volatile uint8_t feedback = 0;
 
 // start MQ135 section
 #include "MQ135.h"
-//int co2Pin = A5;
 #define co2Pin A5
 MQ135 mqSensor(co2Pin);
 // end MQ135 section
@@ -50,11 +50,17 @@ MQ135 mqSensor(co2Pin);
 #include "serialProtocol.h"
 // end serial parsing section
 
-//unsigned long startMillis;
-//unsigned long currentMillis;
-//const unsigned long period = 10000;
-int count=0;
+// start global variables section
+#define campTime 1000
+#define autoSend 30000
+unsigned long lastExecutedMillis = 0; // to campionate environment datas every 1 sec
+unsigned long lastExecutedMillisCount = 0; // to send automatically environment datas every 30 secs
+sensors_event_t event;
+float temperature;
+float humidity;
 float co2;
+int raw;
+// end global variables section
 
 // A small helper
 void error(const __FlashStringHelper*err) {
@@ -73,8 +79,7 @@ float co2_r0_init(){
 }
 
 void ble_setup(){
-  //while (!Serial);  // required for Flora & Micro (seems didn't required for Adafruit Feather 32u4 Bluefruit LE)
-  //delay(500);
+
 
   Serial.begin(4800);
   Serial.println(F("Adafruit Bluefruit Command <-> Data Mode Example"));
@@ -147,89 +152,48 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  ble.print("OK");
-  float temperature;
-  float humidity;
-  sensors_event_t event;
-  //delay(delayMS / 1000); //
-  delay(1000);
-  /*
-  Wait the necessary time to have the temperature and humidity values sampled. 
-  It would be more correct to use the millis() function instead of the delay() 
-  but on this board it gives overflow problems and we don't understand why; 
-  maybe hardware problem? We will only find out by living.
-  */
+  unsigned long currentMillis = millis();
 
-  // feedback interrupt result management
-  if (feedback == 1 || feedback == 2 || feedback == 3) {
+  if (currentMillis - lastExecutedMillis >= campTime) {
+    lastExecutedMillis = currentMillis; // save the last executed time
     dht.temperature().getEvent(&event);
     temperature=event.temperature;
     dht.humidity().getEvent(&event);
     humidity=event.relative_humidity;
     co2 = mqSensor.getCO2PPM();
+    raw = mqSensor.getResistance();
+  }
+
+  // feedback interrupt result management
+  if (feedback == 1 || feedback == 2 || feedback == 3) {
     getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
     feedback = 0;
   }
   
   // ble read section
   String c = ble.readString();
-  count++;
-  ble.print(count);
-  if(count >= 30) { //every 30 cycles, more or less, it will setup c to send getMsg1
-    c='e';          //independently of command sent
-    count=0;
+
+  unsigned long currentMillisCount = millis();
+  if (currentMillisCount - lastExecutedMillisCount >= autoSend){
+    lastExecutedMillisCount = currentMillisCount;
+    c='e';
   }
   /*
   For other types of messages, proto1 will wait for external input and sends they
   according to it.
   */
-  // PLACEHOLDER
-  // SECTION WORK IN PROGRESS
-  //
   if (c.charAt(0) == 'f') {
-    dht.temperature().getEvent(&event);
-    temperature=event.temperature;
-    dht.humidity().getEvent(&event);
-    humidity=event.relative_humidity;
-    int raw = mqSensor.getResistance();
     getMsg0((int) temperature, (int) humidity, raw);
   }
   if (c.charAt(0) == 'e') {
-    dht.temperature().getEvent(&event);
-    temperature=event.temperature;
-    dht.humidity().getEvent(&event);
-    humidity=event.relative_humidity;
-    co2 = mqSensor.getCO2PPM();
     getMsg1((int) temperature,(int) humidity,(int) co2);
   }
   if (c.charAt(0) == 'c') getMsg3(); //VERSION MESSAGE
   if (c.charAt(0) == 'b') { //forced sending feedback message -- Debug purpose only
-    dht.temperature().getEvent(&event);
-    temperature=event.temperature;
-    dht.humidity().getEvent(&event);
-    humidity=event.relative_humidity;
-    co2 = mqSensor.getCO2PPM();
     feedback = 123;
     getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
     feedback = 0;
   }
   //
   //
-
-  /*
-  In this section proto1 will send measurement data every 30 seconds
-  For dev purpose, now it sends every second
-  */
-  // EXPERIMENTAL! Millis() and micros() seembs broken here; we won't use they :|
-  //currentMillis = micros();
-  /*if( count>=30 ){
-    delay(delayMS / 1000);
-    dht.temperature().getEvent(&event);
-    temperature=event.temperature;
-    dht.humidity().getEvent(&event);
-    humidity=event.relative_humidity;
-    co2 = mqSensor.getCO2PPM();
-    getMsg1((int) temperature,(int) humidity,(int) co2);
-    count=0;
-  } else count++;*/
 }
