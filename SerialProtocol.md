@@ -99,7 +99,7 @@ Int = 16 bits
 |1|co2 only message|Temp(int), hum(int),co2(int)|
 |2|extended data message|Temp (int), hum(int), co2(int)...|TODO
 |3|Startup information|Model(int),Version(int),battery(int)|battery can be 0 if sensor not present
-|4|feedback message|Temp(int), hum(int),co2(int), feedback(uint8_t)| Feedback message
+|4|feedback message|Temp(int), hum(int),co2(int), feedback(uint8_t)| Feedback message and debug mode toggle
 |F|Request for message 0|AA1F and empty payload
 |E|Request for message 1|AA1E and empty payload
 |D|Request for message 2|AA1D and empty payload
@@ -107,8 +107,7 @@ Int = 16 bits
 |B|Request for message 4|AA1B and empty payload
 
 #### Automatic message sending
-The sensor should send a 
-1 
-message every 
-30
-seconds (indeed, every 30 loop cycles. Millis() and micros() seems broken so we are going to use this workaround; perdonaci Dio dell'informatica).
+The sensor should send a 1-type message every 30 seconds.
+
+#### Debug mode
+Every loop cycle it will send "Check!" message.

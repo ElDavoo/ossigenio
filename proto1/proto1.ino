@@ -7,6 +7,7 @@ air-quality-monitor
 A monitor for air quality, made for IoT and 3D Intelligent Systems @ UniMORE AA 2022-2023.
 Please do not divulgate.
 v0.1: first Release Candidate (202212041625)
+v0.1.1: fixed request messages (20221205)
 */
 
 // start BLE include section
@@ -30,14 +31,13 @@ Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_
 #include <DHT_U.h>
 #define DHTTYPE    DHT11
 DHT_Unified dht(5, DHTTYPE);
-uint32_t delayMS;
 // end DHT11 section
 
 // start FEEDBACK include section
 #define positiveButtonPin 2
 #define neutralButtonPin 3
 #define negativeButtonPin 1
-volatile uint8_t feedback = 0;
+volatile uint8_t feedback = 0; //volatile because this variable is read by interrupt fuctions
 // end FEEDBACK include section
 
 // start MQ135 section
@@ -62,6 +62,8 @@ float co2;
 int raw;
 // end global variables section
 
+boolean debug = false; //to enable debug mode
+
 // A small helper
 void error(const __FlashStringHelper*err) {
   Serial.println(err);
@@ -79,7 +81,6 @@ float co2_r0_init(){
 }
 
 void ble_setup(){
-
 
   Serial.begin(4800);
   Serial.println(F("Adafruit Bluefruit Command <-> Data Mode Example"));
@@ -108,10 +109,6 @@ void ble_setup(){
   /* Print Bluefruit information */
   ble.info();
 
-  //Serial.println(F("Please use Adafruit Bluefruit LE app to connect in UART mode"));
-  //Serial.println(F("Then Enter characters to send to Bluefruit"));
-  //Serial.println();
-
   ble.verbose(false);  // debug info is a little annoying after this point!
 
   /* Wait for connection */
@@ -137,11 +134,10 @@ void ble_setup(){
 
 void setup() {
   // put your setup code here, to run once:
-  //Serial.begin(9600);
   ble_setup();
   dht.begin();
   sensor_t sensor;
-  //delayMS = sensor.min_delay / 1000; // min_delay= ???
+
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
   pinMode(negativeButtonPin, INPUT);
@@ -172,28 +168,31 @@ void loop() {
   
   // ble read section
   String c = ble.readString();
-
+  String watchDog;
   unsigned long currentMillisCount = millis();
   if (currentMillisCount - lastExecutedMillisCount >= autoSend){
     lastExecutedMillisCount = currentMillisCount;
-    c='e';
+    watchDog='E';
   }
   /*
   For other types of messages, proto1 will wait for external input and sends they
   according to it.
   */
-  if (c.charAt(0) == 'f') {
+  if (c.charAt(3) == 'F') {
     getMsg0((int) temperature, (int) humidity, raw);
   }
-  if (c.charAt(0) == 'e') {
+  if (c.charAt(3) == 'E' || watchDog.charAt(0) == 'E') {
     getMsg1((int) temperature,(int) humidity,(int) co2);
   }
-  if (c.charAt(0) == 'c') getMsg3(); //VERSION MESSAGE
-  if (c.charAt(0) == 'b') { //forced sending feedback message -- Debug purpose only
+  if (c.charAt(3) == 'C') getMsg3(); //VERSION MESSAGE
+  if (c.charAt(3) == 'B') { //forced sending feedback message -- Debug purpose only
     feedback = 123;
     getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
     feedback = 0;
+    debug = !debug; // enable/disable debug mode
+    if (debug == true) ble.print("Debug mode enabled.");
+    else ble.print("Debug mode disabled.");
   }
-  //
-  //
+  if(debug == true) ble.print("Check!"); //ONLY FOR DEBUG PURPOSE!
+
 }
