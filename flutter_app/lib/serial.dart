@@ -2,55 +2,43 @@
 Class to communicate with the serial port.
  */
 
+import 'dart:ffi';
+
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:typed_data';
 
 typedef uint8_t = int;
 
+//list of commands with their corresponding values
+enum MessageTypes {
+  debugMessage(0x80),
+  co2Message(0x81),
+  extendedMessage(2),
+  startupMessage(0x83),
+  feedbackMessage(0x94),
+  msgRequest0(0x0f),
+  msgRequest1(0x0e),
+  msgRequest2(0x0c),
+  msgRequest3(0x0d);
+
+  const MessageTypes(this.value);
+  final int value;
+}
+
 class SerialComm {
 
   // Store the FlutterBlue instance.
   FlutterBlue flutterBlue = FlutterBlue.instance;
+  // The start of a message is 0xAA.
+  static const int startOfMessage = 0xAA;
+  // The end of a message is 0xFFFF
+  static const int endOfMessage = 0xFFFF;
+  late BluetoothCharacteristic uartRX;
 
-
-  // Constructor body
-  /*SerialComm(this.device, this.service, this.characteristic, this.descriptor){
-// Scan for devices
-    FlutterBlue flutterBlue = this.flutterBlue;
-    flutterBlue.startScan(timeout: const Duration(seconds: 4));
-    // Listen for devices
-    StreamSubscription scanSubscription = flutterBlue.scanResults.listen((results) {
-      // Do something with scan results
-      for (ScanResult r in results) {
-        print('${r.device.name} found! rssi: ${r.rssi}');
-      }
-    });
-    // Stop scanning
-    flutterBlue.stopScan();
-    // Connect to the device
-    BluetoothDevice device = await BluetoothDevice.fromId("00:00:00:00:00:00");
-    await device.connect();
-    // Discover services
-    List<BluetoothService> services = await device.discoverServices();
-    // Find the UART service
-    BluetoothService uartService = services.firstWhere((service) => service.uuid.toString() == "6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-    // Find the UART TX characteristic
-    BluetoothCharacteristic txCharacteristic = uartService.characteristics.firstWhere((characteristic) => characteristic.uuid.toString() == "6e400002-b5a3-f393-e0a9-e50e24dcca9e");
-    // Find the UART RX characteristic
-    BluetoothCharacteristic rxCharacteristic = uartService.characteristics.firstWhere((characteristic) => characteristic.uuid.toString() == "6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-    // Set notify on the RX characteristic
-    await rxCharacteristic.setNotifyValue(true);
-    // Listen to the RX characteristic
-    rxCharacteristic.value.listen((value) {
-      // Do something with new value
-      print(value);
-    });
-    // Send data to the TX characteristic
-    txCharacteristic.write([0x01, 0x02, 0x03]);
-    // Disconnect from device
-    await device.disconnect();
+  SerialComm(BluetoothCharacteristic bluetoothCharacteristic){
+    // Set the characteristic to the one passed in.
+    uartRX = bluetoothCharacteristic;
   }
-  }*/
 
 
   // Checksum calculator that returns a single byte
@@ -66,11 +54,30 @@ class SerialComm {
     }
     return (sum2 << 8) | sum1;
   }
-/*
-  // Implement the Nordic UART connection over BLE
-  static Future<BluetoothDevice> connectToNordicUART() async {
-    // Check for permissions
-    if (await Permission.location.request().isGranted) {
+  void receive(List<int> list) {
+    Uint8List data = Uint8List.fromList(list);
+    print("Received: " + data.toString());
+  }
+  void send(Uint8List data) {
+    print("Sending: " + data.toString());
 
-  }*/
+  }
+  void sendMsg(int msgIndex){
+    Uint8List message = buildMsg(msgIndex, Uint8List(0));
+    send(message);
+  }
+  Uint8List buildMsg(int msgIndex, Uint8List payload){
+    Uint8List message = Uint8List(0);
+    // Add the start of message byte
+    message.add(startOfMessage);
+    // Add the message type
+    message.add(msgIndex);
+    // Add the payload
+    message.addAll(payload);
+    // Add the end string
+    message.add(endOfMessage);
+    // Add the checksum
+    message.add(checksum(message));
+    return message;
+  }
 }

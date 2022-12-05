@@ -4,6 +4,7 @@ Class that manages the connection to a BLE device.
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/serial.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'main.dart';
 
@@ -23,6 +24,13 @@ class BLEManager extends ChangeNotifier {
   static const List<String> allowedNames = [
     'Adafruit Bluefruit LE',
   ];
+
+  BluetoothCharacteristic? uartRX;
+
+  static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+  static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+  static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+  SerialComm? serial;
   //Singleton class
   // Method to scan for BLE devices
   void startBLEScan() async {
@@ -106,6 +114,41 @@ class BLEManager extends ChangeNotifier {
         );
       },
     );
+  }
+  // Connect to a BLE device
+  void connectToDevice(BluetoothDevice device) async {
+    // Connect to the device
+    await device.connect();
+    // Discover services
+    List<BluetoothService> services = await device.discoverServices();
+    // Check if Nordic UART Service is present
+    services.forEach((service) {
+      if (service.uuid.toString() == nordicUARTID) {
+        print("Found Nordic UART Service");
+        // Get the characteristics
+        List<BluetoothCharacteristic> characteristics = service.characteristics;
+        // Check if Nordic UART RX characteristic is present
+        characteristics.forEach((characteristic) {
+          if (characteristic.uuid.toString() == nordicUARTRXID) {
+            print("Found Nordic UART RX characteristic");
+            // Save the characteristic into the class
+            uartRX = characteristic;
+            serial = SerialComm(uartRX!);
+          }
+          if (characteristic.uuid.toString() == nordicUARTTXID) {
+            print("Found Nordic UART TX characteristic");
+            // Subscribe to the TX characteristic
+            characteristic.setNotifyValue(true);
+            // Listen to the TX characteristic
+            characteristic.value.listen((value) {
+              // Do something with the value
+              serial!.receive(value);
+            });
+          }
+        });
+      }
+    });
+
   }
 
 }

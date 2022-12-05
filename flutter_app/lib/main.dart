@@ -155,7 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             title: Text(bleManager.devices[index].name),
                             subtitle: Text(bleManager.devices[index].id.toString()),
                             onTap: () {
-                              //bleManager.connectToDevice(bleManager.devices[index]);
+                              bleManager.connectToDevice(bleManager.devices[index]);
                             },
                           );
                         },
