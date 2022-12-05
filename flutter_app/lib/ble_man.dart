@@ -15,6 +15,14 @@ class BLEManager extends ChangeNotifier {
   // Future of scanning
   late Future<void> scanFuture;
   bool _isScanning = false;
+  // List of allowed OUIs
+  static const List<String> allowedOUIs = [
+    'EF:41:B7',
+  ];
+  // List of allowed names
+  static const List<String> allowedNames = [
+    'Adafruit Bluefruit LE',
+  ];
   //Singleton class
   // Method to scan for BLE devices
   void startBLEScan() async {
@@ -49,6 +57,19 @@ class BLEManager extends ChangeNotifier {
   void processResult(BluetoothDevice device) {
     // Filter out devices that are already in the list
     if (devices.contains(device)) {
+      return;
+    }
+    // Only filter BLE devices
+    if (device.type != BluetoothDeviceType.le) {
+      // Add the device to the list
+      return;
+    }
+    //Only devices with allowed OUIs
+    if (!allowedOUIs.contains(device.id.id.substring(0, 8))) {
+      return;
+    }
+    // Only devices with allowed names
+    if (!allowedNames.contains(device.name)) {
       return;
     }
     print("Found device: ${device.toString()}");
