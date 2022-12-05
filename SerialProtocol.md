@@ -100,11 +100,11 @@ Int = 16 bits
 |2|extended data message|Temp (int), hum(int), co2(int)...|TODO
 |3|Startup information|Model(int),Version(int),battery(int)|battery can be 0 if sensor not present
 |4|feedback message|Temp(int), hum(int),co2(int), feedback(uint8_t)| Feedback message
-|F|Request for message 0
-|E|Request for message 1
-|D|Request for message 2
-|C|Request for message 3
-|B|Request for message 4
+|F|Request for message 0|AA1F
+|E|Request for message 1|AA1E
+|D|Request for message 2|AA1D
+|C|Request for message 3|AA1C
+|B|Request for message 4|AA1B
 
 #### Automatic message sending
 The sensor should send a 
