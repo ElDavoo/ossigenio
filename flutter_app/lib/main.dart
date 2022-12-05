@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/perm_man.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
 import 'ble_man.dart';
+import 'package:riverpod/riverpod.dart';
+
 
 void main() {
+  /*runApp(
+      MultiProvider(providers: [
+        ChangeNotifierProvider(create: (context) => BLEManager()),
+      ],
+        child: const MyApp(),
+      ));*/
   runApp(const MyApp());
 }
+
+final StateProvider<List<BluetoothDevice>> devices = StateProvider((ref) => []);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -42,14 +54,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<String> propList = [];
   BLEManager bleManager = BLEManager();
-
- void bleCallback() {
-    setState(() {
-      propList = bleManager.getDevicesToString();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,15 +142,26 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 Expanded(child:
-                // Add a list view to display the scan results
-                ListView.builder(
-                  shrinkWrap: false,
-                  itemCount: bleManager.devices.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(bleManager.devices[index].toString()),
-                    );
-                  },
+                // Add a ListView that uses Consumer to build
+                // its items.
+                ChangeNotifierProvider<BLEManager>(
+                  create: (context) => bleManager,
+                  child: Consumer<BLEManager>(
+                    builder: (context, bleManager, child) {
+                      return ListView.builder(
+                        itemCount: bleManager.devices.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(bleManager.devices[index].name),
+                            subtitle: Text(bleManager.devices[index].id.toString()),
+                            onTap: () {
+                              //bleManager.connectToDevice(bleManager.devices[index]);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
                 ),
               ],

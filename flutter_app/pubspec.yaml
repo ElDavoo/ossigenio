@@ -38,6 +38,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_blue: ^0.8.0
   permission_handler: ^10.2.0
+  riverpod: ^2.1.1
+  provider: ^6.0.4
 
 dev_dependencies:
   flutter_test:
