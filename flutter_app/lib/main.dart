@@ -78,11 +78,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 return const Center(child: CircularProgressIndicator());
               }
               else {
-                return const Center(child: Text("No scan in progress"));
+                if (bleManager.devices.isEmpty) {
+                  return const Center(child: Text("No scan in progress"));
+                } else {
+                  return Container();
+                }
               }
             }
             else {
-              return const Center(child: Text("No scan in progress"));
+              if (bleManager.devices.isEmpty) {
+                return const Center(child: Text("No scan in progress"));
+              } else {
+                return Container();
+              }
             }
           }),
           Column(
@@ -132,10 +140,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 // Add a list view to display the scan results
                 ListView.builder(
                   shrinkWrap: false,
-                  itemCount: propList.length,
+                  itemCount: bleManager.devices.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(propList[index]),
+                      title: Text(bleManager.devices[index].toString()),
                     );
                   },
                 ),
