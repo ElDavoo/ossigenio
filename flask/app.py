@@ -25,7 +25,7 @@ def showMain():
     return render_template('index.html')
 
 @app.route('/registrazione')
-def showSignUp():
+def registrazione():
     return render_template('signup.html')
 
 
