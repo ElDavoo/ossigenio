@@ -1,6 +1,4 @@
 {
     "board": "adafruit:avr:feather32u4",
-    "sketch": "proto1\\proto1.ino",
-    "port": "COM5",
-    "output": "proto1\\build"
+    "port": "COM5"
 }

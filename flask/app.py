@@ -20,7 +20,7 @@ def get_db_connection():
 
 @app.route('/')
 def hello_world():  # put application's code here
-    return 'Saluta Antonio'
+    return 'Ciao a tutti!!!'
 
 
 
