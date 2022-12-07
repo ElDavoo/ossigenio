@@ -22,7 +22,9 @@ def get_db_connection():
 def hello_world():  # put application's code here
     return 'Ciao a tutti!!!'
 
-
+@app.route('/registrazione')
+def showSignUp():
+    return render_template('signup.html')
 
 
 @app.route('/measurements/')
