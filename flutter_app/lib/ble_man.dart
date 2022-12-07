@@ -68,7 +68,7 @@ class BLEManager extends ChangeNotifier {
       return;
     }
     // Only filter BLE devices
-    if (device.type != BluetoothDeviceType.le) {
+    /*if (device.type != BluetoothDeviceType.le) {
       // Add the device to the list
       return;
     }
@@ -79,7 +79,7 @@ class BLEManager extends ChangeNotifier {
     // Only devices with allowed names
     if (!allowedNames.contains(device.name)) {
       return;
-    }
+    }*/
     print("Found device: ${device.toString()}");
     // Add the device to the list
     devices.add(device);

@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/perm_man.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 import 'package:provider/provider.dart';
 import 'ble_man.dart';
-import 'package:riverpod/riverpod.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
-  /*runApp(
+  /*
+  Bisogna mettere qui i ChangeNotifierProvider.
+  In questo modo, saranno disponibili globalmente.
+   */
+  runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (context) => BLEManager()),
       ],
         child: const MyApp(),
-      ));*/
-  runApp(const MyApp());
+      ));
 }
-
-final StateProvider<List<BluetoothDevice>> devices = StateProvider((ref) => []);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -25,18 +24,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Air Quality Monitor',
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      onGenerateTitle: (context) =>
+      AppLocalizations.of(context)!.title,
       theme: ThemeData(
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Air Quality Monitor'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -46,16 +48,14 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  BLEManager bleManager = BLEManager();
-
+  //BLEManager bleManager = BLEManager();
+ // get BLEManager from ChangeNotifierProvider
+  BLEManager get bleManager => context.read<BLEManager>();
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called.
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // TODO: Dynamically change the accounts icon based on account status
         leading: const Icon(Icons.no_accounts),
-        title: Text(widget.title),
+        title: Text(AppLocalizations.of(context)!.title),
         actions: const [
           Icon(Icons.more_vert),
         ],
@@ -78,25 +78,15 @@ class _MyHomePageState extends State<MyHomePage> {
             // if scan is in progress show loading screen
           //else nothing
           StreamBuilder(stream: bleManager.isScanning(), builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data == true) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              else {
-                if (bleManager.devices.isEmpty) {
-                  return const Center(child: Text("No scan in progress"));
-                } else {
-                  return Container();
-                }
-              }
+            if (snapshot.hasData && snapshot.data == true) {
+              return const Center(child: CircularProgressIndicator());
             }
-            else {
-              if (bleManager.devices.isEmpty) {
-                return const Center(child: Text("No scan in progress"));
-              } else {
-                return Container();
-              }
+            if (bleManager.devices.isEmpty) {
+              return Center(child: Text(
+                AppLocalizations.of(context)!.noDevicesFound,
+              ));
             }
+            return Container();
           }),
           Column(
 
@@ -109,9 +99,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                         color: Colors.green,
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        child: const Text(
-                          'Request permission',
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        child: Text(
+                          AppLocalizations.of(context)!.requestPermissionButton,
+                          style: const TextStyle(color: Colors.white, fontSize: 13.0),
                         ),
                       ),
                     ),
@@ -120,9 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                         color: Colors.blue,
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        child: const Text(
-                          'scan',
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        child: Text(
+                          AppLocalizations.of(context)!.startScanButton,
+                          style: const TextStyle(color: Colors.white, fontSize: 13.0),
                         ),
                       ),
                     ),
@@ -132,9 +122,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Container(
                         color: Colors.red,
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                        child: const Text(
-                          'stop scan',
-                          style: TextStyle(color: Colors.white, fontSize: 13.0),
+                        child: Text(
+                          AppLocalizations.of(context)!.stopScanButton,
+                          style: const TextStyle(color: Colors.white, fontSize: 13.0),
                         ),
                       ),
                     ),
@@ -144,9 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(child:
                 // Add a ListView that uses Consumer to build
                 // its items.
-                ChangeNotifierProvider<BLEManager>(
-                  create: (context) => bleManager,
-                  child: Consumer<BLEManager>(
+                Consumer<BLEManager>(
                     builder: (context, bleManager, child) {
                       return ListView.builder(
                         itemCount: bleManager.devices.length,
@@ -163,12 +151,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ),
-                ),
               ],
 
         ),
       ],
           ),
+
     );
   }
 

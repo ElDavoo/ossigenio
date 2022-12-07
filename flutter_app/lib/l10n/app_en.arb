@@ -1,0 +1,22 @@
+{
+    "title": "AQM en",
+    "@title": {
+      "description": "Title of the application"
+    },
+    "requestPermissionButton": "Request permission",
+    "@requestPermissionButton": {
+      "description": "Button to request permission"
+    },
+    "startScanButton": "Start scan",
+    "@startScanButton": {
+      "description": "Button to start scanning"
+    },
+    "stopScanButton": "Stop scan",
+    "@stopScanButton": {
+      "description": "Button to stop scanning"
+    },
+    "noDevicesFound": "No devices found",
+    "@noDevicesFound": {
+      "description": "No devices found"
+    }
+}

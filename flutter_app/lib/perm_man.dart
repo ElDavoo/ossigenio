@@ -1,3 +1,5 @@
+
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /*
@@ -11,6 +13,7 @@ class PermissionManager {
     Permission.bluetoothScan,
     Permission.bluetoothConnect
   ];
+  static const snackBar = SnackBar(content: Text('Please grant permissions'));
 // Check if the app has the required permissions
   Future<bool> checkPermissions() async {
     // Check if the app has the required permissions
@@ -20,6 +23,8 @@ class PermissionManager {
         statuses[Permission.bluetoothConnect] == PermissionStatus.granted) {
       _hasPermission = true;
     }
+    // Show SnackBar
+    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print("Permission status: $_hasPermission");
     return _hasPermission;
   }
