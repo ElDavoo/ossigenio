@@ -19,8 +19,10 @@ def get_db_connection():
     return conn
 
 @app.route('/')
-def hello_world():  # put application's code here
-    return 'Ciao a tutti!!!'
+#def hello_world():  # put application's code here
+#    return 'Ciao a tutti!!!'
+def showMain():
+    return render_template('index.html')
 
 @app.route('/registrazione')
 def showSignUp():
