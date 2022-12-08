@@ -36,6 +36,22 @@
         <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
          
         <button id="btnSignUp" class="btn btn-lg btn-primary btn-block" type="button">Sign up</button>
+        $(function() {
+          $('#btnSignUp').click(function() {
+       
+              $.ajax({
+                  url: '/signUp',
+                  data: $('form').serialize(),
+                  type: 'POST',
+                  success: function(response) {
+                      console.log(response);
+                  },
+                  error: function(error) {
+                      console.log(error);
+                  }
+              });
+          });
+      });
       </form>
       </div>
  
