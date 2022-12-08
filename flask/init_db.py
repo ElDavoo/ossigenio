@@ -37,7 +37,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS measurements (id serial PRIMARY KEY,'
 
 # Insert data into the table
 
-cur.execute('INSERT INTO measurements (lat, lon, temp, hum, co2) VALUES (1, 2, 3, 4, 5);')
+cur.execute('INSERT INTO measurements (lat, lon, temp, hum, co2) VALUES (1, 2, 20, 40, 50);')
 
 conn.commit()
 
