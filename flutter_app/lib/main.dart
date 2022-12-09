@@ -95,7 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 Row(
                   children: <Widget> [
                     TextButton(
-                      onPressed: PermissionManager().checkPermissions,
+                      onPressed: () async {
+                        // Check if the app has the required permissions
+                        if (await PermissionManager().checkPermissions()) {
+                          ScaffoldMessenger.of(context).showSnackBar(PermissionManager.snackBarOk);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(PermissionManager.snackBarFail);
+                        }
+                      },
                       child: Container(
                         color: Colors.green,
                         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),

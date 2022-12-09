@@ -13,7 +13,9 @@ class PermissionManager {
     Permission.bluetoothScan,
     Permission.bluetoothConnect
   ];
-  static const snackBar = SnackBar(content: Text('Please grant permissions'));
+  static const snackBarOk = SnackBar(content: Text('Permessi OK!'));
+  static const snackBarFail = SnackBar(content: Text('Please grant permissions'));
+
 // Check if the app has the required permissions
   Future<bool> checkPermissions() async {
     // Check if the app has the required permissions
