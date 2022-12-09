@@ -3,6 +3,8 @@ This abstract class defines a Message, that must have a MessageType.
  */
 
 //list of commands with their corresponding values
+import 'dart:typed_data';
+
 class MessageTypes {
   static const debugMessage = 0x80;
   static const co2Message = 0x81;
@@ -18,4 +20,6 @@ class MessageTypes {
 
 abstract class Message {
   int get type;
+  //only for debug
+  Uint8List get data;
 }
