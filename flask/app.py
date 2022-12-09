@@ -36,7 +36,8 @@ def signUp():
     _email = request.form['inputEmail']
     _password = request.form['inputPassword']
     #_hashed_password = generate_password_hash(request.form['inputPassword'])
-
+    
+    print('fetching data')
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
@@ -47,6 +48,7 @@ def signUp():
 
     cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_password+');')
 
+    print('buh')
     data = cur.fetchall()
     if len(data) == 0:
         conn.commit()
