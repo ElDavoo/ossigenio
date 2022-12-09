@@ -48,7 +48,7 @@ def signUp():
     cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_password+');')
 
     data = cur.fetchall()
-    if len(data) is 0:
+    if len(data) == 0:
         conn.commit()
         cur.close()
         conn.close()
