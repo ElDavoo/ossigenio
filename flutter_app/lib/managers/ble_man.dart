@@ -3,6 +3,7 @@ Class that manages the connection to a BLE device.
  */
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../utils/serial.dart';
 import 'package:flutter_blue/flutter_blue.dart';
@@ -10,15 +11,19 @@ import 'package:flutter_blue/flutter_blue.dart';
 class BLEManager extends ChangeNotifier {
   // Instance of flutter_blue
   FlutterBlue flutterBlue = FlutterBlue.instance;
+
   // List of devices found
   List<BluetoothDevice> devices = [];
+
   // Future of scanning
   late Future<void> scanFuture;
   bool _isScanning = false;
+
   // List of allowed OUIs
   static const List<String> allowedOUIs = [
     'EF:41:B7',
   ];
+
   // List of allowed names
   static const List<String> allowedNames = [
     'Adafruit Bluefruit LE',
@@ -30,6 +35,7 @@ class BLEManager extends ChangeNotifier {
   static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
   SerialComm? serial;
+
   //Singleton class
   // Method to scan for BLE devices
   void startBLEScan() async {
@@ -42,7 +48,8 @@ class BLEManager extends ChangeNotifier {
     devices.clear();
     scanFuture = flutterBlue.startScan();
     // Listen for devices
-    StreamSubscription scanSubscription = flutterBlue.scanResults.listen((results) {
+    StreamSubscription scanSubscription = flutterBlue.scanResults.listen((
+        results) {
       // Do something with scan results
       for (ScanResult r in results) {
         processResult(r.device);
@@ -61,6 +68,7 @@ class BLEManager extends ChangeNotifier {
     print("Scanning stopped");
     _isScanning = false;
   }
+
   void processResult(BluetoothDevice device) {
     // Filter out devices that are already in the list
     if (devices.contains(device)) {
@@ -84,12 +92,15 @@ class BLEManager extends ChangeNotifier {
     devices.add(device);
     notifyListeners();
   }
-   Stream<bool> isScanning() {
+
+  Stream<bool> isScanning() {
     return flutterBlue.isScanning;
   }
+
   List<BluetoothDevice> getDevices() {
     return devices;
   }
+
   List<String> getDevicesToString() {
     List<String> devicesString = [];
     for (BluetoothDevice device in devices) {
@@ -97,6 +108,7 @@ class BLEManager extends ChangeNotifier {
     }
     return devicesString;
   }
+
   // Gets the list as a ListView
   ListView getDevicesAsListView() {
     List<String> devicesString = getDevicesToString();
@@ -114,40 +126,74 @@ class BLEManager extends ChangeNotifier {
       },
     );
   }
+
   // Connect to a BLE device
-  void connectToDevice(BluetoothDevice device) async {
-    // Connect to the device
-    await device.connect();
+  Future<bool> connectToDevice(BluetoothDevice device) async {
+    // Connect to the device with a timeout of 2 seconds
+    try {
+    await device.connect().timeout(const Duration(seconds: 2));
+    } on TimeoutException catch (e) {
+      if (kDebugMode) {
+        print("Timeout!");
+      }
+      return false;
+    } on Exception catch (e) {
+      if (kDebugMode) {
+        print("Error connecting to device: $e");
+      }
+      return false;
+    }
+
     // Discover services
     List<BluetoothService> services = await device.discoverServices();
+
     // Check if Nordic UART Service is present
-    services.forEach((service) {
+    for (var service in services) {
       if (service.uuid.toString() == nordicUARTID) {
-        print("Found Nordic UART Service");
+        if (kDebugMode) {
+          print("Found Nordic UART Service");
+        }
+
         // Get the characteristics
         List<BluetoothCharacteristic> characteristics = service.characteristics;
+
         // Check if Nordic UART RX characteristic is present
-        characteristics.forEach((characteristic) {
+
+        for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTRXID) {
-            print("Found Nordic UART RX characteristic");
+            if (kDebugMode) {
+              print("Found Nordic UART RX characteristic");
+            }
+
             // Save the characteristic into the class
             uartRX = characteristic;
             serial = SerialComm(uartRX!);
           }
+        }
+        if (serial == null) {
+          return false;
+        }
+
+
+        for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTTXID) {
-            print("Found Nordic UART TX characteristic");
+            if (kDebugMode) {
+              print("Found Nordic UART TX characteristic");
+            }
+
             // Subscribe to the TX characteristic
             characteristic.setNotifyValue(true);
+
             // Listen to the TX characteristic
             characteristic.value.listen((value) {
               // Do something with the value
               serial!.receive(value);
             });
+            return true;
           }
-        });
+        }
       }
-    });
-
+    }
+    return false;
   }
-
 }

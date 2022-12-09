@@ -123,11 +123,21 @@ class _MyHomePageState extends State<MyHomePage> {
                       return ListTile(
                         title: Text(bleManager.devices[index].name),
                         subtitle: Text(bleManager.devices[index].id.toString()),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => DevicePage(devic: Device(bleManager.devices[index]))),
-                          );
+                        onTap: () async {
+                          // Connect to device first
+                          var bruh = bleManager.connectToDevice(bleManager.devices[index]);
+                          // If connection is successful, navigate to device page
+                          if (await bruh) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) =>
+                                  DevicePage(devic: Device(bleManager, bleManager.devices[index]))),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('AppLocalizations.of(context)!.connectionFailed)'))
+                            );
+                          }
                         },
                       );
                     },

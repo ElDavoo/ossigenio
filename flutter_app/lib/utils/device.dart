@@ -3,9 +3,12 @@ This class represents a device.
  */
 import 'package:flutter_blue/flutter_blue.dart';
 
-class Device {
-  late BluetoothDevice device;
+import '../managers/ble_man.dart';
 
-  Device(this.device);
+class Device {
+
+  BLEManager bleManager;
+  BluetoothDevice device;
+  Device(this.bleManager, this.device);
 
 }
