@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import '../../utils/serial.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+import '../utils/log.dart';
+
 class BLEManager extends ChangeNotifier {
   // Instance of flutter_blue
   FlutterBlue flutterBlue = FlutterBlue.instance;
@@ -55,9 +57,8 @@ class BLEManager extends ChangeNotifier {
         processResult(r.device);
       }
     });
-    if (kDebugMode) {
-      print("Scanning...");
-    }
+    Log.l("Scanning...");
+
   }
 
   // Method to stop scanning for BLE devices
@@ -67,9 +68,8 @@ class BLEManager extends ChangeNotifier {
     }
     // Stop scanning
     flutterBlue.stopScan();
-    if (kDebugMode) {
-      print("Scanning stopped");
-    }
+    Log.l("Scanning stopped");
+
     _isScanning = false;
   }
 
@@ -91,9 +91,8 @@ class BLEManager extends ChangeNotifier {
     if (!allowedNames.contains(device.name)) {
       return;
     }*/
-    if (kDebugMode) {
-      print("Found device: ${device.toString()}");
-    }
+    Log.l("Found device: ${device.toString()}");
+
     // Add the device to the list
     devices.add(device);
     notifyListeners();
@@ -115,40 +114,18 @@ class BLEManager extends ChangeNotifier {
     return devicesString;
   }
 
-  // Gets the list as a ListView
-  ListView getDevicesAsListView() {
-    List<String> devicesString = getDevicesToString();
-    return ListView.builder(
-      itemCount: devicesString.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(devicesString[index]),
-          onTap: () {
-            if (kDebugMode) {
-              print("Tapped ${devicesString[index]}");
-            }
-            // Connect to the device
-            //connectToDevice(devices[index]);
-          },
-        );
-      },
-    );
-  }
-
   // Connect to a BLE device
   Future<bool> connectToDevice(BluetoothDevice device) async {
     // Connect to the device with a timeout of 2 seconds
     try {
     await device.connect().timeout(const Duration(seconds: 2));
     } on TimeoutException {
-      if (kDebugMode) {
-        print("Timeout!");
-      }
+
+        Log.l("Timeout!");
+
       return false;
     } on Exception catch (e) {
-      if (kDebugMode) {
-        print("Error connecting to device: $e");
-      }
+      Log.l("Error connecting to device: $e");
       return false;
     }
 
@@ -158,9 +135,7 @@ class BLEManager extends ChangeNotifier {
     // Check if Nordic UART Service is present
     for (var service in services) {
       if (service.uuid.toString() == nordicUARTID) {
-        if (kDebugMode) {
-          print("Found Nordic UART Service");
-        }
+        Log.l("Found Nordic UART Service");
 
         // Get the characteristics
         List<BluetoothCharacteristic> characteristics = service.characteristics;
@@ -169,9 +144,7 @@ class BLEManager extends ChangeNotifier {
 
         for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTRXID) {
-            if (kDebugMode) {
-              print("Found Nordic UART RX characteristic");
-            }
+            Log.l("Found Nordic UART RX characteristic");
 
             // Save the characteristic into the class
             uartRX = characteristic;
@@ -185,9 +158,8 @@ class BLEManager extends ChangeNotifier {
 
         for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTTXID) {
-            if (kDebugMode) {
-              print("Found Nordic UART TX characteristic");
-            }
+            Log.l("Found Nordic UART TX characteristic");
+
 
             // Subscribe to the TX characteristic
             characteristic.setNotifyValue(true);

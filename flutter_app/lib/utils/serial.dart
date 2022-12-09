@@ -8,6 +8,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
 import '../Messages/message.dart';
+import 'log.dart';
 
 typedef uint8_t = int;
 
@@ -44,55 +45,38 @@ class SerialComm {
 
   Message? receive(List<int> list) {
     Uint8List data = Uint8List.fromList(list);
-    if (kDebugMode){
       print("Received: $data");
-    }
+
     // Check if the message is valid
     if (data[0] == startOfMessage) {
-      if (kDebugMode){
-        print("Start of message is valid");
-      }
+        Log.l("Start of message is valid");
       // Check the message type
       switch (data[1]) {
         case MessageTypes.debugMessage:
-          if (kDebugMode){
-            print("Debug message received");
-          }
+            Log.l("Debug message received");
           return DebugMessage.dbgconstr(data);
         case MessageTypes.co2Message:
-          if (kDebugMode){
-            print("CO2 message received");
-          }
+            Log.l("CO2 message received");
           return CO2Message.dbgconstr(data);
-          break;
         case MessageTypes.extendedMessage:
-          if (kDebugMode) {
-            print("Extended message received");
-          }
+          Log.l("Extended message received");
           // TODO
           return null;
-          break;
         default:
-          if (kDebugMode){
-            print("Unknown message type");
-          }
+          Log.l("Unknown message type");
+
           return null;
-          break;
       }
     } else {
       // The message is invalid
-      if (kDebugMode) {
-        print("Invalid message received: $data is not $startOfMessage");
-      }
+      Log.l("Invalid message received: $data is not $startOfMessage");
       return null;
 
     }
   }
 
   void send(Uint8List data) {
-    if (kDebugMode) {
-      print("Sending: $data");
-    }
+    Log.l("Sending: $data");
     uartRX.write(data);
   }
 

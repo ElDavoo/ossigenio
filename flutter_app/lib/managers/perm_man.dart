@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../utils/log.dart';
+
 /*
 Class to manage and ask for permissions.
 TODO: Better handle failed permissions
@@ -28,9 +30,9 @@ class PermissionManager {
     }
     // Show SnackBar
     //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    if (kDebugMode) {
-      print("Permission status: $_hasPermission");
-    }
+
+      Log.l("Permission status: $_hasPermission");
+
     return _hasPermission;
   }
 }
