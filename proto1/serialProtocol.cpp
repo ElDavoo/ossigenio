@@ -51,7 +51,7 @@ void getMsg0(int temp, int humidity, int raw_data){
 	ble.print(buffer); 
 }
 
-void getMsg1(int temp, int humidity, int co2) {
+/*void getMsg1(int temp, int humidity, int co2) {
     char buffer[5];
     //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
     ble.write(0xAA);
@@ -62,6 +62,31 @@ void getMsg1(int temp, int humidity, int co2) {
 	ble.print(buffer); 
     sprintf(buffer, "%0.5d", co2);
 	ble.print(buffer); 
+
+    uint8_t message[4];
+
+    message[0] = (uint8_t) 0xAA81;
+    message[1] = (uint8_t) temp;
+    message[2] = (uint8_t) humidity;
+    message[3] = (uint8_t) co2;
+
+    int crc = checksumCalculator(message,4);
+    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+    sprintf(buffer, "%0.5d", crc);
+	ble.print(buffer); 
+}*/
+
+void getMsg1(int temp, int humidity, int co2) {
+    char buffer[5];
+    //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
+    ble.write(0xAA);
+    ble.write(0x81);
+    //sprintf(buffer, "%0.5d", temp);
+	ble.print((unsigned short int)temp, 1); 
+	//sprintf(buffer, "%0.5d", humidity);
+	ble.print((unsigned short int)humidity, 1); 
+    //sprintf(buffer, "%0.5d", co2);
+	ble.print((unsigned short int)co2, 2); 
 
     uint8_t message[4];
 
