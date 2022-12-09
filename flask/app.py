@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, json, request
+from werkzeug import generate_password_hash, check_password_hash
 import psycopg2
 app = Flask(__name__)
 
@@ -33,13 +34,33 @@ def signUp():
     # create user code will be here !!
     _name = request.form['inputName']
     _email = request.form['inputEmail']
-    _password = request.form['inputPassword']
+    #_password = request.form['inputPassword']
+    _hashed_password = generate_password_hash(request.form['inputPassword'])
 
-    # validate the received values
-    if _name and _email and _password:
-        return json.dumps({'html':'<span>All fields good !!</span>'})
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
+                                 'name integer NOT NULL,'
+                                 'email integer NOT NULL,'
+                                 'password integer NOT NULL,'
+                                 )
+
+    cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_hashed_password+');')
+
+    data = cur.fetchall()
+    if len(data) is 0:
+        conn.commit()
+        return json.dumps({'message':'User created successfully !'})
     else:
-        return json.dumps({'html':'<span>Enter the required fields</span>'})
+        return json.dumps({'error':str(data[0])})
+    cur.close()
+    conn.close()
+    print("insert done")
+    # validate the received values
+    #if _name and _email and _password:
+    #    return json.dumps({'html':'<span>All fields good !!</span>'})
+    #else:
+    #    return json.dumps({'html':'<span>Enter the required fields</span>'})
 
 @app.route('/measurements/')
 def index():
