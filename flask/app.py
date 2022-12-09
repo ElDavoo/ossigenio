@@ -50,12 +50,15 @@ def signUp():
     data = cur.fetchall()
     if len(data) is 0:
         conn.commit()
+        cur.close()
+        conn.close()
+        print("insert done")
         return json.dumps({'message':'User created successfully !'})
     else:
+        conn.commit()
+        cur.close()
+        conn.close()
         return json.dumps({'error':str(data[0])})
-    cur.close()
-    conn.close()
-    print("insert done")
     # validate the received values
     #if _name and _email and _password:
     #    return json.dumps({'html':'<span>All fields good !!</span>'})
