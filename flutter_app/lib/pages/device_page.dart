@@ -13,23 +13,33 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
+
+  // Override back button and disconnect
+  Future<bool> _onWillPop() async {
+    widget.devic.bleManager.disconnect();
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: _onWillPop
+        , child:
+    Scaffold(
       appBar: AppBar(
         title: const Text('Device'),
       ),
       body: Column(
-        children: [
-          Text(widget.devic.device.toString()),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text("Go back"),
-          ),
-        ]
+          children: [
+            Text(widget.devic.device.toString()),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Go back"),
+            ),
+          ]
       ),
-    );
+    ));
   }
 }

@@ -35,6 +35,7 @@ class BLEManager extends ChangeNotifier {
   static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
   SerialComm? serial;
+  BluetoothDevice ?device;
 
   //Singleton class
   // Method to scan for BLE devices
@@ -189,11 +190,16 @@ class BLEManager extends ChangeNotifier {
               // Do something with the value
               serial!.receive(value);
             });
+            this.device = device;
             return true;
           }
         }
       }
     }
     return false;
+  }
+
+  void disconnect() {
+    device!.disconnect();
   }
 }

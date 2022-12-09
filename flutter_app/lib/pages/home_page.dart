@@ -124,6 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         title: Text(bleManager.devices[index].name),
                         subtitle: Text(bleManager.devices[index].id.toString()),
                         onTap: () async {
+                          bleManager.stopBLEScan();
                           // Connect to device first
                           var bruh = bleManager.connectToDevice(bleManager.devices[index]);
                           // If connection is successful, navigate to device page
