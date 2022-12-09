@@ -22,4 +22,9 @@ abstract class Message {
   int get type;
   //only for debug
   Uint8List get data;
+  // fromBytes constructor
+  Message.fromBytes(Uint8List data);
+  // generic constructor
+  Message();
+
 }

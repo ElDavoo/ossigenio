@@ -5,6 +5,8 @@ Class to communicate with the serial port.
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+import '../Messages/co2_message.dart';
+import '../Messages/debug_message.dart';
 import '../Messages/message.dart';
 
 typedef uint8_t = int;
@@ -40,7 +42,7 @@ class SerialComm {
     return (sum2 << 8) | sum1;
   }
 
-  void receive(List<int> list) {
+  Message? receive(List<int> list) {
     Uint8List data = Uint8List.fromList(list);
     if (kDebugMode){
       print("Received: $data");
@@ -56,21 +58,25 @@ class SerialComm {
           if (kDebugMode){
             print("Debug message received");
           }
-          break;
+          return DebugMessage.dbgconstr(data);
         case MessageTypes.co2Message:
           if (kDebugMode){
             print("CO2 message received");
           }
+          return CO2Message.dbgconstr(data);
           break;
         case MessageTypes.extendedMessage:
-          if (kDebugMode){
+          if (kDebugMode) {
             print("Extended message received");
           }
+          // TODO
+          return null;
           break;
         default:
           if (kDebugMode){
             print("Unknown message type");
           }
+          return null;
           break;
       }
     } else {
@@ -78,9 +84,8 @@ class SerialComm {
       if (kDebugMode) {
         print("Invalid message received: $data is not $startOfMessage");
       }
-    }
-    if (kDebugMode) {
-      print("Received: $data");
+      return null;
+
     }
   }
 

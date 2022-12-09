@@ -5,6 +5,8 @@ import 'dart:typed_data';
 
 import 'package:flutter_app/Messages/message.dart';
 
+import '../utils/serial.dart';
+
 class DebugMessage extends Message {
   late final int rawData;
   late final int temperature;
@@ -16,4 +18,41 @@ class DebugMessage extends Message {
   @override
   late final Uint8List data;
 
+  // Debug constructor
+  DebugMessage.dbgconstr(this.data){
+    rawData = 0;
+    temperature = 0;
+    humidity = 0;
+  }
+
+  // Proper constructor
+   DebugMessage(this.rawData, this.temperature, this.humidity) {
+     data = Uint8List(0);
+   }
+
+   // toString
+    @override
+    String toString() {
+      if (data.isEmpty) {
+        return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity";
+      } else {
+        return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity, data: $data";
+      }
+    }
+
+    // fromBytes
+    DebugMessage.fromBytes(this.data) {
+      //TODO implement
+      rawData = data[0];
+      temperature = data[1];
+      humidity = data[2];
+    }
+}
+
+class DebugMessageRequest extends Message {
+  @override
+  int get type => MessageTypes.msgRequest0;
+
+  @override
+  Uint8List get data => SerialComm.buildMsgg(MessageTypes.msgRequest0);
 }
