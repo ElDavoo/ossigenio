@@ -4,9 +4,8 @@ Class that manages the connection to a BLE device.
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/serial.dart';
+import '../../utils/serial.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'main.dart';
 
 class BLEManager extends ChangeNotifier {
   // Instance of flutter_blue
