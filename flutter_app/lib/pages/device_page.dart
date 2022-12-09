@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Messages/message.dart';
 
 import '../../utils/device.dart';
 
@@ -36,7 +37,7 @@ class _DevicePageState extends State<DevicePage> {
                   text: 'Device',
                 ),
                 Tab(
-                  text: 'Messages',
+                  text: 'Messages (debug)',
                 ),
               ],
             ),
@@ -44,10 +45,39 @@ class _DevicePageState extends State<DevicePage> {
           body: TabBarView(
             children: <Widget> [
               const Placeholder(),
-              Column(
-                  children: [
-                    Text(widget.devic.device.toString()),
-                  ]
+          Row(
+            children: [
+              TextButton(
+                onPressed: () {
+                  widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest0);
+                },
+                child: const Text('Request 0'),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest1);
+                },
+                child: const Text('Request 1'),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest2);
+                },
+                child: const Text('Request 2'),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest3);
+                },
+                child: const Text('Request 3'),
+              ),
+              TextButton(
+                onPressed: () {
+                  widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest4);
+                },
+                child: const Text('Request 4'),
+              ),
+            ],
               ),
             ],
             ))));
