@@ -2,8 +2,7 @@
 Class to communicate with the serial port.
  */
 
-import 'dart:ffi';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'dart:typed_data';
 
@@ -43,9 +42,9 @@ class SerialComm {
 
   // Checksum calculator that returns a single byte
   static int checksum(Uint8List data) {
-    uint8_t curr_crc = 0x0000;
-    uint8_t sum1 = curr_crc;
-    uint8_t sum2 = (curr_crc >> 8);
+    uint8_t currCrc = 0x0000;
+    uint8_t sum1 = currCrc;
+    uint8_t sum2 = (currCrc >> 8);
     int index;
     for(index = 0; index < data.length; index = index+1)
     {
@@ -54,18 +53,25 @@ class SerialComm {
     }
     return (sum2 << 8) | sum1;
   }
+
   void receive(List<int> list) {
     Uint8List data = Uint8List.fromList(list);
-    print("Received: " + data.toString());
+    if (kDebugMode) {
+      print("Received: $data");
+    }
   }
+
   void send(Uint8List data) {
-    print("Sending: " + data.toString());
+    if (kDebugMode) {
+      print("Sending: $data");
+    }
 
   }
   void sendMsg(int msgIndex){
     Uint8List message = buildMsg(msgIndex, Uint8List(0));
     send(message);
   }
+
   Uint8List buildMsg(int msgIndex, Uint8List payload){
     Uint8List message = Uint8List(0);
     // Add the start of message byte
@@ -80,4 +86,5 @@ class SerialComm {
     message.add(checksum(message));
     return message;
   }
+
 }

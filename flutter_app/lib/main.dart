@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'ble_man.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'device_page.dart';
+
 void main() {
   /*
   Bisogna mettere qui i ChangeNotifierProvider.
@@ -150,7 +152,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             title: Text(bleManager.devices[index].name),
                             subtitle: Text(bleManager.devices[index].id.toString()),
                             onTap: () {
-                              bleManager.connectToDevice(bleManager.devices[index]);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => DevicePage(devic: bleManager.devices[index])),
+                              );
                             },
                           );
                         },
@@ -168,3 +173,5 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 }
+
+
