@@ -40,9 +40,9 @@ def signUp():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
-                                 'name integer NOT NULL,'
-                                 'email integer NOT NULL,'
-                                 'password integer NOT NULL,'
+                                 'name string NOT NULL,'
+                                 'email string NOT NULL,'
+                                 'password string NOT NULL,'
                                  )
 
     cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_password+');')
