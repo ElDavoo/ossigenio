@@ -28,7 +28,7 @@ def showMain():
 def registrazione():
     return render_template('signup.html')
 
-@app.route('/signUp')
+@app.route('/signUp',methods=['POST'])
 def signUp():
     # create user code will be here !!
     _name = request.form['inputName']
