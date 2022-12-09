@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -27,7 +28,9 @@ class PermissionManager {
     }
     // Show SnackBar
     //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    print("Permission status: $_hasPermission");
+    if (kDebugMode) {
+      print("Permission status: $_hasPermission");
+    }
     return _hasPermission;
   }
 }

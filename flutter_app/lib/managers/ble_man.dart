@@ -2,7 +2,6 @@
 Class that manages the connection to a BLE device.
  */
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../utils/serial.dart';
@@ -56,7 +55,9 @@ class BLEManager extends ChangeNotifier {
         processResult(r.device);
       }
     });
-    print("Scanning...");
+    if (kDebugMode) {
+      print("Scanning...");
+    }
   }
 
   // Method to stop scanning for BLE devices
@@ -66,7 +67,9 @@ class BLEManager extends ChangeNotifier {
     }
     // Stop scanning
     flutterBlue.stopScan();
-    print("Scanning stopped");
+    if (kDebugMode) {
+      print("Scanning stopped");
+    }
     _isScanning = false;
   }
 
@@ -88,7 +91,9 @@ class BLEManager extends ChangeNotifier {
     if (!allowedNames.contains(device.name)) {
       return;
     }*/
-    print("Found device: ${device.toString()}");
+    if (kDebugMode) {
+      print("Found device: ${device.toString()}");
+    }
     // Add the device to the list
     devices.add(device);
     notifyListeners();
@@ -119,7 +124,9 @@ class BLEManager extends ChangeNotifier {
         return ListTile(
           title: Text(devicesString[index]),
           onTap: () {
-            print("Tapped ${devicesString[index]}");
+            if (kDebugMode) {
+              print("Tapped ${devicesString[index]}");
+            }
             // Connect to the device
             //connectToDevice(devices[index]);
           },
@@ -133,7 +140,7 @@ class BLEManager extends ChangeNotifier {
     // Connect to the device with a timeout of 2 seconds
     try {
     await device.connect().timeout(const Duration(seconds: 2));
-    } on TimeoutException catch (e) {
+    } on TimeoutException {
       if (kDebugMode) {
         print("Timeout!");
       }

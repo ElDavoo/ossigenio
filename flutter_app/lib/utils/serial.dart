@@ -4,7 +4,6 @@ Class to communicate with the serial port.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'dart:typed_data';
 
 import '../Messages/message.dart';
 
@@ -89,14 +88,19 @@ class SerialComm {
     if (kDebugMode) {
       print("Sending: $data");
     }
-
+    uartRX.write(data);
   }
+
   void sendMsg(int msgIndex){
-    Uint8List message = buildMsg(msgIndex, Uint8List(0));
-    send(message);
+    send(buildMsgg(msgIndex));
   }
 
-  Uint8List buildMsg(int msgIndex, Uint8List payload){
+  static Uint8List buildMsgg(int msgIndex){
+   return buildMsg(msgIndex, Uint8List(0));
+  }
+
+
+  static Uint8List buildMsg(int msgIndex, Uint8List payload){
     Uint8List message = Uint8List(0);
     // Add the start of message byte
     message.add(startOfMessage);

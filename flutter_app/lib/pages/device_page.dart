@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/device.dart';
@@ -25,21 +24,32 @@ class _DevicePageState extends State<DevicePage> {
     return WillPopScope(
         onWillPop: _onWillPop
         , child:
-    Scaffold(
-      appBar: AppBar(
-        title: const Text('Device'),
-      ),
-      body: Column(
-          children: [
-            Text(widget.devic.device.toString()),
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Go back"),
+        DefaultTabController(
+          initialIndex: 0,
+          length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Device'),
+            bottom: const TabBar(
+              tabs: <Widget>[
+                Tab(
+                  text: 'Device',
+                ),
+                Tab(
+                  text: 'Messages',
+                ),
+              ],
             ),
-          ]
-      ),
-    ));
+          ),
+          body: TabBarView(
+            children: <Widget> [
+              const Placeholder(),
+              Column(
+                  children: [
+                    Text(widget.devic.device.toString()),
+                  ]
+              ),
+            ],
+            ))));
   }
 }

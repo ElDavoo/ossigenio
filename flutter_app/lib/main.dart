@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
