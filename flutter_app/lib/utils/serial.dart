@@ -90,7 +90,7 @@ class SerialComm {
 
 
   static Uint8List buildMsg(int msgIndex, Uint8List payload){
-    Uint8List message = Uint8List(0);
+    List<int> message = List.empty(growable: true);
     // Add the start of message byte
     message.add(startOfMessage);
     // Add the message type
@@ -100,8 +100,8 @@ class SerialComm {
     // Add the end string
     message.add(endOfMessage);
     // Add the checksum
-    message.add(checksum(message));
-    return message;
+    message.add(checksum(Uint8List.fromList(message)));
+    return Uint8List.fromList(message);
   }
 
 }
