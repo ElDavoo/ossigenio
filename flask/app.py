@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, render_template, json, request
-from werkzeug import generate_password_hash, check_password_hash
+#from werkzeug import generate_password_hash, check_password_hash
 import psycopg2
 app = Flask(__name__)
 
@@ -34,8 +34,8 @@ def signUp():
     # create user code will be here !!
     _name = request.form['inputName']
     _email = request.form['inputEmail']
-    #_password = request.form['inputPassword']
-    _hashed_password = generate_password_hash(request.form['inputPassword'])
+    _password = request.form['inputPassword']
+    #_hashed_password = generate_password_hash(request.form['inputPassword'])
 
     conn = get_db_connection()
     cur = conn.cursor()
@@ -45,7 +45,7 @@ def signUp():
                                  'password integer NOT NULL,'
                                  )
 
-    cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_hashed_password+');')
+    cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_password+');')
 
     data = cur.fetchall()
     if len(data) is 0:
