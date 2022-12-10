@@ -4,9 +4,11 @@ Class that manages the connection to a BLE device.
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../utils/serial.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
+import '../Messages/message.dart';
 import '../utils/log.dart';
 
 class BLEManager extends ChangeNotifier {
@@ -37,6 +39,7 @@ class BLEManager extends ChangeNotifier {
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
   SerialComm? serial;
   BluetoothDevice ?device;
+  List<MessageWithDirection> messages = [];
 
   //Singleton class
   // Method to scan for BLE devices
@@ -124,7 +127,11 @@ class BLEManager extends ChangeNotifier {
         Log.l("Timeout!");
 
       return false;
-    } on Exception catch (e) {
+    } on PlatformException catch (e) {
+      if (e.code == 'already_connected') return true;
+      return false;
+    }
+    on Exception catch (e) {
       Log.l("Error connecting to device: $e");
       return false;
     }
@@ -167,7 +174,15 @@ class BLEManager extends ChangeNotifier {
             // Listen to the TX characteristic
             characteristic.value.listen((value) {
               // Do something with the value
-              serial!.receive(value);
+              Message? message = serial!.receive(value);
+              if (message != null) {
+                // Add the message to the list
+                messages.add(MessageWithDirection(
+                    MessageDirection.received,
+                    DateTime.now(),
+                    message));
+                notifyListeners();
+              }
             });
             this.device = device;
             return true;

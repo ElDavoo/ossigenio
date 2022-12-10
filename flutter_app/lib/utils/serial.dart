@@ -7,6 +7,7 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
+import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
 import 'log.dart';
 
@@ -85,6 +86,11 @@ class SerialComm {
           Log.l("Extended message received");
           // TODO
           return null;
+        case MessageTypes.feedbackMessage:
+          Log.l("Feedback message received");
+          Message message = FeedbackMessage.fromBytes(payload);
+          Log.l('$message');
+          return message;
         default:
           Log.l("Unknown message type");
 

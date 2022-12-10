@@ -28,3 +28,22 @@ abstract class Message {
   Message();
 
 }
+
+enum MessageDirection { received, sent }
+class MessageWithDirection {
+  final MessageDirection direction;
+  //timestamp
+  final DateTime timestamp;
+  final Message message;
+
+  MessageWithDirection(this.direction, this.timestamp, this.message);
+  //override tostring
+  @override
+  String toString() {
+    String dir = direction == MessageDirection.received ? "R" : "S";
+    //timestamp as HH:MM:SS
+    String time = timestamp.toString().substring(11, 19);
+    return "$dir $time ${message.toString()}";
+  }
+
+}

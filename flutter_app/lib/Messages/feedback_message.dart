@@ -4,50 +4,48 @@ import 'package:flutter_app/utils/serial.dart';
 
 import '../Messages/message.dart';
 
-enum FeedbackValues { nothing, positive, neutral, negative}
+enum FeedbackValues { nothing, positive, neutral, negative }
 
 class FeedbackMessage extends Message {
-  late final int rawData;
   late final int temperature;
   late final int humidity;
+  late final int co2;
   late final FeedbackValues feedback;
 
   @override
   int get type => MessageTypes.feedbackMessage;
 
   @override
-  late final Uint8List data;
+  Uint8List data = Uint8List(0);
 
   // Debug constructor
-  FeedbackMessage.dbgconstr(this.data){
-    rawData = 0;
+  FeedbackMessage.dbgconstr(this.data) {
+    co2 = 0;
     temperature = 0;
     humidity = 0;
   }
 
   // Proper constructor
-  FeedbackMessage(this.rawData, this.temperature, this.humidity) {
-    data = Uint8List(0);
-  }
+  FeedbackMessage(this.co2, this.temperature, this.humidity, this.feedback);
 
   // toString
   @override
   String toString() {
     if (data.isEmpty) {
-      return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity, feedback: $feedback";
+      return "FeedBackMsg: co2: $co2, temp: $temperature, hum: $humidity, feedback: ${feedback.toString()}";
     } else {
-      return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity, feedback: $feedback, data: $data";
+      return "FeedBackMsg: co2: $co2, temp: $temperature, hum: $humidity, feedback: ${feedback.toString()}, data: $data";
     }
   }
 
   // fromBytes
   FeedbackMessage.fromBytes(this.data) {
-    //TODO implement
-    rawData = data[0];
-    temperature = data[1];
-    humidity = data[2];
+    temperature = data[0];
+    humidity = data[1];
+    //co2 instead is a 16 bit number
+    co2 = data[3] + (data[2] << 8);
+    feedback = FeedbackValues.values[data[4]];
   }
-
 }
 
 class FeedbackMessageRequest extends Message {

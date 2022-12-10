@@ -13,7 +13,7 @@ class CO2Message extends Message {
   late final int co2;
 
   @override
-  late final Uint8List data;
+  Uint8List data = Uint8List(0);
 
   @override
   int get type => MessageTypes.co2Message;
@@ -34,14 +34,14 @@ class CO2Message extends Message {
   @override
   String toString() {
     if (data.isEmpty) {
-      return "CO2Message: co2: $co2, temperature: $temperature, humidity: $humidity";
+      return "CO2Message: co2: $co2, temp: $temperature, hum: $humidity";
     } else {
-      return "CO2Message: co2: $co2, temperature: $temperature, humidity: $humidity, data: $data";
+      return "CO2Message: co2: $co2, temp: $temperature, hum: $humidity, data: $data";
     }
   }
 
   // fromBytes
-  CO2Message.fromBytes(this.data) {
+  CO2Message.fromBytes(Uint8List data) {
     temperature = data[0];
     humidity = data[1];
     //co2 instead is a 16 bit number
