@@ -82,11 +82,15 @@ void getMsg1(int temp, int humidity, int co2) {
     ble.write(0xAA);
     ble.write(0x81);
     //sprintf(buffer, "%0.5d", temp);
-	ble.print((unsigned short int)temp, 1); 
+	//ble.print((unsigned short int)temp, 1); 
+    ble.write((uint8_t) temp);
 	//sprintf(buffer, "%0.5d", humidity);
-	ble.print((unsigned short int)humidity, 1); 
+    ble.write((uint8_t) humidity);
+	//ble.print((unsigned short int)humidity, 1); 
     //sprintf(buffer, "%0.5d", co2);
-	ble.print((unsigned short int)co2, 2); 
+    ble.write(highByte(co2));
+    ble.write(lowByte(co2));
+	//ble.print((unsigned short int)co2, 2); 
 
     uint8_t message[4];
 
@@ -95,10 +99,10 @@ void getMsg1(int temp, int humidity, int co2) {
     message[2] = (uint8_t) humidity;
     message[3] = (uint8_t) co2;
 
-    int crc = checksumCalculator(message,4);
-    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-    sprintf(buffer, "%0.5d", crc);
-	ble.print(buffer); 
+    uint8_t crc = checksumCalculator(message,4);
+    ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+    //sprintf(buffer, "%0.5d", crc);
+	ble.write(crc); 
 }
 
 void getMsg2(/*NOT YET IMPLEMENTED*/){
