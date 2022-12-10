@@ -40,12 +40,21 @@ def signUp():
     print('fetching data')
     conn = get_db_connection()
     cur = conn.cursor()
+    cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
+                                 'name char(50) NOT NULL,'
+                                 'email char(50) NOT NULL,'
+                                 'password char(50) NOT NULL);'
+                                 )
     sql_query = 'INSERT INTO users (name, email, password) VALUES (%s,%s,%s);'
     tuple1 = (_name,_email,_password)
     cur.execute(sql_query,tuple1)
 
     print('buh')
-    data = cur.fetchall()
+    try:
+        data = cur.fetchall()
+    except Exception as e:
+        print(e)
+        data = []
     if len(data) == 0:
         conn.commit()
         cur.close()
