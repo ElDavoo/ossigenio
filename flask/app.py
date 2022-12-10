@@ -45,8 +45,9 @@ def signUp():
                                  'email char(50) NOT NULL,'
                                  'password char(50) NOT NULL);'
                                  )
-
-    cur.execute('INSERT INTO users (name, email, password) VALUES ("'+_name+'", "'+_email+'", "'+_password+'");')
+    sql_query = 'INSERT INTO users (name, email, password) VALUES (%s,%s,%s);'
+    tuple1 = (_name,_email,_password)
+    cur.execute(sql_query,tuple1)
 
     print('buh')
     data = cur.fetchall()
