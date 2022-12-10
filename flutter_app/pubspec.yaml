@@ -45,6 +45,8 @@ dependencies:
   intl: ^0.17.0
   syncfusion_flutter_gauges: ^20.3.60
   dio: ^4.0.6
+  shared_preferences: ^2.0.15
+  flutter_secure_storage: ^7.0.0
 
 dev_dependencies:
   flutter_test:

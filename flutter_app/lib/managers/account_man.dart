@@ -2,6 +2,7 @@
 Class to manage accounts registered in the http server
  */
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../utils/log.dart';
 
@@ -61,6 +62,8 @@ class AccountManager{
     Log.l(response.data);
     // check the response
     if (response.statusCode == 200) {
+      // save account data in the local storage
+
       // login successful
       return true;
     } else {
