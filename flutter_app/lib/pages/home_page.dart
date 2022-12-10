@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../managers/perm_man.dart';
 import '../utils/device.dart';
 import 'device_page.dart';
+import 'login_page.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -38,7 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         // TODO: Dynamically change the accounts icon based on account status
-        leading: const Icon(Icons.no_accounts),
+        leading: IconButton(
+            icon: const Icon(Icons.no_accounts),
+          onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+              },
+        ),
         title: Text(AppLocalizations.of(context)!.title),
         actions: const [
           Icon(Icons.more_vert),

@@ -13,6 +13,7 @@ void main() {
   runApp(
       MultiProvider(providers: [
         ChangeNotifierProvider(create: (context) => BLEManager()),
+
       ],
         child: const MyApp(),
       ));
