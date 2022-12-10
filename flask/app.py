@@ -77,7 +77,10 @@ def index():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM users;')
-    books = cur.fetchall()
+    try:
+        books = cur.fetchall()
+    except Exception as e:
+        print(e)
     cur.close()
     conn.close()
     return books
