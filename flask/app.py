@@ -29,7 +29,7 @@ def showMain():
 def users():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users;')
+    cur.execute('SELECT name, email FROM users;')
     try:
         books = cur.fetchall()
     except Exception as e:
@@ -86,7 +86,7 @@ def signUp():
     #    return json.dumps({'html':'<span>Enter the required fields</span>'})
 
 @app.route('/measurements/')
-def index():
+def measurements():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM measurements;')
