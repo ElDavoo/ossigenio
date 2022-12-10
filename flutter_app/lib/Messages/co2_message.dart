@@ -8,9 +8,9 @@ import 'package:flutter_app/Messages/message.dart';
 import '../utils/serial.dart';
 
 class CO2Message extends Message {
-  late final int co2;
   late final int temperature;
   late final int humidity;
+  late final int co2;
 
   @override
   late final Uint8List data;
@@ -26,7 +26,7 @@ class CO2Message extends Message {
   }
 
   // Proper constructor
-  CO2Message(this.co2, this.temperature, this.humidity) {
+  CO2Message(this.temperature, this.humidity, this.co2) {
     data = Uint8List(0);
   }
 
@@ -34,18 +34,18 @@ class CO2Message extends Message {
   @override
   String toString() {
     if (data.isEmpty) {
-      return "DebugMessage: rawData: $co2, temperature: $temperature, humidity: $humidity";
+      return "CO2Message: co2: $co2, temperature: $temperature, humidity: $humidity";
     } else {
-      return "DebugMessage: rawData: $co2, temperature: $temperature, humidity: $humidity, data: $data";
+      return "CO2Message: co2: $co2, temperature: $temperature, humidity: $humidity, data: $data";
     }
   }
 
   // fromBytes
   CO2Message.fromBytes(this.data) {
-    //TODO implement
-    co2 = data[0];
-    temperature = data[1];
-    humidity = data[2];
+    temperature = data[0];
+    humidity = data[1];
+    //co2 instead is a 16 bit number
+    co2 = data[3] + (data[2] << 8);
   }
 
 }

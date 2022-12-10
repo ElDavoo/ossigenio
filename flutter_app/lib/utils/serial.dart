@@ -20,7 +20,7 @@ class SerialComm {
   // The start of a message is 0xAA.
   static const int startOfMessage = 0xAA;
   // The end of a message is 0xFFFF
-  static const int endOfMessage = 0xFFFF;
+  static const int endOfMessage = 0xFF;
   late BluetoothCharacteristic uartRX;
 
   SerialComm(BluetoothCharacteristic bluetoothCharacteristic){
@@ -30,6 +30,7 @@ class SerialComm {
 
 
   // Checksum calculator that returns a single byte
+  // FIXME
   static int checksum(Uint8List data) {
     uint8_t currCrc = 0x0000;
     uint8_t sum1 = currCrc;
@@ -45,19 +46,41 @@ class SerialComm {
 
   Message? receive(List<int> list) {
     Uint8List data = Uint8List.fromList(list);
-      print("Received: $data");
+    if (data.length < 4) {
+      Log.l("data.length < 2");
+      return null;
+    }
+    Log.l("Received: $data");
 
     // Check if the message is valid
-    if (data[0] == startOfMessage) {
-        Log.l("Start of message is valid");
+    if (data[0] != startOfMessage) {
+      Log.l("Invalid start byte: ${data[data.length-2]} is not $startOfMessage");
+      return null;
+    }
+    // Check if the almost last byte is the end of message
+    if (data[data.length - 2] != endOfMessage) {
+      Log.l("Invalid end byte, ${data[data.length - 2]} is not $endOfMessage");
+      return null;
+    }
+    // Check checksum
+    int calculatedChecksum = checksum(data.sublist(1, data.length - 2));
+    int receivedChecksum = data[data.length - 1];
+    if (calculatedChecksum != receivedChecksum) {
+      Log.l("Checksum should be $calculatedChecksum but it is $receivedChecksum");
+      //TODO calculate better checksum on bluefruit side
+      //return null;
+    }
       // Check the message type
+      Uint8List payload = data.sublist(2, data.length - 2);
       switch (data[1]) {
         case MessageTypes.debugMessage:
             Log.l("Debug message received");
           return DebugMessage.dbgconstr(data);
         case MessageTypes.co2Message:
             Log.l("CO2 message received");
-          return CO2Message.dbgconstr(data);
+          Message message = CO2Message.fromBytes(payload);
+          Log.l('$message');
+          return message;
         case MessageTypes.extendedMessage:
           Log.l("Extended message received");
           // TODO
@@ -67,12 +90,7 @@ class SerialComm {
 
           return null;
       }
-    } else {
-      // The message is invalid
-      Log.l("Invalid message received: $data is not $startOfMessage");
-      return null;
 
-    }
   }
 
   void send(Uint8List data) {
