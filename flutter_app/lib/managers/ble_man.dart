@@ -118,7 +118,7 @@ class BLEManager extends ChangeNotifier {
   Future<bool> connectToDevice(BluetoothDevice device) async {
     // Connect to the device with a timeout of 2 seconds
     try {
-    await device.connect().timeout(const Duration(seconds: 2));
+    await device.connect().timeout(const Duration(seconds: 3));
     } on TimeoutException {
 
         Log.l("Timeout!");
