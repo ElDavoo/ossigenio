@@ -38,6 +38,10 @@ def users():
     conn.close()
     return books
 
+@app.route('/user_inserted/')
+def user_inserted():
+    return render_template('user_inserted.html')
+
 @app.route('/registrazione')
 def registrazione():
     return render_template('signup.html')
