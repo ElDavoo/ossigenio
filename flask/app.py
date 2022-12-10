@@ -85,15 +85,15 @@ def index():
     conn.close()
     return books
 
-@app.route('/measurements/')
-def index():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM measurements;')
-    books = cur.fetchall()
-    cur.close()
-    conn.close()
-    return books
+#@app.route('/measurements/')
+#def index():
+#    conn = get_db_connection()
+#    cur = conn.cursor()
+#   cur.execute('SELECT * FROM measurements;')
+#   books = cur.fetchall()
+#   cur.close()
+#   conn.close()
+#   return books
 
 if __name__ == '__main__':
     port = 5000
