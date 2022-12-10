@@ -38,6 +38,10 @@ def users():
     conn.close()
     return books
 
+@app.route('/user_inserted/')
+def user_inserted():
+    return render_template('user_inserted.html')
+
 @app.route('/registrazione')
 def registrazione():
     return render_template('signup.html')
@@ -73,7 +77,7 @@ def signUp():
         cur.close()
         conn.close()
         print("insert done")
-        return render_template('user_inserted.html')
+        return json.dumps({'message':'User created successfully !'})
     else:
         conn.commit()
         cur.close()
