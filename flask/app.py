@@ -43,7 +43,7 @@ def signUp():
     cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
                                  'name char(50) NOT NULL,'
                                  'email char(50) NOT NULL,'
-                                 'password char(50) NOT NULL;'
+                                 'password char(50) NOT NULL);'
                                  )
 
     cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_password+');')
