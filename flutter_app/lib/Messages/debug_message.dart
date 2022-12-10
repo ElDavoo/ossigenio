@@ -42,10 +42,10 @@ class DebugMessage extends Message {
 
     // fromBytes
     DebugMessage.fromBytes(this.data) {
-      //TODO implement
-      rawData = data[0];
-      temperature = data[1];
-      humidity = data[2];
+      temperature = data[0];
+      humidity = data[1];
+      //co2 instead is a 16 bit number
+      rawData = data[3] + (data[2] << 8);
     }
 }
 

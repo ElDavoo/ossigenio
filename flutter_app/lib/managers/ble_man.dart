@@ -38,8 +38,10 @@ class BLEManager extends ChangeNotifier {
   static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
   SerialComm? serial;
-  BluetoothDevice ?device;
+  BluetoothDevice? device;
   List<MessageWithDirection> messages = [];
+
+  Stream<MessageWithDirection>? messagesStream;
 
   //Singleton class
   // Method to scan for BLE devices
@@ -53,15 +55,14 @@ class BLEManager extends ChangeNotifier {
     devices.clear();
     scanFuture = flutterBlue.startScan();
     // Listen for devices
-    StreamSubscription scanSubscription = flutterBlue.scanResults.listen((
-        results) {
+    StreamSubscription scanSubscription =
+        flutterBlue.scanResults.listen((results) {
       // Do something with scan results
       for (ScanResult r in results) {
         processResult(r.device);
       }
     });
     Log.l("Scanning...");
-
   }
 
   // Method to stop scanning for BLE devices
@@ -121,17 +122,15 @@ class BLEManager extends ChangeNotifier {
   Future<bool> connectToDevice(BluetoothDevice device) async {
     // Connect to the device with a timeout of 2 seconds
     try {
-    await device.connect().timeout(const Duration(seconds: 3));
+      await device.connect().timeout(const Duration(seconds: 3));
     } on TimeoutException {
-
-        Log.l("Timeout!");
+      Log.l("Timeout!");
 
       return false;
     } on PlatformException catch (e) {
       if (e.code == 'already_connected') return true;
       return false;
-    }
-    on Exception catch (e) {
+    } on Exception catch (e) {
       Log.l("Error connecting to device: $e");
       return false;
     }
@@ -162,27 +161,28 @@ class BLEManager extends ChangeNotifier {
           return false;
         }
 
-
         for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTTXID) {
             Log.l("Found Nordic UART TX characteristic");
 
-
             // Subscribe to the TX characteristic
             characteristic.setNotifyValue(true);
 
-            // Listen to the TX characteristic
-            characteristic.value.listen((value) {
-              // Do something with the value
-              Message? message = serial!.receive(value);
-              if (message != null) {
-                // Add the message to the list
-                messages.add(MessageWithDirection(
-                    MessageDirection.received,
-                    DateTime.now(),
-                    message));
-                notifyListeners();
-              }
+            // Map the stream to a Message object
+            messagesStream = characteristic.value
+                .map((value) {
+                  Message? message = serial!.receive(value);
+                  if (message != null) {
+                    return MessageWithDirection(
+                        MessageDirection.received, DateTime.now(), message);
+                  }
+                  return null;
+                })
+                .where((message) => message != null)
+                .cast<MessageWithDirection>();
+            messagesStream!.listen((message) {
+              messages.add(message);
+              notifyListeners();
             });
             this.device = device;
             return true;
@@ -194,6 +194,8 @@ class BLEManager extends ChangeNotifier {
   }
 
   void disconnect() {
-    device!.disconnect();
+    if (device != null) {
+      device!.disconnect();
+    }
   }
 }

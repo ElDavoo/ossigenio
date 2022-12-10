@@ -95,7 +95,7 @@ class _DevicePageState extends State<DevicePage> {
                             itemBuilder: (context, index) {
                               return Text(
                                   bleManager.messages[index].toString(),
-                                  style: const TextStyle(fontSize: 14));
+                                  style: const TextStyle(fontSize: 13));
                             },
                           );
                         },

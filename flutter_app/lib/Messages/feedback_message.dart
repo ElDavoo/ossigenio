@@ -32,9 +32,9 @@ class FeedbackMessage extends Message {
   @override
   String toString() {
     if (data.isEmpty) {
-      return "FeedBackMsg: co2: $co2, temp: $temperature, hum: $humidity, feedback: ${feedback.toString()}";
+      return "FeedBackMsg: co2: $co2, temp: $temperature, hum: $humidity, feedback: ${feedback.toString().split(".")[1]}";
     } else {
-      return "FeedBackMsg: co2: $co2, temp: $temperature, hum: $humidity, feedback: ${feedback.toString()}, data: $data";
+      return "FeedBackMsg: co2: $co2, temp: $temperature, hum: $humidity, feedback: ${feedback.toString().split(".")[1]}, data: $data";
     }
   }
 
