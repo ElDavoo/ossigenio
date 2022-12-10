@@ -67,6 +67,16 @@ def signUp():
     #else:
     #    return json.dumps({'html':'<span>Enter the required fields</span>'})
 
+@app.route('/users/')
+def index():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users;')
+    books = cur.fetchall()
+    cur.close()
+    conn.close()
+    return books
+
 @app.route('/measurements/')
 def index():
     conn = get_db_connection()
