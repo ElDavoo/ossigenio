@@ -26,7 +26,7 @@ def showMain():
     return render_template('index.html')
 
 @app.route('/users/')
-def index():
+def users():
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('SELECT * FROM users;')
