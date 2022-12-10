@@ -7,8 +7,17 @@ class Log {
       // Get the name of the calling function
       String caller = StackTrace.current.toString();
           String lol = caller.split("\n")[1];
-          String lol2= lol.split(".")[1].split(" ")[0];
-      print("$lol2: $message");
+          List<String> lol2= lol.split(" ");
+          //Delete first element
+          lol2.removeAt(0);
+          // The second non empty string is the name of the calling function
+          for (String s in lol2){
+            if (s.isNotEmpty){
+              caller = s;
+              break;
+            }
+          }
+     print("$caller: $message");
     }
   }
 }
