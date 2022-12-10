@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/message.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 import '../../utils/device.dart';
 import '../Messages/co2_message.dart';
+import '../Messages/debug_message.dart';
 import '../managers/ble_man.dart';
 
 class DevicePage extends StatefulWidget {
@@ -27,7 +29,6 @@ class _DevicePageState extends State<DevicePage> {
   Widget buildGauge(String title, int min, int max, int value) {
     return Stack(
       children: [
-
         SfRadialGauge(
           axes: <RadialAxis>[
             RadialAxis(
@@ -77,7 +78,6 @@ class _DevicePageState extends State<DevicePage> {
             ),
           ),
       ],
-
     );
   }
 
@@ -104,55 +104,137 @@ class _DevicePageState extends State<DevicePage> {
                 ),
                 body: TabBarView(
                   children: <Widget>[
-                    // Add a 2x2 grid
-                    GridView.count(
-                      crossAxisCount: 2,
-                      children: <Widget>[
-                        // Add a card with the device name
-                        Card(
-                          child: Center(
-                            child:
-                                // Gauge which listens to message stream
-                                StreamBuilder<MessageWithDirection>(
-                                    stream:
-                                        widget.devic.bleManager.messagesStream,
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        // If message contains a co2 field
-                                        if (snapshot.data!.message.type ==
-                                            MessageTypes.co2Message) {
-                                          // Cast to CO2Message
-                                          final CO2Message msg = snapshot
-                                              .data!.message as CO2Message;
-                                          return buildGauge(
-                                              'CO2', 0, 500, msg.co2);
+                    RefreshIndicator(
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        children: <Widget>[
+                          // Add a card with the device name
+                          Card(
+                            child: Center(
+                              child:
+                                  // Gauge which listens to message stream
+                                  StreamBuilder<MessageWithDirection>(
+                                      stream: widget
+                                          .devic.bleManager.messagesStream,
+                                      builder: (context, snapshot) {
+                                        int co2 = 0;
+                                        if (snapshot.hasData) {
+                                          // If message contains a co2 field
+                                          if (snapshot.data!.message.type ==
+                                              MessageTypes.co2Message) {
+                                            // Cast to CO2Message
+                                            final CO2Message msg = snapshot
+                                                .data!.message as CO2Message;
+                                            co2 = msg.co2;
+                                          }
+                                          if (snapshot.data!.message.type ==
+                                              MessageTypes.feedbackMessage) {
+                                            final FeedbackMessage msg = snapshot
+                                                .data!
+                                                .message as FeedbackMessage;
+                                            co2 = msg.co2;
+                                          }
                                         }
+                                        return buildGauge('CO2', 0, 500, co2);
+                                      }),
+                            ),
+                          ),
+                          // Add a card with the device address
+                          Card(
+                            child: Center(
+                              child: StreamBuilder<MessageWithDirection>(
+                                  stream:
+                                      widget.devic.bleManager.messagesStream,
+                                  builder: (context, snapshot) {
+                                    int temp = 0;
+                                    if (snapshot.hasData) {
+                                      // If message contains a co2 field
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.co2Message) {
+                                        // Cast to CO2Message
+                                        final CO2Message msg = snapshot
+                                            .data!.message as CO2Message;
+                                        temp = msg.temperature;
                                       }
-                                      return buildGauge('CO2', 0, 500, 0);
-                                    }),
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.feedbackMessage) {
+                                        final FeedbackMessage msg = snapshot
+                                            .data!.message as FeedbackMessage;
+                                        temp = msg.temperature;
+                                      }
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.debugMessage) {
+                                        final FeedbackMessage msg = snapshot
+                                            .data!.message as FeedbackMessage;
+                                        temp = msg.temperature;
+                                      }
+                                    }
+                                    return buildGauge('°C', 0, 30, temp);
+                                  }),
+                            ),
                           ),
-                        ),
-                        // Add a card with the device address
-                        const Card(
-                          child: Center(
-                            child: Placeholder(),
+                          // Add a card with the device rssi
+                          Card(
+                            child: Center(
+                              child: StreamBuilder<MessageWithDirection>(
+                                  stream:
+                                      widget.devic.bleManager.messagesStream,
+                                  builder: (context, snapshot) {
+                                    int hum = 0;
+                                    if (snapshot.hasData) {
+                                      // If message contains a co2 field
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.co2Message) {
+                                        // Cast to CO2Message
+                                        final CO2Message msg = snapshot
+                                            .data!.message as CO2Message;
+                                        hum = msg.humidity;
+                                      }
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.feedbackMessage) {
+                                        final FeedbackMessage msg = snapshot
+                                            .data!.message as FeedbackMessage;
+                                        hum = msg.humidity;
+                                      }
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.debugMessage) {
+                                        final FeedbackMessage msg = snapshot
+                                            .data!.message as FeedbackMessage;
+                                        hum = msg.humidity;
+                                      }
+                                    }
+                                    return buildGauge('💧', 0, 100, hum);
+                                  }),
+                            ),
                           ),
-                        ),
-                        // Add a card with the device rssi
-                        const Card(
-                          child: Center(
-                            child: Placeholder(),
+                          // Add a card with the device battery
+                          Card(
+                            child: Center(
+                              child: StreamBuilder<MessageWithDirection>(
+                                  stream:
+                                      widget.devic.bleManager.messagesStream,
+                                  builder: (context, snapshot) {
+                                    int data = 0;
+                                    if (snapshot.hasData) {
+                                      // If message contains a co2 field
+                                      if (snapshot.data!.message.type ==
+                                          MessageTypes.debugMessage) {
+                                        final DebugMessage msg = snapshot
+                                            .data!.message as DebugMessage;
+                                        data = msg.rawData;
+                                      }
+                                    }
+                                    return buildGauge('raw', 0, 500, data);
+                                  }),
+                            ),
                           ),
-                        ),
-                        // Add a card with the device battery
-                        const Card(
-                          child: Center(
-                            child: Placeholder(),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      onRefresh: () {
+                        return Future.delayed(const Duration(seconds: 1));
+                      },
                     ),
-
                     Column(
                       children: <Widget>[
                         Row(
@@ -210,7 +292,7 @@ class _DevicePageState extends State<DevicePage> {
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ))));
   }
