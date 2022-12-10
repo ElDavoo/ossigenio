@@ -179,7 +179,8 @@ class BLEManager extends ChangeNotifier {
                   return null;
                 })
                 .where((message) => message != null)
-                .cast<MessageWithDirection>();
+                .cast<MessageWithDirection>()
+                .asBroadcastStream();
             messagesStream!.listen((message) {
               messages.add(message);
               notifyListeners();
