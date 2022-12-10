@@ -43,7 +43,7 @@ def signUp():
     cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
                                  'name char(50) NOT NULL,'
                                  'email char(50) NOT NULL,'
-                                 'password char(50) NOT NULL,'
+                                 'password char(50) NOT NULL;'
                                  )
 
     cur.execute('INSERT INTO users (name, email, password) VALUES ('+_name+', '+_email+', '+_password+');')
@@ -66,16 +66,6 @@ def signUp():
     #    return json.dumps({'html':'<span>All fields good !!</span>'})
     #else:
     #    return json.dumps({'html':'<span>Enter the required fields</span>'})
-
-@app.route('/users')
-def index():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM users;')
-    books = cur.fetchall()
-    cur.close()
-    conn.close()
-    return books
 
 @app.route('/measurements/')
 def index():
