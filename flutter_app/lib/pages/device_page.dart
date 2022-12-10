@@ -232,7 +232,7 @@ class _DevicePageState extends State<DevicePage> {
                         ],
                       ),
                       onRefresh: () {
-                        return Future.delayed(const Duration(seconds: 1));
+                        return refresh();
                       },
                     ),
                     Column(
@@ -295,5 +295,12 @@ class _DevicePageState extends State<DevicePage> {
                     ),
                   ],
                 ))));
+  }
+
+  Future<void> refresh() async {
+    widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest1);
+    //widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest2);
+    //Wait to get a packet from the device, so listen to the stream for one packet
+    await widget.devic.bleManager.messagesStream?.first;
   }
 }
