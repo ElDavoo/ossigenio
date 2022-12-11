@@ -237,7 +237,7 @@ class _DevicePageState extends State<DevicePage> {
                     ),
                     Column(
                       children: <Widget>[
-                        Row(
+                        Wrap(
                           children: [
                             TextButton(
                               onPressed: () {
