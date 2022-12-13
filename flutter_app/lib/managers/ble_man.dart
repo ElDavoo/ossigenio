@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/managers/pref_man.dart';
 import '../../utils/serial.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
@@ -83,7 +84,7 @@ class BLEManager extends ChangeNotifier {
       return;
     }
     // Only filter BLE devices
-    /*if (device.type != BluetoothDeviceType.le) {
+    if (device.type != BluetoothDeviceType.le) {
       // Add the device to the list
       return;
     }
@@ -94,8 +95,13 @@ class BLEManager extends ChangeNotifier {
     // Only devices with allowed names
     if (!allowedNames.contains(device.name)) {
       return;
-    }*/
-    Log.l("Found device: ${device.toString()}");
+    }
+    // If the device is the one registered in the preferences, connect to it
+    PrefManager().read(PrefConstants.deviceMac)
+        .then((value) => {
+          //if (value == device.id.id)
+          //connectToDevice(device)
+          });
 
     // Add the device to the list
     devices.add(device);
@@ -186,6 +192,13 @@ class BLEManager extends ChangeNotifier {
               notifyListeners();
             });
             this.device = device;
+            // Take the device mac address
+            // store the device mac address in shared preferences
+            Log.l("mac address:${device.id.id}");
+            PrefManager().write(
+              PrefConstants.deviceMac,
+              device.id.id,
+            );
             return true;
           }
         }

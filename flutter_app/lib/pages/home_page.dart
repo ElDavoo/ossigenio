@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/managers/pref_man.dart';
 import 'package:provider/provider.dart';
 
 import '../../managers/ble_man.dart';
@@ -30,6 +31,26 @@ class _MyHomePageState extends State<MyHomePage> {
   //BLEManager bleManager = BLEManager();
   // get BLEManager from ChangeNotifierProvider
   BLEManager get bleManager => context.read<BLEManager>();
+
+  void _init() {
+    PermissionManager().checkPermissions();
+    bleManager.startBLEScan();
+    // Read the device mac address from shared preferences
+    PrefManager().read(PrefConstants.deviceMac).then((value) {
+      /*if (value != null) {
+        // Attempt to connect to the device
+        bleManager.connectToDevice(value);
+      }*/
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+    //bleManager.startBLEScan();
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called.
