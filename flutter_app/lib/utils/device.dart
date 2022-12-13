@@ -16,6 +16,7 @@ class Device {
   //constructor that take blemanager and device and initializes a mqttmanager
   Device(this.bleManager, this.device) {
     mqttManager = MqttManager();
+    mqttManager.connect('','');
     // listen to the stream and publish the messages
     bleManager.messagesStream?.listen((message) {
       Log.l("Message received");

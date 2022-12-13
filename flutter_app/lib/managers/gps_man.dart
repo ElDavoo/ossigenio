@@ -10,6 +10,15 @@ import '../utils/log.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GpsManager {
+
+  static final GpsManager _instance = GpsManager._internal();
+
+  factory GpsManager() {
+    return _instance;
+  }
+
+  GpsManager._internal();
+
   // method to get the current position
   Future<Position> getCurrentPosition() async {
     Position position = await Geolocator.getCurrentPosition(

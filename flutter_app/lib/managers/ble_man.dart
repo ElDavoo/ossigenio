@@ -13,6 +13,15 @@ import '../Messages/message.dart';
 import '../utils/log.dart';
 
 class BLEManager extends ChangeNotifier {
+
+  static final BLEManager _instance = BLEManager._internal();
+
+  factory BLEManager() {
+    return _instance;
+  }
+
+  BLEManager._internal();
+
   // Instance of flutter_blue
   FlutterBlue flutterBlue = FlutterBlue.instance;
 
@@ -26,6 +35,7 @@ class BLEManager extends ChangeNotifier {
   // List of allowed OUIs
   static const List<String> allowedOUIs = [
     'EF:41:B7',
+    'E6:4A:29',
   ];
 
   // List of allowed names

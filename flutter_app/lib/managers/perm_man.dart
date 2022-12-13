@@ -10,6 +10,15 @@ Class to manage and ask for permissions.
 TODO: Better handle failed permissions
  */
 class PermissionManager {
+
+  static final PermissionManager _instance = PermissionManager._internal();
+
+  factory PermissionManager() {
+    return _instance;
+  }
+
+  PermissionManager._internal();
+
   bool _hasPermission = false;
   // List of permissions to get
   static const List<Permission> permissions = [

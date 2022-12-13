@@ -14,6 +14,16 @@ class AccountConstants{
 }
 
 class AccountManager{
+
+  static final AccountManager _instance = AccountManager._internal();
+
+  factory AccountManager() {
+    return _instance;
+  }
+
+  AccountManager._internal();
+
+
   static Future<bool> login(String username, String password) async {
     // use dio
     Dio dio = Dio();

@@ -30,6 +30,14 @@ class MqttConstants {
 
 class MqttManager {
 
+  static final MqttManager _instance = MqttManager._internal();
+
+  factory MqttManager() {
+    return _instance;
+  }
+
+  MqttManager._internal();
+
   late MqttServerClient client;
   // method to connect to the mqtt server
   void connect(String username, String password) async {
@@ -51,10 +59,7 @@ class MqttManager {
     }
   }
   //constructor
-  MqttManager() {
-    // connect to the mqtt server
-    connect('test', 'test2');
-  }
+
   //method to disconnect from the mqtt server
   void disconnect() {
     client.disconnect();

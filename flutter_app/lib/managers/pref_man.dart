@@ -10,6 +10,7 @@ class PrefConstants{
 
 
 class PrefManager {
+
   static final PrefManager _instance = PrefManager._internal();
   static const FlutterSecureStorage _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
