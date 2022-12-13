@@ -11,11 +11,11 @@ class MessageTypes {
   static const extendedMessage = 0x82;
   static const startupMessage = 0x83;
   static const feedbackMessage = 0x94;
-  static const msgRequest0 = 0x0f;
-  static const msgRequest1 = 0x0e;
-  static const msgRequest2 = 0x0d;
-  static const msgRequest3 = 0x0c;
-  static const msgRequest4 = 0x0b;
+  static const msgRequest0 = 0x1f;
+  static const msgRequest1 = 0x1e;
+  static const msgRequest2 = 0x1d;
+  static const msgRequest3 = 0x1c;
+  static const msgRequest4 = 0x1b;
 }
 
 abstract class Message {
