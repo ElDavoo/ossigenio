@@ -14,7 +14,9 @@ class PermissionManager {
   // List of permissions to get
   static const List<Permission> permissions = [
     Permission.bluetoothScan,
-    Permission.bluetoothConnect
+    Permission.bluetoothConnect,
+    Permission.location,
+
   ];
   static const snackBarOk = SnackBar(content: Text('Permessi OK!'));
   static const snackBarFail = SnackBar(content: Text('Please grant permissions'));
@@ -24,10 +26,7 @@ class PermissionManager {
     // Check if the app has the required permissions
     Map<Permission, PermissionStatus> statuses = await permissions.request();
     // Check if the app has the required permissions
-    if (statuses[Permission.bluetoothScan] == PermissionStatus.granted &&
-        statuses[Permission.bluetoothConnect] == PermissionStatus.granted) {
-      _hasPermission = true;
-    }
+    _hasPermission = statuses.values.every((status) => status.isGranted);
     // Show SnackBar
     //ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
