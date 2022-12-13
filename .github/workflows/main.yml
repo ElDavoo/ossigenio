@@ -24,7 +24,8 @@ jobs:
         flutter-version: '3.3.9'
     - run: flutter pub get
     - run: flutter build apk
+    - run: pwd ; find -name *.apk
     - uses: actions/upload-artifact@v1
       with:
         name: release-apk
-        path: build/app/outputs/flutter-apk/app-release.apk
+        path: ../flutter_app/build/app/outputs/flutter-apk/app-release.apk
