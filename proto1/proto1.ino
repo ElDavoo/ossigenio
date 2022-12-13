@@ -52,9 +52,9 @@ MQ135 mqSensor(co2Pin);
 
 // start global variables section
 #define campTime 1000
-#define autoSend 30000
+#define autoSend 10000
 unsigned long lastExecutedMillis = 0; // to campionate environment datas every 1 sec
-unsigned long lastExecutedMillisCount = 0; // to send automatically environment datas every 30 secs
+unsigned long lastExecutedMillisCount = 0; // to send automatically environment datas every 10 secs
 sensors_event_t event;
 float temperature;
 float humidity;
@@ -167,32 +167,61 @@ void loop() {
   }
   
   // ble read section
-  String c = ble.readString();
-  String watchDog;
+  //String c = ble.readString();
+  uint8_t buf[4] = {0x00,0x00,0x00,0x00};
+  while (ble.available() > 0){
+    int rlen = ble.readBytes(buf, 4);
+  }
   unsigned long currentMillisCount = millis();
   if (currentMillisCount - lastExecutedMillisCount >= autoSend){
     lastExecutedMillisCount = currentMillisCount;
-    watchDog='E';
+    getMsg1((int) temperature,(int) humidity,(int) co2);
   }
   /*
   For other types of messages, proto1 will wait for external input and sends they
   according to it.
   */
-  if (c.charAt(3) == 'F') {
+  if(buf[0] == 0xAA && buf[2] == 0xFF){
+    switch(buf[1]){
+      case 0x1F:
+        getMsg0((int) temperature, (int) humidity, raw);
+        break;
+
+      case 0x1E:
+        getMsg1((int) temperature,(int) humidity,(int) co2);
+        break;
+
+      case 0x1C:
+        getMsg3();
+        break;
+
+      case 0x1B:
+        feedback = 123;
+        getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
+        feedback = 0;
+        debug = !debug; // enable/disable debug mode
+        if (debug == true) ble.print("Debug mode enabled.");
+        else ble.print("Debug mode disabled.");
+        break;
+    }
+  }
+
+
+  /*if (buf[3] == 'F') {
     getMsg0((int) temperature, (int) humidity, raw);
   }
-  if (c.charAt(3) == 'E' || watchDog.charAt(0) == 'E') {
+  if (buf[3] == 'E' || watchDog[0] == 'E') {
     getMsg1((int) temperature,(int) humidity,(int) co2);
   }
-  if (c.charAt(3) == 'C') getMsg3(); //VERSION MESSAGE
-  if (c.charAt(3) == 'B') { //forced sending feedback message -- Debug purpose only
+  if (buf[3] == 'C') getMsg3(); //VERSION MESSAGE
+  if (buf[3] == 'B') { //forced sending feedback message -- Debug purpose only
     feedback = 123;
     getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
     feedback = 0;
     debug = !debug; // enable/disable debug mode
     if (debug == true) ble.print("Debug mode enabled.");
     else ble.print("Debug mode disabled.");
-  }
+  }*/
   if(debug == true) ble.print("Check!"); //ONLY FOR DEBUG PURPOSE!
 
 }
