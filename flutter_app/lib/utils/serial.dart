@@ -16,19 +16,10 @@ typedef uint8_t = int;
 
 class SerialComm {
 
-  // Store the FlutterBlue instance.
-  FlutterBlue flutterBlue = FlutterBlue.instance;
   // The start of a message is 0xAA.
   static const int startOfMessage = 0xAA;
   // The end of a message is 0xFFFF
   static const int endOfMessage = 0xFF;
-  late BluetoothCharacteristic uartRX;
-
-  SerialComm(BluetoothCharacteristic bluetoothCharacteristic){
-    // Set the characteristic to the one passed in.
-    uartRX = bluetoothCharacteristic;
-  }
-
 
   // Checksum calculator that returns a single byte
   // FIXME
@@ -45,7 +36,7 @@ class SerialComm {
     return (sum2 << 8) | sum1;
   }
 
-  Message? receive(List<int> list) {
+  static Message? receive(List<int> list) {
     Uint8List data = Uint8List.fromList(list);
     if (data.length < 4) {
       Log.l("data.length < 2");
@@ -99,13 +90,13 @@ class SerialComm {
 
   }
 
-  void send(Uint8List data) {
+  static void send(BluetoothCharacteristic uartRX, Uint8List data) {
     Log.l("Sending: $data");
     uartRX.write(data);
   }
 
-  void sendMsg(int msgIndex){
-    send(buildMsgg(msgIndex));
+  static void sendMsg(BluetoothCharacteristic uartRX, int msgIndex){
+    send(uartRX, buildMsgg(msgIndex));
   }
 
   static Uint8List buildMsgg(int msgIndex){

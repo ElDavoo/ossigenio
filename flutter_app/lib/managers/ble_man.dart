@@ -48,7 +48,7 @@ class BLEManager extends ChangeNotifier {
   static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
   static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
-  SerialComm? serial;
+
   BluetoothDevice? device;
   List<MessageWithDirection> messages = [];
 
@@ -170,11 +170,7 @@ class BLEManager extends ChangeNotifier {
 
             // Save the characteristic into the class
             uartRX = characteristic;
-            serial = SerialComm(uartRX!);
           }
-        }
-        if (serial == null) {
-          return false;
         }
 
         for (var characteristic in characteristics) {
@@ -187,7 +183,7 @@ class BLEManager extends ChangeNotifier {
             // Map the stream to a Message object
             messagesStream = characteristic.value
                 .map((value) {
-                  Message? message = serial!.receive(value);
+                  Message? message = SerialComm.receive(value);
                   if (message != null) {
                     return MessageWithDirection(
                         MessageDirection.received, DateTime.now(), message);

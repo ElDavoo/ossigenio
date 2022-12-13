@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/message.dart';
+import 'package:flutter_app/utils/serial.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -241,36 +242,31 @@ class _DevicePageState extends State<DevicePage> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.serial
-                                    ?.sendMsg(MessageTypes.msgRequest0);
+                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest0);
                               },
                               child: const Text('Request 0'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.serial
-                                    ?.sendMsg(MessageTypes.msgRequest1);
+                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest1);
                               },
                               child: const Text('Request 1'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.serial
-                                    ?.sendMsg(MessageTypes.msgRequest2);
+                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest2);
                               },
                               child: const Text('Request 2'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.serial
-                                    ?.sendMsg(MessageTypes.msgRequest3);
+                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest3);
                               },
                               child: const Text('Request 3'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.serial
-                                    ?.sendMsg(MessageTypes.msgRequest4);
+                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest4);
                               },
                               child: const Text('Request 4'),
                             ),
@@ -298,7 +294,7 @@ class _DevicePageState extends State<DevicePage> {
   }
 
   Future<void> refresh() async {
-    widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest1);
+    SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest1);
     //widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest2);
     //Wait to get a packet from the device, so listen to the stream for one packet
     await widget.devic.bleManager.messagesStream?.first;
