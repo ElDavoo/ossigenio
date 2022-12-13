@@ -23,8 +23,7 @@ jobs:
       with:
         flutter-version: '3.3.9'
     - run: flutter pub get
-    - run: flutter build apk
-    - run: pwd ; find -name *.apk
+    - run: flutter build apk --target-platform android-arm64
     - uses: actions/upload-artifact@v1
       with:
         name: release-apk
