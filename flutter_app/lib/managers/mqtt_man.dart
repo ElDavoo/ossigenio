@@ -90,21 +90,21 @@ class MqttManager {
     const String deviceId = '1';
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage(
-        '$topic/${MqttConstants.co2Topic}',
+        '$topic${MqttConstants.co2Topic}',
         MqttQos.atMostOnce,
         stringToBuffer(message.co2.toString()));
     client.publishMessage(
-        '$topic/${MqttConstants.humidityTopic}',
+        '$topic${MqttConstants.humidityTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(message.humidity.toString()));
     client.publishMessage(
-        '$topic/${MqttConstants.temperatureTopic}',
+        '$topic${MqttConstants.temperatureTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(message.temperature.toString()));
     // Build the combined payload as json string
     String combinedPayload = '{"co2": ${message.co2}, "humidity": ${message.humidity}, "temperature": ${message.temperature}}';
     client.publishMessage(
-        '$topic/${MqttConstants.combinedTopic}',
+        '$topic${MqttConstants.combinedTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(combinedPayload));
   }
@@ -115,15 +115,15 @@ class MqttManager {
     const String deviceId = '1';
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage(
-        '$topic/${MqttConstants.debugTopic}',
+        '$topic${MqttConstants.debugTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(message.rawData.toString()));
     client.publishMessage(
-        '$topic/${MqttConstants.humidityTopic}',
+        '$topic${MqttConstants.humidityTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(message.humidity.toString()));
     client.publishMessage(
-        '$topic/${MqttConstants.temperatureTopic}',
+        '$topic${MqttConstants.temperatureTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(message.temperature.toString()));
     // Build the combined payload as json string
@@ -131,7 +131,7 @@ class MqttManager {
         .rawData}, "humidity": ${message.humidity}, "temperature": ${message
         .temperature}}';
     client.publishMessage(
-        '$topic/${MqttConstants.combinedTopic}',
+        '$topic${MqttConstants.combinedTopic}',
         MqttQos.atMostOnce,
         stringToBuffer(combinedPayload));
   }
@@ -142,25 +142,25 @@ class MqttManager {
       const String deviceId = '1';
       String topic = '${MqttConstants.rootTopic}$deviceId/';
       client.publishMessage(
-          '$topic/${MqttConstants.co2Topic}',
+          '$topic${MqttConstants.co2Topic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.co2.toString()));
       client.publishMessage(
-          '$topic/${MqttConstants.humidityTopic}',
+          '$topic${MqttConstants.humidityTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.humidity.toString()));
       client.publishMessage(
-          '$topic/${MqttConstants.temperatureTopic}',
+          '$topic${MqttConstants.temperatureTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.temperature.toString()));
       client.publishMessage(
-          '$topic/${MqttConstants.feedbackTopic}',
+          '$topic${MqttConstants.feedbackTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.feedback.toString()));
       // Build the combined payload as json string
       String combinedPayload = '{"co2": ${message.co2}, "humidity": ${message.humidity}, "temperature": ${message.temperature}, "feedback": ${message.feedback}}';
       client.publishMessage(
-          '$topic/${MqttConstants.combinedTopic}',
+          '$topic${MqttConstants.combinedTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(combinedPayload));
     }
@@ -171,21 +171,21 @@ class MqttManager {
       const String deviceId = '1';
       String topic = '${MqttConstants.rootTopic}$deviceId/';
       client.publishMessage(
-          '$topic/${MqttConstants.modelTopic}',
+          '$topic${MqttConstants.modelTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.model.toString()));
       client.publishMessage(
-          '$topic/${MqttConstants.versionTopic}',
+          '$topic${MqttConstants.versionTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.version.toString()));
       client.publishMessage(
-          '$topic/${MqttConstants.batteryTopic}',
+          '$topic${MqttConstants.batteryTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(message.battery.toString()));
       // Build the combined payload as json string
       String combinedPayload = '{"model": ${message.model}, "version": ${message.version}, "battery": ${message.battery}}';
       client.publishMessage(
-          '$topic/${MqttConstants.combinedTopic}',
+          '$topic${MqttConstants.combinedTopic}',
           MqttQos.atMostOnce,
           stringToBuffer(combinedPayload));
 
