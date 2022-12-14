@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
 
+import '../utils/log.dart';
+
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -17,6 +19,18 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailinputController = TextEditingController();
   final passwordinputController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    Log.addListener(context);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the
+    Log.snackStream.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

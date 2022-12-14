@@ -9,6 +9,7 @@ import '../../utils/device.dart';
 import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
 import '../managers/ble_man.dart';
+import '../utils/log.dart';
 
 class DevicePage extends StatefulWidget {
   final Device devic;
@@ -20,6 +21,20 @@ class DevicePage extends StatefulWidget {
 }
 
 class _DevicePageState extends State<DevicePage> {
+
+  @override
+  void initState(){
+    super.initState();
+    Log.addListener(context);
+
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Log.snackStream.close();
+  }
+
   // Override back button and disconnect
   Future<bool> _onWillPop() async {
     widget.devic.bleManager.disconnect();

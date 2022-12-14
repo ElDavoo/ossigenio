@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../managers/perm_man.dart';
 import '../utils/device.dart';
+import '../utils/log.dart';
 import 'device_page.dart';
 import 'login_page.dart';
 
@@ -42,6 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
         bleManager.connectToDevice(value);
       }*/
     });
+    Log.addListener(context);
+
   }
 
   @override
@@ -49,6 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _init();
     //bleManager.startBLEScan();
+  }
+
+  @override
+  void dispose() {
+    bleManager.stopBLEScan();
+    Log.snackStream.close();
+    super.dispose();
   }
 
   @override

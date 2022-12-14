@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/register_page.dart';
 
 import '../managers/account_man.dart';
+import '../utils/log.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -16,6 +17,19 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final logininputController = TextEditingController();
   final registerinputController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Log.addListener(context);
+  }
+
+  @override
+  void dispose() {
+    // Clean up the
+    Log.snackStream.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
