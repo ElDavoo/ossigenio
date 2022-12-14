@@ -1,0 +1,2 @@
+-keep class com.pauldemarco.flutter_blue.Protos* { *; }
+-keep class com.pauldemarco.flutter_blue.FlutterBluePlugin* { *; }

@@ -47,7 +47,7 @@ class Log {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 1),
               content: Text(event)
           )
       );

@@ -27,7 +27,7 @@ class BLEManager extends ChangeNotifier {
   }
 
   // Instance of flutter_blue
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+  final FlutterBlue flutterBlue = FlutterBlue.instance;
 
 
 
