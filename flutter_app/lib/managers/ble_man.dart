@@ -99,9 +99,9 @@ class BLEManager extends ChangeNotifier {
       return;
     }
     //Only devices with allowed OUIs
-    if (!allowedOUIs.contains(device.id.id.substring(0, 8))) {
+    /*if (!allowedOUIs.contains(device.id.id.substring(0, 8))) {
       return;
-    }
+    }*/
     // Only devices with allowed names
     if (!allowedNames.contains(device.name)) {
       return;
