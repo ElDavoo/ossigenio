@@ -20,10 +20,16 @@ class BLEManager extends ChangeNotifier {
     return _instance;
   }
 
-  BLEManager._internal();
+  BLEManager._internal(){
+    flutterBlue.isScanning.listen((isScanning) {
+      _isScanning = isScanning;
+    });
+  }
 
   // Instance of flutter_blue
   FlutterBlue flutterBlue = FlutterBlue.instance;
+
+
 
   // List of devices found
   List<BluetoothDevice> devices = [];
@@ -31,6 +37,8 @@ class BLEManager extends ChangeNotifier {
   // Future of scanning
   late Future<void> scanFuture;
   bool _isScanning = false;
+
+
 
   // List of allowed OUIs
   static const List<String> allowedOUIs = [
@@ -122,18 +130,6 @@ class BLEManager extends ChangeNotifier {
     return flutterBlue.isScanning;
   }
 
-  List<BluetoothDevice> getDevices() {
-    return devices;
-  }
-
-  List<String> getDevicesToString() {
-    List<String> devicesString = [];
-    for (BluetoothDevice device in devices) {
-      devicesString.add(device.toString());
-    }
-    return devicesString;
-  }
-
   // Connect to a BLE device
   Future<bool> connectToDevice(BluetoothDevice device) async {
     // Connect to the device with a timeout of 2 seconds
@@ -217,5 +213,16 @@ class BLEManager extends ChangeNotifier {
     if (device != null) {
       device!.disconnect();
     }
+  }
+  void send(Uint8List data) {
+    if (uartRX != null) {
+      uartRX!.write(data);
+    } else {
+      Log.l("UART RX characteristic not found");
+    }
+  }
+
+  void sendMsg(int msgIndex){
+    send(SerialComm.buildMsgg(msgIndex));
   }
 }

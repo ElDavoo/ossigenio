@@ -242,31 +242,31 @@ class _DevicePageState extends State<DevicePage> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest0);
+                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest0);
                               },
                               child: const Text('Request 0'),
                             ),
                             TextButton(
                               onPressed: () {
-                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest1);
+                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest1);
                               },
                               child: const Text('Request 1'),
                             ),
                             TextButton(
                               onPressed: () {
-                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest2);
+                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest2);
                               },
                               child: const Text('Request 2'),
                             ),
                             TextButton(
                               onPressed: () {
-                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest3);
+                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest3);
                               },
                               child: const Text('Request 3'),
                             ),
                             TextButton(
                               onPressed: () {
-                                SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest4);
+                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest4);
                               },
                               child: const Text('Request 4'),
                             ),
@@ -294,7 +294,7 @@ class _DevicePageState extends State<DevicePage> {
   }
 
   Future<void> refresh() async {
-    SerialComm.sendMsg(widget.devic.bleManager.uartRX!, MessageTypes.msgRequest1);
+    widget.devic.bleManager.sendMsg(MessageTypes.msgRequest1);
     //widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest2);
     //Wait to get a packet from the device, so listen to the stream for one packet
     await widget.devic.bleManager.messagesStream?.first;

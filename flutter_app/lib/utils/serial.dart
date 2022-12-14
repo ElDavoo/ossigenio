@@ -90,14 +90,7 @@ class SerialComm {
 
   }
 
-  static void send(BluetoothCharacteristic uartRX, Uint8List data) {
-    Log.l("Sending: $data");
-    uartRX.write(data);
-  }
 
-  static void sendMsg(BluetoothCharacteristic uartRX, int msgIndex){
-    send(uartRX, buildMsgg(msgIndex));
-  }
 
   static Uint8List buildMsgg(int msgIndex){
    return buildMsg(msgIndex, Uint8List(0));
