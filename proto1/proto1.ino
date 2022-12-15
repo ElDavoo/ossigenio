@@ -101,7 +101,11 @@ void ble_setup(){
       error(F("Couldn't factory reset"));
     }
   }
-
+  
+  if ( !ble.sendCommandCheckOK(F("AT+GAPDEVNAME=AirQualityMonitor")) ){
+    error(F("Couldn't change Bluefruit name :("));
+  }
+  
   /* Disable command echo from Bluefruit */
   ble.echo(false);
 
