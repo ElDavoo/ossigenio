@@ -54,12 +54,21 @@ extern volatile uint8_t feedback;
 void getMsg0(int temp, int humidity, int raw_data){
     //char buffer[5];
     //ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
-    ble.write(0xAA);
+    uint8_t buffer[8];
+    /*ble.write(0xAA);
     ble.write(0x80);
     ble.write((uint8_t) temp);
     ble.write((uint8_t) humidity);
     ble.write(highByte(raw_data));
-    ble.write(lowByte(raw_data));
+    ble.write(lowByte(raw_data));*/
+    buffer[0] = 0xAA;
+    buffer[1] = 0x80;
+    buffer[2] = (uint8_t) temp;
+    buffer[3] = (uint8_t) humidity;
+    buffer[4] = highByte(raw_data);
+    buffer[5] = lowByte(raw_data);
+    buffer[6] = 0xFF;
+
 
     uint8_t message[4];
 
@@ -69,8 +78,10 @@ void getMsg0(int temp, int humidity, int raw_data){
     message[3] = (uint8_t) raw_data;
 
     uint8_t crc = checksumCalculator(message,4);
-    ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-	ble.write(crc); 
+    //ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+	//ble.write(crc); 
+    buffer[7] = crc;
+    ble.write(buffer,8);
 }
 
 /*void getMsg1(int temp, int humidity, int co2) { //OLD VERSION
@@ -101,12 +112,13 @@ void getMsg0(int temp, int humidity, int raw_data){
 void getMsg1(int temp, int humidity, int co2) {
     //char buffer[5];
 
-    ble.write(0xAA); //AA, numero campi e tipo --- 0xAA81 = dec43649
+    uint8_t buffer[8];
+    /*ble.write(0xAA); //AA, numero campi e tipo --- 0xAA81 = dec43649
     ble.write(0x81);
     ble.write((uint8_t) temp);
     ble.write((uint8_t) humidity);
     ble.write(highByte(co2));
-    ble.write(lowByte(co2));
+    ble.write(lowByte(co2));*/
 
     uint8_t message[4];
 
@@ -115,9 +127,18 @@ void getMsg1(int temp, int humidity, int co2) {
     message[2] = (uint8_t) humidity;
     message[3] = (uint8_t) co2;
 
+    buffer[0] = 0xAA;
+    buffer[1] = 0x81;
+    buffer[2] = (uint8_t) temp;
+    buffer[3] = (uint8_t) humidity;
+    buffer[4] = highByte(co2);
+    buffer[5] = lowByte(co2);
+    buffer[6] = 0xFF;
     uint8_t crc = checksumCalculator(message,4);
-    ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-	ble.write(crc); 
+    buffer[7] = crc;
+    ble.write(buffer,8);
+    //ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+	//ble.write(crc); 
 }
 
 void getMsg2(/*NOT YET IMPLEMENTED*/){
@@ -128,11 +149,18 @@ void getMsg3(){
     //char buffer[5];
     //ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
     uint8_t battery = 0;
-    ble.write(0xAA);
+    uint8_t buffer[7];
+    /*ble.write(0xAA);
     ble.write(0x83);
     ble.write((uint8_t) MODEL);
     ble.write((uint8_t) VERSION);
-    ble.write(battery);
+    ble.write(battery);*/
+    buffer[0] = 0xAA;
+    buffer[1] = 0x83;
+    buffer[2] = (uint8_t) MODEL;
+    buffer[3] = (uint8_t) VERSION;
+    buffer[4] = battery;
+    buffer[5] = 0xFF;
 
     uint8_t message[4];
 
@@ -142,8 +170,10 @@ void getMsg3(){
     message[3] = (uint8_t) 0;
 
     uint8_t crc = checksumCalculator(message,4); 
-    ble.write(0xFF);
-	ble.write(crc); 
+    //ble.write(0xFF);
+	//ble.write(crc);
+    buffer[6] = crc;
+    ble.write(buffer,7); 
 }
 
 /*void getMsg3(){ //OLD VERSION
@@ -174,13 +204,23 @@ void getMsg3(){
 void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     //char buffer[5];
     //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
-    ble.write(0xAA);
+    uint8_t buffer[9];
+
+    /*ble.write(0xAA);
     ble.write(0x94);
     ble.write((uint8_t) temp);
     ble.write((uint8_t) humidity);
     ble.write(highByte(co2));
     ble.write(lowByte(co2));
-    ble.write(feedback);
+    ble.write(feedback);*/
+    buffer[0] = 0xAA;
+    buffer[1] = 0x81;
+    buffer[2] = (uint8_t) temp;
+    buffer[3] = (uint8_t) humidity;
+    buffer[4] = highByte(co2);
+    buffer[5] = lowByte(co2);
+    buffer[6] = feedback;
+    buffer[7] = 0xFF;
 
     uint8_t message[5];
 
@@ -191,8 +231,10 @@ void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     message[4] = (uint8_t) feedback;
 
     uint8_t crc = checksumCalculator(message,5);
-    ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-	ble.write(crc); 
+    //ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
+	//ble.write(crc); 
+    buffer[8] = crc;
+    ble.write(buffer,9);
 }
 
 /*void getMsg4(int temp, int humidity, int co2, uint8_t feedback) { //OLD VERSION

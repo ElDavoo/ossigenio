@@ -52,7 +52,7 @@ MQ135 mqSensor(co2Pin);
 
 // start global variables section
 #define campTime 1000
-#define autoSend 10000
+int autoSend = 10000;
 unsigned long lastExecutedMillis = 0; // to campionate environment datas every 1 sec
 unsigned long lastExecutedMillisCount = 0; // to send automatically environment datas every 10 secs
 sensors_event_t event;
@@ -204,8 +204,14 @@ void loop() {
         getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
         feedback = 0;
         debug = !debug; // enable/disable debug mode
-        if (debug == true) ble.print("Debug mode enabled.");
-        else ble.print("Debug mode disabled.");
+        if (debug == true) {
+          ble.print("Debug mode enabled.");
+          autoSend = 1000;
+        }
+        else {
+          ble.print("Debug mode disabled.");
+          autoSend = 10000;
+        }
         break;
     }
   }
@@ -226,6 +232,6 @@ void loop() {
     if (debug == true) ble.print("Debug mode enabled.");
     else ble.print("Debug mode disabled.");
   }*/
-  if(debug == true) ble.print("Check!"); //ONLY FOR DEBUG PURPOSE!
+  //if(debug == true) ble.print("Check!"); //ONLY FOR DEBUG PURPOSE!
 
 }
