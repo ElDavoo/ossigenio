@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/message.dart';
@@ -22,17 +24,19 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> {
 
+  StreamSubscription ?_log;
+
   @override
   void initState(){
     super.initState();
-    Log.addListener(context);
+    _log ??= Log.addListener(context);
 
   }
 
   @override
   void dispose() {
     super.dispose();
-    Log.snackStream.close();
+    _log?.cancel();
   }
 
   // Override back button and disconnect

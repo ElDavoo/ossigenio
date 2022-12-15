@@ -33,7 +33,7 @@ class Log {
     return "$stacktrace: $msg";
   }
   // Make warnings shut up
-  static void l(String message) {
+  static void v(String message) {
     if (kDebugMode) {
       // Get the name of the calling function
       String caller = StackTrace.current.toString();
@@ -42,9 +42,18 @@ class Log {
     }
   }
 
-  static void addListener(BuildContext context) {
-    Log.snackStream.stream.listen((event) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  static void l (String message) {
+    // Get the name of the calling function
+    String caller = StackTrace.current.toString();
+    if (kDebugMode) {
+      print(formatMsg(caller, message));
+    }
+    snackStream.add(formatMsg(caller, message));
+  }
+
+  static StreamSubscription<String> addListener(BuildContext context) {
+    return Log.snackStream.stream.listen((event) {
+      ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               duration: const Duration(seconds: 1),

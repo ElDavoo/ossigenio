@@ -1,6 +1,8 @@
 /*
 Stateful widget for register page
  */
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
@@ -19,16 +21,18 @@ class _RegisterPageState extends State<RegisterPage> {
   final emailinputController = TextEditingController();
   final passwordinputController = TextEditingController();
 
+  StreamSubscription? _log;
+
   @override
   void initState() {
     super.initState();
-    Log.addListener(context);
+    _log = Log.addListener(context);
   }
 
   @override
   void dispose() {
     // Clean up the
-    Log.snackStream.close();
+    _log?.cancel();
     super.dispose();
   }
 

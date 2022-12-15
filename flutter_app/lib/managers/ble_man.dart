@@ -68,10 +68,9 @@ class BLEManager extends ChangeNotifier {
     if (_isScanning) {
       return;
     }
-    //_isScanning = true;
-    // Start scanning
     // Clear out the list of devices
     devices.clear();
+    // Start scanning
     scanFuture = flutterBlue.startScan();
     // Listen for devices
     /*StreamSubscription scanSubscription =
@@ -110,7 +109,7 @@ class BLEManager extends ChangeNotifier {
         processResult(r.device);
       }
     });
-    Log.l("Scanning...");
+    Log.v("Scanning...");
   }
 
   // Method to stop scanning for BLE devices
@@ -120,9 +119,7 @@ class BLEManager extends ChangeNotifier {
     }
     // Stop scanning
     flutterBlue.stopScan();
-    Log.l("Scanning stopped");
-
-    //_isScanning = false;
+    Log.v("Scanning stopped");
   }
 
   void processResult(BluetoothDevice device) {
@@ -148,14 +145,14 @@ class BLEManager extends ChangeNotifier {
     try {
       await device.connect().timeout(const Duration(seconds: 3));
     } on TimeoutException {
-      Log.l("Timeout!");
+      Log.v("Timeout!");
 
       return false;
     } on PlatformException catch (e) {
       if (e.code == 'already_connected') return true;
       return false;
     } on Exception catch (e) {
-      Log.l("Error connecting to device: $e");
+      Log.v("Error connecting to device: $e");
       return false;
     }
 
@@ -165,7 +162,7 @@ class BLEManager extends ChangeNotifier {
     // Check if Nordic UART Service is present
     for (var service in services) {
       if (service.uuid.toString() == nordicUARTID) {
-        Log.l("Found Nordic UART Service");
+        Log.v("Found Nordic UART Service");
 
         // Get the characteristics
         List<BluetoothCharacteristic> characteristics = service.characteristics;
@@ -174,7 +171,7 @@ class BLEManager extends ChangeNotifier {
 
         for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTRXID) {
-            Log.l("Found Nordic UART RX characteristic");
+            Log.v("Found Nordic UART RX characteristic");
 
             // Save the characteristic into the class
             uartRX = characteristic;
@@ -183,7 +180,7 @@ class BLEManager extends ChangeNotifier {
 
         for (var characteristic in characteristics) {
           if (characteristic.uuid.toString() == nordicUARTTXID) {
-            Log.l("Found Nordic UART TX characteristic");
+            Log.v("Found Nordic UART TX characteristic");
 
             // Subscribe to the TX characteristic
             characteristic.setNotifyValue(true);
@@ -208,7 +205,7 @@ class BLEManager extends ChangeNotifier {
             this.device = device;
             // Take the device mac address
             // store the device mac address in shared preferences
-            Log.l("mac address:${device.id.id}");
+            Log.v("mac address:${device.id.id}");
             PrefManager().write(
               PrefConstants.deviceMac,
               device.id.id,
@@ -230,7 +227,7 @@ class BLEManager extends ChangeNotifier {
     if (uartRX != null) {
       uartRX!.write(data);
     } else {
-      Log.l("UART RX characteristic not found");
+      Log.v("UART RX characteristic not found");
     }
   }
 
@@ -242,7 +239,7 @@ class BLEManager extends ChangeNotifier {
     // Check if Nordic UART Service is present
     for (var service in advertisementData.serviceUuids) {
       if (service.toString() == nordicUARTID) {
-        Log.l("Found Nordic UART Service");
+        Log.v("Found Nordic UART Service");
         return true;
       }
     }

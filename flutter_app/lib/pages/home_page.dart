@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +33,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   //BLEManager bleManager = BLEManager();
   // get BLEManager from ChangeNotifierProvider
+
+  StreamSubscription? _log;
+
   BLEManager get bleManager => context.read<BLEManager>();
 
   void _init() {
@@ -43,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
         bleManager.connectToDevice(value);
       }*/
     });
-    Log.addListener(context);
+    _log = Log.addListener(context);
 
   }
 
@@ -57,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     bleManager.stopBLEScan();
-    Log.snackStream.close();
+    _log?.cancel();
     super.dispose();
   }
 

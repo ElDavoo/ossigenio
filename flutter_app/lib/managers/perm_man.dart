@@ -39,7 +39,7 @@ class PermissionManager {
     // Show SnackBar
     //ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-      Log.l("Permission status: $_hasPermission");
+      Log.v("Permission status: $_hasPermission");
 
     return _hasPermission;
   }

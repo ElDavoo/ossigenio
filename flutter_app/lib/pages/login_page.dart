@@ -1,6 +1,8 @@
 /*
 A flutter login page that can also be used as a sign up page.
  */
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/pages/register_page.dart';
 
@@ -18,16 +20,18 @@ class _LoginPageState extends State<LoginPage> {
   final logininputController = TextEditingController();
   final registerinputController = TextEditingController();
 
+  StreamSubscription? _log;
+
   @override
   void initState() {
     super.initState();
-    Log.addListener(context);
+    _log = Log.addListener(context);
   }
 
   @override
   void dispose() {
     // Clean up the
-    Log.snackStream.close();
+    _log?.cancel();
     super.dispose();
   }
 

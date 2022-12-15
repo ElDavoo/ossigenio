@@ -39,26 +39,26 @@ class SerialComm {
   static Message? receive(List<int> list) {
     Uint8List data = Uint8List.fromList(list);
     if (data.length < 4) {
-      Log.l("data.length < 2");
+      Log.v("data.length < 2");
       return null;
     }
-    Log.l("Received: $data");
+    Log.v("Received: $data");
 
     // Check if the message is valid
     if (data[0] != startOfMessage) {
-      Log.l("Invalid start byte: ${data[data.length-2]} is not $startOfMessage");
+      Log.v("Invalid start byte: ${data[data.length-2]} is not $startOfMessage");
       return null;
     }
     // Check if the almost last byte is the end of message
     if (data[data.length - 2] != endOfMessage) {
-      Log.l("Invalid end byte, ${data[data.length - 2]} is not $endOfMessage");
+      Log.v("Invalid end byte, ${data[data.length - 2]} is not $endOfMessage");
       return null;
     }
     // Check checksum
     int calculatedChecksum = checksum(data.sublist(1, data.length - 2));
     int receivedChecksum = data[data.length - 1];
     if (calculatedChecksum != receivedChecksum) {
-      Log.l("Checksum should be $calculatedChecksum but it is $receivedChecksum");
+      Log.v("Checksum should be $calculatedChecksum but it is $receivedChecksum");
       //TODO calculate better checksum on bluefruit side
       //return null;
     }
@@ -66,24 +66,24 @@ class SerialComm {
       Uint8List payload = data.sublist(2, data.length - 2);
       switch (data[1]) {
         case MessageTypes.debugMessage:
-            Log.l("Debug message received");
+            Log.v("Debug message received");
           return DebugMessage.dbgconstr(data);
         case MessageTypes.co2Message:
-            Log.l("CO2 message received");
+            Log.v("CO2 message received");
           Message message = CO2Message.fromBytes(payload);
-          Log.l('$message');
+          Log.v('$message');
           return message;
         case MessageTypes.extendedMessage:
-          Log.l("Extended message received");
+          Log.v("Extended message received");
           // TODO
           return null;
         case MessageTypes.feedbackMessage:
-          Log.l("Feedback message received");
+          Log.v("Feedback message received");
           Message message = FeedbackMessage.fromBytes(payload);
-          Log.l('$message');
+          Log.v('$message');
           return message;
         default:
-          Log.l("Unknown message type");
+          Log.v("Unknown message type");
 
           return null;
       }

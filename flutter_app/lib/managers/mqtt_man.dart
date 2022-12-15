@@ -53,9 +53,9 @@ class MqttManager {
     client.logging(on: true);
     // TODO set the username and password
     try {
-      await client.connect('test', 'test2').then((value) => Log.l(value.toString()));
+      await client.connect('test', 'test2').then((value) => Log.v(value.toString()));
     } catch (e) {
-      Log.l(e.toString());
+      Log.v(e.toString());
     }
   }
   //constructor

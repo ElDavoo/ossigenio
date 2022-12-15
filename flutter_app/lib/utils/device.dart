@@ -19,7 +19,7 @@ class Device {
     mqttManager.connect('','');
     // listen to the stream and publish the messages
     bleManager.messagesStream?.listen((message) {
-      Log.l("Message received");
+      Log.v("Message received");
       if (message.direction == MessageDirection.received) {
           mqttManager.publish(message.message);
       }

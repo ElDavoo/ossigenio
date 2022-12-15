@@ -41,7 +41,7 @@ class AccountManager{
     };
     // send the request
     Response response = await dio.post(AccountConstants.urlLogin, data: body);
-    Log.l(response.data);
+    Log.v(response.data);
     // check the response
     if (response.statusCode == 200) {
       // login successful
@@ -69,7 +69,7 @@ class AccountManager{
     });
     // send the request
     Response response = await dio.post(AccountConstants.urlRegister, data: body);
-    Log.l(response.data);
+    Log.v(response.data);
     // check the response
     if (response.statusCode == 200) {
       // save account data in the local storage
