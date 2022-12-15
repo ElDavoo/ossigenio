@@ -152,7 +152,7 @@ class _DevicePageState extends State<DevicePage> {
                                             co2 = msg.co2;
                                           }
                                         }
-                                        return buildGauge('CO2', 300, 2000, co2);
+                                        return buildGauge('CO2', 150, 2000, co2);
                                       }),
                             ),
                           ),
