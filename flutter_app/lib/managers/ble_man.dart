@@ -49,6 +49,7 @@ class BLEManager extends ChangeNotifier {
   // List of allowed names
   static const List<String> allowedNames = [
     'Adafruit Bluefruit LE',
+    'AirQualityMonitor',
   ];
 
   BluetoothCharacteristic? uartRX;
