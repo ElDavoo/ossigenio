@@ -63,20 +63,48 @@ class BLEManager extends ChangeNotifier {
 
   Stream<MessageWithDirection>? messagesStream;
 
-  //Singleton class
   // Method to scan for BLE devices
   void startBLEScan() async {
     if (_isScanning) {
       return;
     }
-    _isScanning = true;
+    //_isScanning = true;
     // Start scanning
     // Clear out the list of devices
     devices.clear();
     scanFuture = flutterBlue.startScan();
     // Listen for devices
-    StreamSubscription scanSubscription =
+    /*StreamSubscription scanSubscription =
         flutterBlue.scanResults.listen((results) {
+      // Do something with scan results
+      for (ScanResult r in results) {
+        processResult(r.device);
+      }
+    });*/
+    flutterBlue.scanResults
+    .map((results) {
+      List<ScanResult> list = [];
+      for (ScanResult r in results) {
+        if (r.device.type != BluetoothDeviceType.le) {
+          continue;
+        }
+        if (!allowedNames.contains(r.device.name)) {
+          continue;
+        }
+        //TODO
+        if (!processAdv(r.advertisementData)) {
+          continue;
+        }
+        // Filter weak devices
+        if (r.rssi < -80) {
+          continue;
+        }
+        // Filter devices
+        list.add(r);
+      }
+      return list;
+    }).where((results) => results.isNotEmpty)
+        .listen((results) {
       // Do something with scan results
       for (ScanResult r in results) {
         processResult(r.device);
@@ -94,27 +122,10 @@ class BLEManager extends ChangeNotifier {
     flutterBlue.stopScan();
     Log.l("Scanning stopped");
 
-    _isScanning = false;
+    //_isScanning = false;
   }
 
   void processResult(BluetoothDevice device) {
-    // Filter out devices that are already in the list
-    if (devices.contains(device)) {
-      return;
-    }
-    // Only filter BLE devices
-    if (device.type != BluetoothDeviceType.le) {
-      // Add the device to the list
-      return;
-    }
-    //Only devices with allowed OUIs
-    /*if (!allowedOUIs.contains(device.id.id.substring(0, 8))) {
-      return;
-    }*/
-    // Only devices with allowed names
-    if (!allowedNames.contains(device.name)) {
-      return;
-    }
     // If the device is the one registered in the preferences, connect to it
     PrefManager().read(PrefConstants.deviceMac)
         .then((value) => {
@@ -225,5 +236,16 @@ class BLEManager extends ChangeNotifier {
 
   void sendMsg(int msgIndex){
     send(SerialComm.buildMsgg(msgIndex));
+  }
+
+  bool processAdv(AdvertisementData advertisementData) {
+    // Check if Nordic UART Service is present
+    for (var service in advertisementData.serviceUuids) {
+      if (service.toString() == nordicUARTID) {
+        Log.l("Found Nordic UART Service");
+        return true;
+      }
+    }
+    return false;
   }
 }
