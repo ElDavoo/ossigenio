@@ -9,30 +9,16 @@ Please do not divulgate.
 v0.2: first version based on ESP32
 */
 
-// start BLE include section
 #include <Arduino.h>
 #include <SPI.h>
 #include <stdint.h>
-/*#include "Adafruit_BLE.h"
-#include "Adafruit_BluefruitLE_SPI.h"
-#include "Adafruit_BluefruitLE_UART.h"
-#include "BluefruitConfig.h"
-#if SOFTWARE_SERIAL_AVAILABLE
-  #include <SoftwareSerial.h>
-#endif
-#define FACTORYRESET_ENABLE         1
-#define MINIMUM_FIRMWARE_VERSION    "0.6.6"
-#define MODE_LED_BEHAVIOUR          "MODE"
-Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);*/
+
+// start BLE include section
 #include "BleSerial.h"
 BleSerial ble;
 // end BLE section
 
 // start DHT11 include section
-/*#include <DHT.h>
-#include <DHT_U.h>
-#define DHTTYPE    DHT11
-DHT_Unified dht(5, DHTTYPE);*/
 #include "HS300x.h"
 using namespace HS300x;
 cHS300x gHs300x {Wire};
@@ -46,9 +32,6 @@ volatile uint8_t feedback = 0; //volatile because this variable is read by inter
 // end FEEDBACK include section
 
 // start MQ135 section
-/*#include "MQ135.h"
-#define co2Pin A5
-MQ135 mqSensor(co2Pin);*/
 #include <Wire.h>
 #include "SparkFunCCS811.h"
 #define CCS811_ADDR 0x5A //Alternate I2C Address
@@ -64,7 +47,6 @@ CCS811 mySensor(CCS811_ADDR);
 int autoSend = 10000;
 unsigned long lastExecutedMillis = 0; // to campionate environment datas every 1 sec
 unsigned long lastExecutedMillisCount = 0; // to send automatically environment datas every 10 secs
-//sensors_event_t event;
 float temperature;
 float humidity;
 float co2;
@@ -79,16 +61,6 @@ void error(const __FlashStringHelper*err) {
   while (1);
 }
 
-/* 
-  TO BE USED ONLY FOR DEV PURPOSE
-  TO BE DELETED FOR PRUDUCTION
-  IT'S PURPOSE IS TO RETRIEVE CORRECT R0 VALUE FOR CO2
-*/
-/*float co2_r0_init(){
-  float resistanceZero = mqSensor.getRZeroCO2(); //TEMPORARY!
-  return resistanceZero;
-}*/
-
 void ble_setup(){
   ble.begin("AirQualityMonitor");
   //Serial.println("ESP32 Bluetooth");
@@ -96,13 +68,10 @@ void ble_setup(){
 
 void setup() {
   // put your setup code here, to run once:
-  //Serial.begin(115200);
   Wire.begin(17,16);
   mySensor.begin();
   gHs300x.begin();
   ble_setup();
-  //dht.begin();
-  //sensor_t sensor;
 
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
@@ -119,11 +88,6 @@ void loop() {
 
   if (currentMillis - lastExecutedMillis >= campTime) {
     lastExecutedMillis = currentMillis; // save the last executed time
-    //dht.temperature().getEvent(&event);
-    //temperature=event.temperature;
-    //dht.humidity().getEvent(&event);
-    //humidity=event.relative_humidity;
-    //co2 = mqSensor.getCO2PPM();
     if (gHs300x.getTemperatureHumidity(m)){
       m.extract(temperature, humidity);
     }
