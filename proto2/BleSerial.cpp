@@ -9,13 +9,17 @@ bool BleSerial::connected()
 void BleSerial::onConnect(BLEServer *pServer)
 {
 	bleConnected = true;
-	if(enableLed) digitalWrite(ledPin, HIGH);
+	if(enableLed) digitalWrite(ledPin, LOW); 
+	/* 
+	Turning on connection led on connect. Why i'm using low instead of HIGH? Because on this devkit, led are connected to +3.3V instead of GND.
+	Check datasheet for further details
+	*/
 }
 
 void BleSerial::onDisconnect(BLEServer *pServer)
 {
 	bleConnected = false;
-	if(enableLed) digitalWrite(ledPin, LOW);
+	if(enableLed) digitalWrite(ledPin, HIGH); //turning off connection led on disconnect; see comments before
 	Server->startAdvertising();
 }
 
@@ -134,6 +138,7 @@ void BleSerial::begin(const char *name,bool enable_led, int led_pin)
 
 	if(enableLed){
 		pinMode(ledPin,OUTPUT);
+		digitalWrite(ledPin, HIGH); //turning off led at library startup (otherwise it automatically turning on at startup)
 	}
 	//characteristic property is what the other device does.
 

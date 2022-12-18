@@ -12,31 +12,35 @@ v0.2: first version based on ESP32
 #include <Arduino.h>
 #include <SPI.h>
 #include <stdint.h>
+#include <Wire.h>
 
 // start BLE include section
 #include "BleSerial.h"
 BleSerial ble;
+#define ledPin 32
 // end BLE section
 
-// start DHT11 include section
+// start HS3001 include section (temperature and humidity sensor)
 #include "HS300x.h"
 using namespace HS300x;
 cHS300x gHs300x {Wire};
-// end DHT11 section
+// end HS3001 section
 
 // start FEEDBACK include section
 #define positiveButtonPin 2
 #define neutralButtonPin 3
 #define negativeButtonPin 1
 volatile uint8_t feedback = 0; //volatile because this variable is read by interrupt fuctions
+volatile bool feed = false; //used to avoid too feedback consecutively
 // end FEEDBACK include section
 
-// start MQ135 section
-#include <Wire.h>
+// start CCS811 section (co2 sensor)
 #include "SparkFunCCS811.h"
-#define CCS811_ADDR 0x5A //Alternate I2C Address
+#define CCS811_ADDR 0x5A //I2C Address (is not hardcoded into library for compatibility purpose)
 CCS811 mySensor(CCS811_ADDR);
-// end MQ135 section
+#include "ens210.h" //temp sensor on board of ccs811 chip; used to monitorate last one warming-up
+ENS210 ens210;
+// end CCS811 section
 
 // start serial parsing section
 #include "serialProtocol.h"
@@ -50,41 +54,42 @@ unsigned long lastExecutedMillisCount = 0; // to send automatically environment 
 float temperature;
 float humidity;
 float co2;
-int raw;
+int raw; //seems not possible to read raw data from ccs811; used for ens210 temperature reading (ccs811 warming-up)
 // end global variables section
 
 boolean debug = false; //to enable debug mode
 
-// A small helper
-void error(const __FlashStringHelper*err) {
-  Serial.println(err);
-  while (1);
-}
-
 void ble_setup(){
-  ble.begin("AirQualityMonitor");
-  //Serial.println("ESP32 Bluetooth");
+  ble.begin("AirQualityMonitor", true, ledPin); //put ble adv name here
 }
 
 void setup() {
   // put your setup code here, to run once:
-  Wire.begin(17,16);
-  mySensor.begin();
-  gHs300x.begin();
+  Wire.begin(17,16); //initialize i2c comm
+  mySensor.begin(); //initialize ccs811 sensor
+  gHs300x.begin(); //initialize gHs3001 sensor
   ble_setup();
 
+  /*
+  // MAYBE, THIS SECTION, COULD BE DEPRECATED???
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
-  pinMode(negativeButtonPin, INPUT);
+  pinMode(negativeButtonPin, INPUT); //
   attachInterrupt(1, positive, RISING); //INT1 ASSOCIATO AL PIN 2 -> positiveButtonPin
   attachInterrupt(0, neutral, RISING); //INT0 ASSOCIATO AL PIN 3 -> neutralButtonPin
   attachInterrupt(3, negative, RISING); //INT3 ASSOCIATO AL PIN 1 -> negativeButtonPin
+  */
+  touchAttachInterrupt(T0, positive, 40); // PIN 4 (on right side)
+  touchAttachInterrupt(T2, neutral, 40); // PIN 2 (on right side)
+  touchAttachInterrupt(T4, negative, 40); // PIN 13 (on left side)
+  // why i'm not using T1? Touch1 >>  Not available on Devkit 30 pin version but available on Devkit 36 pin version
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   unsigned long currentMillis = millis();
   cHS300x::Measurements m;
+  int t_data, t_status, h_data, h_status; //necessary for ens210
 
   if (currentMillis - lastExecutedMillis >= campTime) {
     lastExecutedMillis = currentMillis; // save the last executed time
@@ -94,12 +99,14 @@ void loop() {
     if (mySensor.dataAvailable()) {
       mySensor.readAlgorithmResults();
       co2 = (float) mySensor.getCO2();
-      raw = mySensor.getBaseline();
+      ens210.measure(&t_data, &t_status, &h_data, &h_status );
+      raw = (int) ens210.toCelsius(t_data,10)/10.0; //temperature of co2 sensor?
     }
+    feed = false; //re-enabling feedback disabled into isr
   }
 
   // feedback interrupt result management
-  if (feedback == 1 || feedback == 2 || feedback == 3) {
+  if ((feedback == 1 || feedback == 2 || feedback == 3) && feed == false) {
     getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
     feedback = 0;
   }
@@ -117,7 +124,7 @@ void loop() {
     getMsg1((int) temperature,(int) humidity,(int) co2);
   }
   /*
-  For other types of messages, proto1 will wait for external input and sends they
+  For other types of messages, proto2 will wait for external input and sends they
   according to it.
   */
   if(buf[0] == 0xAA && buf[2] == 0xFF){
@@ -150,23 +157,5 @@ void loop() {
         break;
     }
   }
-
-
-  /*if (buf[3] == 'F') {
-    getMsg0((int) temperature, (int) humidity, raw);
-  }
-  if (buf[3] == 'E' || watchDog[0] == 'E') {
-    getMsg1((int) temperature,(int) humidity,(int) co2);
-  }
-  if (buf[3] == 'C') getMsg3(); //VERSION MESSAGE
-  if (buf[3] == 'B') { //forced sending feedback message -- Debug purpose only
-    feedback = 123;
-    getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
-    feedback = 0;
-    debug = !debug; // enable/disable debug mode
-    if (debug == true) ble.print("Debug mode enabled.");
-    else ble.print("Debug mode disabled.");
-  }*/
-  //if(debug == true) ble.print("Check!"); //ONLY FOR DEBUG PURPOSE!
 
 }

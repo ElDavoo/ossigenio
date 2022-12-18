@@ -19,12 +19,13 @@ v0.0.5 - rewrited getMsg1 and getMsg3
 #include "BleSerial.h"
 extern BleSerial ble;
 extern volatile uint8_t feedback;
+extern volatile bool feed;
 #include <stdint.h>
 #define MODEL 1
 #define VERSION 1
 
-#define lowByte(w) ((uint8_t) ((w) & 0xff))
-#define highByte(w) ((uint8_t) ((w) >> 8))
+#define lowByte(w) ((uint8_t) ((w) & 0xff)) // esp32 seems not have lowByte and highByte functions ootb
+#define highByte(w) ((uint8_t) ((w) >> 8)) // declared in this way to save memory
 
 /*void getMsg0(int temp, int humidity, int raw_data){ //OLD VERSION
     char buffer[5];
@@ -214,7 +215,7 @@ void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     ble.write(lowByte(co2));
     ble.write(feedback);*/
     buffer[0] = 0xAA;
-    buffer[1] = 0x81;
+    buffer[1] = 0x84;
     buffer[2] = (uint8_t) temp;
     buffer[3] = (uint8_t) humidity;
     buffer[4] = highByte(co2);
@@ -281,12 +282,15 @@ uint8_t checksumCalculator(uint8_t *data, uint8_t length){
 void positive(){
     //ble.print("Think positive!"); //DEBUG
     feedback=1;
+    feed = true;
 }
 void neutral(){
     //ble.print("N"); //DEBUG
     feedback=2;
+    feed = true;
 }
 void negative(){
     //ble.print(":("); //DEBUG
     feedback=3;
+    feed = true;
 }
