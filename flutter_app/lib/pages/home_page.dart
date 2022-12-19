@@ -37,10 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   StreamSubscription? _log;
 
-  BLEManager get bleManager => context.read<BLEManager>();
-
   void _init() {
-    bleManager.startBLEScan();
+    BLEManager().startBLEScan();
     // Read the device mac address from shared preferences
     PrefManager().read(PrefConstants.deviceMac).then((value) {
       /*if (value != null) {
@@ -60,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    bleManager.stopBLEScan();
+    BLEManager().stopBLEScan();
     _log?.cancel();
     super.dispose();
   }

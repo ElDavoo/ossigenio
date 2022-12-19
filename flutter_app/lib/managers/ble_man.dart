@@ -8,7 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import '../../utils/serial.dart';
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+
 
 import '../Messages/message.dart';
 import '../utils/device.dart';
@@ -36,7 +37,7 @@ class BLEManager extends ChangeNotifier {
   }
 
   // Instance of flutter_blue
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
+  final FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
 
 
 

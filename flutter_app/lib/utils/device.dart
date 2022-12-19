@@ -1,7 +1,7 @@
 /*
 This class represents a device.
  */
-import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../Messages/message.dart';
 import '../managers/ble_man.dart';

@@ -3,7 +3,6 @@ Class to communicate with the serial port.
  */
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_blue/flutter_blue.dart';
 
 import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
