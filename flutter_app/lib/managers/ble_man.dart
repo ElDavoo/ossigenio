@@ -60,6 +60,7 @@ class BLEManager extends ChangeNotifier {
   static const List<String> allowedNames = [
     'Adafruit Bluefruit LE',
     'AirQualityMonitor',
+    'AirQualityMonitorEBV',
   ];
 
   static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
