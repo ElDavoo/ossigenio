@@ -63,7 +63,8 @@ class BLEManager extends ChangeNotifier {
   Future<Device> startBLEScan() async {
     Device? device;
     if (_isScanning) {
-      return Future.error('Already scanning');
+      // Wait for the scan to finish
+      await flutterBlue.stopScan();
     }
     bool hasPermissions = await PermissionManager().checkPermissions();
     if (hasPermissions) {

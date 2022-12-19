@@ -74,69 +74,64 @@ class _MyHomePageState extends State<MyHomePage> {
         initialIndex: 0,
         length: 2,
         child: Scaffold(
-          appBar: AppBar(
-            // TODO: Dynamically change the accounts icon based on account status
-            leading: IconButton(
-              icon: const Icon(Icons.no_accounts),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
-              },
-            ),
-            title: Text(AppLocalizations.of(context)!.title),
-            bottom: const TabBar(
-              tabs: <Widget>[
-                Tab(
-                  text: 'Device',
-                ),
-                Tab(
-                  text: 'Messages (debug)',
-                ),
+            appBar: AppBar(
+              // TODO: Dynamically change the accounts icon based on account status
+              leading: IconButton(
+                icon: const Icon(Icons.no_accounts),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+              ),
+              title: Text(AppLocalizations.of(context)!.title),
+              bottom: const TabBar(
+                tabs: <Widget>[
+                  Tab(
+                    text: 'Device',
+                  ),
+                  Tab(
+                    text: 'Messages (debug)',
+                  ),
+                ],
+              ),
+              actions: const [
+                Icon(Icons.more_vert),
               ],
             ),
-            actions: const [
-              Icon(Icons.more_vert),
-            ],
-          ),
-          body:
-              FutureBuilder<Device>(
+            body: FutureBuilder<Device>(
                 future: BLEManager().startBLEScan(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     _device = snapshot.data;
-                    return
-                      ChangeNotifierProvider(
-                          create: (context) => _device!,
-                        child: TabBarView(
-                          children: <Widget>[
-                            Consumer<Device>(
-                              builder: (context, device, child) {
-                                return devicePage();
-                              },
-                            ),
-                            debugPage(),
-                          ],
-                        ),
-
-                      );
-
-
-
+                    return ChangeNotifierProvider(
+                      create: (context) => _device!,
+                      child: TabBarView(
+                        children: <Widget>[
+                          Consumer<Device>(
+                            builder: (context, device, child) {
+                              return devicePage(device);
+                            },
+                          ),
+                          Consumer<Device>(
+                            builder: (context, device, child) {
+                              return debugPage(device);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return const CircularProgressIndicator();
-                }
-              )
-
-          ));
+                  return const Center(child: CircularProgressIndicator());
+                })));
   }
 
   //Build a gauge with minimum, maximum and current value
-  Widget buildGauge(String title, int min, int max, int value) {
+  static Widget buildGauge(String title, int min, int max, int value) {
     return Stack(
       children: [
         SfRadialGauge(
@@ -191,45 +186,45 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<void> refresh() async {
-    BLEManager.sendMsg(_device!, MessageTypes.msgRequest1);
+  static Future<void> refresh(Device device) async {
+    BLEManager.sendMsg(device, MessageTypes.msgRequest1);
     //BLEManager().serial?.sendMsg(MessageTypes.msgRequest2);
     //Wait to get a packet from the device, so listen to the stream for one packet
-    await _device!.messagesStream.first;
+    await device.messagesStream.first;
   }
 
-  Widget debugPage() {
+  Widget debugPage(Device device) {
     return Column(
       children: <Widget>[
         Wrap(
           children: [
             TextButton(
               onPressed: () {
-                BLEManager.sendMsg(_device!, MessageTypes.msgRequest0);
+                BLEManager.sendMsg(device, MessageTypes.msgRequest0);
               },
               child: const Text('Request 0'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager.sendMsg(_device!, MessageTypes.msgRequest1);
+                BLEManager.sendMsg(device, MessageTypes.msgRequest1);
               },
               child: const Text('Request 1'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager.sendMsg(_device!, MessageTypes.msgRequest2);
+                BLEManager.sendMsg(device, MessageTypes.msgRequest2);
               },
               child: const Text('Request 2'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager.sendMsg(_device!, MessageTypes.msgRequest3);
+                BLEManager.sendMsg(device, MessageTypes.msgRequest3);
               },
               child: const Text('Request 3'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager.sendMsg(_device!, MessageTypes.msgRequest4);
+                BLEManager.sendMsg(device, MessageTypes.msgRequest4);
               },
               child: const Text('Request 4'),
             ),
@@ -238,9 +233,9 @@ class _MyHomePageState extends State<MyHomePage> {
         Expanded(
           //Consumer of blemanager
           child:
-          // changenotifierprovider
+              // changenotifierprovider
 
-          Consumer<Device>(
+              Consumer<Device>(
             builder: (context, device, child) {
               return ListView.builder(
                 itemCount: device.messages.length,
@@ -256,7 +251,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget devicePage() {
+  static Widget devicePage(Device device) {
     return RefreshIndicator(
       child: GridView.count(
         crossAxisCount: 2,
@@ -268,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child:
                   // Gauge which listens to message stream
                   StreamBuilder<MessageWithDirection>(
-                      stream: _device!.messagesStream,
+                      stream: device.messagesStream,
                       builder: (context, snapshot) {
                         int co2 = 0;
                         if (snapshot.hasData) {
@@ -295,7 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<MessageWithDirection>(
-                  stream: _device!.messagesStream,
+                  stream: device.messagesStream,
                   builder: (context, snapshot) {
                     int temp = 0;
                     if (snapshot.hasData) {
@@ -328,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<MessageWithDirection>(
-                  stream: _device!.messagesStream,
+                  stream: device.messagesStream,
                   builder: (context, snapshot) {
                     int hum = 0;
                     if (snapshot.hasData) {
@@ -361,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<MessageWithDirection>(
-                  stream: _device!.messagesStream,
+                  stream: device.messagesStream,
                   builder: (context, snapshot) {
                     int data = 0;
                     if (snapshot.hasData) {
@@ -380,7 +375,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<int>(
-                  stream: BLEManager.rssiStream(_device!),
+                  stream: BLEManager.rssiStream(device),
                   builder: (context, snapshot) {
                     int data = 0;
                     if (snapshot.hasData) {
@@ -394,7 +389,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       onRefresh: () {
-        return refresh();
+        return refresh(device);
       },
     );
   }
