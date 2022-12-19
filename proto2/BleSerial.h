@@ -5,6 +5,7 @@
 #include <BLEUtils.h>
 #include <BLEServer.h>
 #include <BLE2902.h>
+#include <esp_bt_device.h> //to retrieve device mac address
 #include "ByteRingBuffer.h"
 
 
@@ -36,6 +37,7 @@ public:
 	BLEServer *Server;
 
 	BLEAdvertising *pAdvertising;
+	BLEAdvertisementData oAdvertisementData = BLEAdvertisementData();
 	//BLESecurity *pSecurity;
 
 	//Services

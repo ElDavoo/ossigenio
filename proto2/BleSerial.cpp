@@ -1,6 +1,7 @@
 #include "BleSerial.h"
 using namespace std;
 
+
 bool BleSerial::connected()
 {
 	return Server->getConnectedCount() > 0;
@@ -151,7 +152,13 @@ void BleSerial::begin(const char *name,bool enable_led, int led_pin)
 
 	SetupSerialService();
 
+	const uint8_t* point = esp_bt_dev_get_address();
+	char ManufacturerData[8] = {0x75,0xf1}; //0xF175; id produttore preso a caso tra quelli liberi
+  	for (int i = 0; i < 6; i++) ManufacturerData[i+2] = point[i];
+	oAdvertisementData.setManufacturerData(ManufacturerData); //to add mac into manufacter data; thanks Apple! -.-"
+
 	pAdvertising = BLEDevice::getAdvertising();
+	pAdvertising->setAdvertisementData(oAdvertisementData);
 	pAdvertising->addServiceUUID(BLE_SERIAL_SERVICE_UUID);
 	pAdvertising->setScanResponse(true);
 	pAdvertising->setMinPreferred(0x06); // functions that help with iPhone connections issue
