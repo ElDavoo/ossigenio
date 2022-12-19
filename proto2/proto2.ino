@@ -27,9 +27,6 @@ cHS300x gHs300x {Wire};
 // end HS3001 section
 
 // start FEEDBACK include section
-#define positiveButtonPin 2
-#define neutralButtonPin 3
-#define negativeButtonPin 1
 volatile uint8_t feedback = 0; //volatile because this variable is read by interrupt fuctions
 volatile bool feed = false; //used to avoid too feedback consecutively
 // end FEEDBACK include section
@@ -60,7 +57,7 @@ int raw; //seems not possible to read raw data from ccs811; used for ens210 temp
 boolean debug = false; //to enable debug mode
 
 void ble_setup(){
-  ble.begin("AirQualityMonitor", true, ledPin); //put ble adv name here
+  ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here
 }
 
 void setup() {
@@ -79,6 +76,9 @@ void setup() {
   attachInterrupt(0, neutral, RISING); //INT0 ASSOCIATO AL PIN 3 -> neutralButtonPin
   attachInterrupt(3, negative, RISING); //INT3 ASSOCIATO AL PIN 1 -> negativeButtonPin
   */
+  /*touchAttachInterrupt(T8, positive, 40); // PIN 33 (left side)
+  touchAttachInterrupt(T7, neutral, 40); // PIN 27 (left side)
+  touchAttachInterrupt(T4, negative, 40);*/ // PIN 13 (left side)
   touchAttachInterrupt(T0, positive, 40); // PIN 4 (on right side)
   touchAttachInterrupt(T2, neutral, 40); // PIN 2 (on right side)
   touchAttachInterrupt(T4, negative, 40); // PIN 13 (on left side)

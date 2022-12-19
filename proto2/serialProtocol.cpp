@@ -23,45 +23,17 @@ extern volatile bool feed;
 #include <stdint.h>
 #define MODEL 1
 #define VERSION 1
+#include "serialNumber.h"
+extern const uint32_t serialNumber;
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff)) // esp32 seems not have lowByte and highByte functions ootb
 #define highByte(w) ((uint8_t) ((w) >> 8)) // declared in this way to save memory
-
-/*void getMsg0(int temp, int humidity, int raw_data){ //OLD VERSION
-    char buffer[5];
-    //ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
-    ble.write(0xAA);
-    ble.write(0x80);
-    sprintf(buffer, "%0.5d", temp);
-	ble.print(buffer); 
-	sprintf(buffer, "%0.5d", humidity);
-	ble.print(buffer); 
-    sprintf(buffer, "%0.5d", raw_data);
-	ble.print(buffer); 
-
-    uint8_t message[4];
-
-    message[0] = (uint8_t) 0xAA80;
-    message[1] = (uint8_t) temp;
-    message[2] = (uint8_t) humidity;
-    message[3] = (uint8_t) raw_data;
-
-    int crc = checksumCalculator(message,4);
-    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-    sprintf(buffer, "%0.5d", crc);
-	ble.print(buffer); 
-}*/
 
 void getMsg0(int temp, int humidity, int raw_data){
     //char buffer[5];
     //ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
     uint8_t buffer[8];
-    /*ble.write(0xAA);
-    ble.write(0x80);
-    ble.write((uint8_t) temp);
-    ble.write((uint8_t) humidity);
-    ble.write(highByte(raw_data));
-    ble.write(lowByte(raw_data));*/
+
     buffer[0] = 0xAA;
     buffer[1] = 0x80;
     buffer[2] = (uint8_t) temp;
@@ -69,7 +41,6 @@ void getMsg0(int temp, int humidity, int raw_data){
     buffer[4] = highByte(raw_data);
     buffer[5] = lowByte(raw_data);
     buffer[6] = 0xFF;
-
 
     uint8_t message[4];
 
@@ -85,42 +56,10 @@ void getMsg0(int temp, int humidity, int raw_data){
     ble.write(buffer,8);
 }
 
-/*void getMsg1(int temp, int humidity, int co2) { //OLD VERSION
-    char buffer[5];
-    //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
-    ble.write(0xAA);
-    ble.write(0x81);
-    sprintf(buffer, "%0.5d", temp);
-	ble.print(buffer); 
-	sprintf(buffer, "%0.5d", humidity);
-	ble.print(buffer); 
-    sprintf(buffer, "%0.5d", co2);
-	ble.print(buffer); 
-
-    uint8_t message[4];
-
-    message[0] = (uint8_t) 0xAA81;
-    message[1] = (uint8_t) temp;
-    message[2] = (uint8_t) humidity;
-    message[3] = (uint8_t) co2;
-
-    int crc = checksumCalculator(message,4);
-    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-    sprintf(buffer, "%0.5d", crc);
-	ble.print(buffer); 
-}*/
-
 void getMsg1(int temp, int humidity, int co2) {
     //char buffer[5];
 
     uint8_t buffer[8];
-    /*ble.write(0xAA); //AA, numero campi e tipo --- 0xAA81 = dec43649
-    ble.write(0x81);
-    ble.write((uint8_t) temp);
-    ble.write((uint8_t) humidity);
-    ble.write(highByte(co2));
-    ble.write(lowByte(co2));*/
-
     uint8_t message[4];
 
     message[0] = (uint8_t) 0xAA81;
@@ -149,8 +88,8 @@ void getMsg2(/*NOT YET IMPLEMENTED*/){
 void getMsg3(){
     //char buffer[5];
     //ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
-    uint8_t battery = 0;
-    uint8_t buffer[7];
+    uint8_t battery = 100;
+    uint8_t buffer[11];
     /*ble.write(0xAA);
     ble.write(0x83);
     ble.write((uint8_t) MODEL);
@@ -160,60 +99,37 @@ void getMsg3(){
     buffer[1] = 0x83;
     buffer[2] = (uint8_t) MODEL;
     buffer[3] = (uint8_t) VERSION;
-    buffer[4] = battery;
-    buffer[5] = 0xFF;
+    buffer[4] = (uint8_t) ((serialNumber) >> 24); //primo byte
+    buffer[5] = (uint8_t) (((serialNumber) & 0x00ff0000) >> 16); //secondo
+    buffer[6] = (uint8_t) (((serialNumber) & 0x0000ff00) >> 8); //terzo
+    buffer[7] = (uint8_t) (((serialNumber) & 0x000000ff)); //quarto
+    buffer[8] = battery;
+    buffer[9] = 0xFF;
 
-    uint8_t message[4];
+    uint8_t message[9];
 
-    message[0] = (uint8_t) 0xAA83;
-    message[1] = (uint8_t) MODEL;
-    message[2] = (uint8_t) VERSION;
-    message[3] = (uint8_t) 0;
+    message[0] = (uint8_t) 0xAA;
+    message[1] = (uint8_t) 0x83;
+    message[2] = (uint8_t) MODEL;
+    message[3] = (uint8_t) VERSION;
+    message[4] = (uint8_t) ((serialNumber) >> 24); //primo byte
+    message[5] = (uint8_t) (((serialNumber) & 0x00ff0000) >> 16); //secondo
+    message[6] = (uint8_t) (((serialNumber) & 0x0000ff00) >> 8); //terzo
+    message[7] = (uint8_t) (((serialNumber) & 0x000000ff)); //quarto
+    message[8] = (uint8_t) battery;
 
-    uint8_t crc = checksumCalculator(message,4); 
+    uint8_t crc = checksumCalculator(message,9); 
     //ble.write(0xFF);
 	//ble.write(crc);
-    buffer[6] = crc;
-    ble.write(buffer,7); 
+    buffer[10] = crc;
+    ble.write(buffer,11); 
 }
-
-/*void getMsg3(){ //OLD VERSION
-    char buffer[5];
-    //ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
-    ble.write(0xAA);
-    ble.write(0x83);
-	sprintf(buffer, "%0.5d", MODEL);
-	ble.print(buffer);  
-	sprintf(buffer, "%0.5d", VERSION);
-	ble.print(buffer);  
-    sprintf(buffer, "%0.5d", 0); //battery value
-	ble.print(buffer); 
-
-    uint8_t message[4];
-
-    message[0] = (uint8_t) 0xAA83;
-    message[1] = (uint8_t) MODEL;
-    message[2] = (uint8_t) VERSION;
-    message[3] = (uint8_t) 0;
-
-    int crc = checksumCalculator(message,4);
-    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc
-    sprintf(buffer, "%0.5d", crc);
-	ble.print(buffer); 
-}*/
 
 void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     //char buffer[5];
     //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
     uint8_t buffer[9];
 
-    /*ble.write(0xAA);
-    ble.write(0x94);
-    ble.write((uint8_t) temp);
-    ble.write((uint8_t) humidity);
-    ble.write(highByte(co2));
-    ble.write(lowByte(co2));
-    ble.write(feedback);*/
     buffer[0] = 0xAA;
     buffer[1] = 0x84;
     buffer[2] = (uint8_t) temp;
@@ -237,34 +153,6 @@ void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     buffer[8] = crc;
     ble.write(buffer,9);
 }
-
-/*void getMsg4(int temp, int humidity, int co2, uint8_t feedback) { //OLD VERSION
-    char buffer[5];
-    //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
-    ble.write(0xAA);
-    ble.write(0x94);
-    sprintf(buffer, "%0.5d", temp);
-	ble.print(buffer); 
-	sprintf(buffer, "%0.5d", humidity);
-	ble.print(buffer); 
-    sprintf(buffer, "%0.5d", co2);
-	ble.print(buffer); 
-    sprintf(buffer, "%0.5d", feedback);
-	ble.print(buffer); 
-
-    uint8_t message[5];
-
-    message[0] = (uint8_t) 0xAA81;
-    message[1] = (uint8_t) temp;
-    message[2] = (uint8_t) humidity;
-    message[3] = (uint8_t) co2;
-    message[4] = (uint8_t) feedback;
-
-    int crc = checksumCalculator(message,5);
-    ble.print(0xFFFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-    sprintf(buffer, "%0.5d", crc);
-	ble.print(buffer); 
-}*/
 
 uint8_t checksumCalculator(uint8_t *data, uint8_t length){
    uint8_t curr_crc = 0x0000;

@@ -2,6 +2,5 @@
 **/.idea
 flask/secrets.env
 mqtt.passwords
-proto1/build/*
-proto1/build/*
+build/*
 .vscode/arduino.json
