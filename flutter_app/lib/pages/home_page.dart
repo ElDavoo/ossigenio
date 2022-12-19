@@ -355,6 +355,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
             ),
           ),
+          Card(
+            child: Center(
+              child: StreamBuilder<int>(
+                  stream: BLEManager().rssiStream(),
+                  builder: (context, snapshot) {
+                    int data = 0;
+                    if (snapshot.hasData) {
+                      // abs of rssi
+                      data = snapshot.data!.abs();
+                    }
+                    return buildGauge(data.toString(), 40, 100, data);
+                  }),
+            ),
+          ),
         ],
       ),
       onRefresh: () {

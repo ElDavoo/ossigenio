@@ -268,4 +268,14 @@ class BLEManager extends ChangeNotifier {
     }
     return false;
   }
+
+  Stream<int> rssiStream() async* {
+    if (device != null) {
+      for (;;) {
+        yield await device!.device.readRssi();
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    }
+
+  }
 }
