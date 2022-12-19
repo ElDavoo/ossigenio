@@ -13,6 +13,7 @@ import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
 import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
+import '../utils/device.dart';
 import '../utils/log.dart';
 import 'login_page.dart';
 
@@ -36,9 +37,9 @@ class _MyHomePageState extends State<MyHomePage> {
   // get BLEManager from ChangeNotifierProvider
 
   StreamSubscription? _log;
+  Device? _device;
 
   void _init() {
-    BLEManager().startBLEScan();
     // Read the device mac address from shared preferences
     PrefManager().read(PrefConstants.deviceMac).then((value) {
       /*if (value != null) {
@@ -99,21 +100,39 @@ class _MyHomePageState extends State<MyHomePage> {
               Icon(Icons.more_vert),
             ],
           ),
-          body: TabBarView(
-            children: <Widget>[
-              Consumer<BLEManager>(
-                builder: (context, bleManager, child) {
-                  if (bleManager.device != null) {
-                    return DevicePage();
-                  } else {
-                    return const Center(child: Text('No device connected'));
+          body:
+              FutureBuilder<Device>(
+                future: BLEManager().startBLEScan(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    _device = snapshot.data;
+                    return
+                      ChangeNotifierProvider(
+                          create: (context) => _device!,
+                        child: TabBarView(
+                          children: <Widget>[
+                            Consumer<Device>(
+                              builder: (context, device, child) {
+                                return devicePage();
+                              },
+                            ),
+                            debugPage(),
+                          ],
+                        ),
+
+                      );
+
+
+
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
                   }
-                },
-              ),
-              debugPage(),
-            ],
-          ),
-        ));
+                  // By default, show a loading spinner.
+                  return const CircularProgressIndicator();
+                }
+              )
+
+          ));
   }
 
   //Build a gauge with minimum, maximum and current value
@@ -173,10 +192,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> refresh() async {
-    BLEManager().sendMsg(MessageTypes.msgRequest1);
+    BLEManager.sendMsg(_device!, MessageTypes.msgRequest1);
     //BLEManager().serial?.sendMsg(MessageTypes.msgRequest2);
     //Wait to get a packet from the device, so listen to the stream for one packet
-    await BLEManager().messagesStream?.first;
+    await _device!.messagesStream.first;
   }
 
   Widget debugPage() {
@@ -186,31 +205,31 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             TextButton(
               onPressed: () {
-                BLEManager().sendMsg(MessageTypes.msgRequest0);
+                BLEManager.sendMsg(_device!, MessageTypes.msgRequest0);
               },
               child: const Text('Request 0'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager().sendMsg(MessageTypes.msgRequest1);
+                BLEManager.sendMsg(_device!, MessageTypes.msgRequest1);
               },
               child: const Text('Request 1'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager().sendMsg(MessageTypes.msgRequest2);
+                BLEManager.sendMsg(_device!, MessageTypes.msgRequest2);
               },
               child: const Text('Request 2'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager().sendMsg(MessageTypes.msgRequest3);
+                BLEManager.sendMsg(_device!, MessageTypes.msgRequest3);
               },
               child: const Text('Request 3'),
             ),
             TextButton(
               onPressed: () {
-                BLEManager().sendMsg(MessageTypes.msgRequest4);
+                BLEManager.sendMsg(_device!, MessageTypes.msgRequest4);
               },
               child: const Text('Request 4'),
             ),
@@ -218,12 +237,15 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Expanded(
           //Consumer of blemanager
-          child: Consumer<BLEManager>(
-            builder: (context, bleManager, child) {
+          child:
+          // changenotifierprovider
+
+          Consumer<Device>(
+            builder: (context, device, child) {
               return ListView.builder(
-                itemCount: bleManager.messages.length,
+                itemCount: device.messages.length,
                 itemBuilder: (context, index) {
-                  return Text(bleManager.messages[index].toString(),
+                  return Text(device.messages[index].toString(),
                       style: const TextStyle(fontSize: 13));
                 },
               );
@@ -234,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget DevicePage() {
+  Widget devicePage() {
     return RefreshIndicator(
       child: GridView.count(
         crossAxisCount: 2,
@@ -246,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child:
                   // Gauge which listens to message stream
                   StreamBuilder<MessageWithDirection>(
-                      stream: BLEManager().messagesStream,
+                      stream: _device!.messagesStream,
                       builder: (context, snapshot) {
                         int co2 = 0;
                         if (snapshot.hasData) {
@@ -273,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<MessageWithDirection>(
-                  stream: BLEManager().messagesStream,
+                  stream: _device!.messagesStream,
                   builder: (context, snapshot) {
                     int temp = 0;
                     if (snapshot.hasData) {
@@ -306,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<MessageWithDirection>(
-                  stream: BLEManager().messagesStream,
+                  stream: _device!.messagesStream,
                   builder: (context, snapshot) {
                     int hum = 0;
                     if (snapshot.hasData) {
@@ -339,7 +361,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<MessageWithDirection>(
-                  stream: BLEManager().messagesStream,
+                  stream: _device!.messagesStream,
                   builder: (context, snapshot) {
                     int data = 0;
                     if (snapshot.hasData) {
@@ -358,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Card(
             child: Center(
               child: StreamBuilder<int>(
-                  stream: BLEManager().rssiStream(),
+                  stream: BLEManager.rssiStream(_device!),
                   builder: (context, snapshot) {
                     int data = 0;
                     if (snapshot.hasData) {

@@ -3,23 +3,33 @@ Class that manages the connection to a BLE device.
  */
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/perm_man.dart';
-import 'package:flutter_app/managers/pref_man.dart';
 import '../../utils/serial.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
-
-import '../Messages/message.dart';
 import '../utils/device.dart';
 import '../utils/log.dart';
 
-class BTUart {
-  late BluetoothCharacteristic _rxCharacteristic;
-  late BluetoothCharacteristic _txCharacteristic;
+class BTConst {
 
-  BTUart(this._rxCharacteristic, this._txCharacteristic);
+  // List of allowed names
+  static const List<String> allowedNames = [
+    'Adafruit Bluefruit LE',
+    'AirQualityMonitor',
+    'AirQualityMonitorEBV',
+  ];
+
+  static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+  static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+  static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+}
+
+class BTUart {
+  late BluetoothCharacteristic rxCharacteristic;
+  late BluetoothCharacteristic txCharacteristic;
+
+  BTUart(this.rxCharacteristic, this.txCharacteristic);
 }
 
 class BLEManager extends ChangeNotifier {
@@ -34,96 +44,68 @@ class BLEManager extends ChangeNotifier {
     flutterBlue.isScanning.listen((isScanning) {
       _isScanning = isScanning;
     });
+    flutterBlue.state.listen((event) {
+      _state = event;
+    });
   }
 
   // Instance of flutter_blue
   final FlutterBluePlus flutterBlue = FlutterBluePlus.instance;
 
+  // State of BT radio
+  Stream<BluetoothState> get state => flutterBlue.state;
+  BluetoothState _state = BluetoothState.unknown;
 
-
-  // List of devices found
-  List<BluetoothDevice> devices = [];
-
-  // Future of scanning
-  late Future<void> scanFuture;
   bool _isScanning = false;
-  bool _isConnecting = false;
 
-
-
-  // List of allowed OUIs
-  static const List<String> allowedOUIs = [
-    'EF:41:B7',
-    'E6:4A:29',
-  ];
-
-  // List of allowed names
-  static const List<String> allowedNames = [
-    'Adafruit Bluefruit LE',
-    'AirQualityMonitor',
-    'AirQualityMonitorEBV',
-  ];
-
-  static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
-  static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
-  static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
-
-  Device ?device;
-  List<MessageWithDirection> messages = [];
-
-  Stream<MessageWithDirection>? messagesStream;
 
   // Method to scan for BLE devices
-  void startBLEScan() async {
+  Future<Device> startBLEScan() async {
+    Device? device;
     if (_isScanning) {
-      return;
+      return Future.error('Already scanning');
     }
-    PermissionManager().checkPermissions().then((value) {
-      if (value) {
-        // Clear out the list of devices
-        devices.clear();
-        // Start scanning
-        scanFuture = flutterBlue.startScan();
-        // Listen for devices
-        StreamSubscription? scansub;
-        scansub = flutterBlue.scanResults
-            .map((results) {
-          List<ScanResult> list = [];
-          for (ScanResult r in results) {
-            if (r.device.type != BluetoothDeviceType.le) {
-              continue;
-            }
-            if (!allowedNames.contains(r.device.name)) {
-              continue;
-            }
-            //TODO
-            if (!processAdv(r.advertisementData)) {
-              continue;
-            }
-            // Filter weak devices
-            if (r.rssi < -80) {
-              continue;
-            }
-            // Filter devices
-            list.add(r);
+    bool hasPermissions = await PermissionManager().checkPermissions();
+    if (hasPermissions) {
+
+      // Start scanning
+      flutterBlue.startScan();
+      // Listen for devices
+      StreamSubscription? scansub;
+      List<ScanResult> btdevice = await flutterBlue.scanResults.map((results) {
+        List<ScanResult> list = [];
+        for (ScanResult r in results) {
+          if (r.device.type != BluetoothDeviceType.le) {
+            continue;
           }
-          return list;
-        }).where((results) => results.isNotEmpty)
-            .listen((results) {
-              stopBLEScan();
-              scansub?.cancel();
-          if (results.length > 1) {
-            Log.v("TODO: Handle multiple devices");
-            results.sort((a, b) => b.rssi.compareTo(a.rssi));
+          if (!BTConst.allowedNames.contains(r.device.name)) {
+            continue;
           }
-          connectToDevice(results[0].device).then((value) {
-            device = value;
-            notifyListeners();
-          });
-        });
+          //TODO
+          if (!processAdv(r.advertisementData)) {
+            continue;
+          }
+          // Filter weak devices
+          if (r.rssi < -80) {
+            continue;
+          }
+          // Filter devices
+          list.add(r);
+        }
+        return list;
+      }).where((results) => results.isNotEmpty).first;
+      // Stop scanning
+      flutterBlue.stopScan();
+      // Sort by rssi
+      btdevice.sort((a, b) => b.rssi.compareTo(a.rssi));
+      // Connect to the first device
+      return await connectToDevice(btdevice.first.device);
+
         Log.v("Scanning...");
+      } else {
+        Log.v("Permissions not granted");
+        return Future.error('Permissions not granted');
       }
-    });
 
 
   }
@@ -138,30 +120,9 @@ class BLEManager extends ChangeNotifier {
     Log.v("Scanning stopped");
   }
 
-  void processResult(BluetoothDevice device) {
-    // If the device is the one registered in the preferences, connect to it
-    PrefManager().read(PrefConstants.deviceMac)
-        .then((value) => {
-          //if (value == device.id.id)
-          //connectToDevice(device)
-          });
-
-    // Add the device to the list
-    devices.add(device);
-
-  }
-
-  Stream<bool> isScanning() {
-    return flutterBlue.isScanning;
-  }
-
   // Connect to a BLE device
   Future<Device> connectToDevice(BluetoothDevice device) async {
     stopBLEScan();
-    if (_isConnecting) {
-      return Future.error("Already connecting");
-    }
-    _isConnecting = true;
     // Connect to the device with a timeout of 3 seconds
     try {
       await device.connect().timeout(const Duration(seconds: 3));
@@ -182,42 +143,27 @@ class BLEManager extends ChangeNotifier {
     //throw UnimplementedError();
   }
 
-  Future<BTUart> getUart(BluetoothDevice device) async {
+  static Future<BTUart> getUart(BluetoothDevice device) async {
     BTUart? uart;
     // Discover services
     try {
       await device.discoverServices().then((value) {
         try {
           List<BluetoothCharacteristic> uartCharacteristics = value
-              .firstWhere((service) => service.uuid.toString() == nordicUARTID)
+              .firstWhere((service) => service.uuid.toString() == BTConst.nordicUARTID)
               .characteristics;
           BluetoothCharacteristic rxCharacteristic = uartCharacteristics
               .firstWhere((characteristic) =>
           characteristic.uuid.toString() ==
-              nordicUARTRXID);
+              BTConst.nordicUARTRXID);
           BluetoothCharacteristic txCharacteristic = uartCharacteristics
               .firstWhere((characteristic) =>
           characteristic.uuid.toString() ==
-              nordicUARTTXID);
+              BTConst.nordicUARTTXID);
 
           uart =  BTUart(rxCharacteristic, txCharacteristic);
           txCharacteristic.setNotifyValue(true);
-          messagesStream = txCharacteristic.value
-              .map((value) {
-            Message? message = SerialComm.receive(value);
-            if (message != null) {
-              return MessageWithDirection(
-                  MessageDirection.received, DateTime.now(), message);
-            }
-            return null;
-          })
-              .where((message) => message != null)
-              .cast<MessageWithDirection>()
-              .asBroadcastStream();
-          messagesStream!.listen((message) {
-            messages.add(message);
-            notifyListeners();
-          });
+
 
           return uart;
         } catch (e) {
@@ -241,27 +187,26 @@ class BLEManager extends ChangeNotifier {
     }
   }
 
-  void disconnect() {
-    if (device != null) {
-      device!.device.disconnect();
-    }
+  static Future disconnect(Device device) {
+    return device.device.disconnect();
   }
-  void send(Uint8List data) {
-    if (device?.btUart._rxCharacteristic != null) {
-      device!.btUart._rxCharacteristic.write(data);
+
+  static void send(Device device, Uint8List data) {
+    if (device.state == BluetoothDeviceState.connected) {
+      device.btUart.txCharacteristic.write(data);
     } else {
-      Log.v("UART RX characteristic not found");
+      Log.v("Device not connected");
     }
   }
 
-  void sendMsg(int msgIndex){
-    send(SerialComm.buildMsgg(msgIndex));
+  static void sendMsg(Device device, int msgIndex){
+    send(device, SerialComm.buildMsgg(msgIndex));
   }
 
-  bool processAdv(AdvertisementData advertisementData) {
+  static bool processAdv(AdvertisementData advertisementData) {
     // Check if Nordic UART Service is present
     for (var service in advertisementData.serviceUuids) {
-      if (service.toString() == nordicUARTID) {
+      if (service.toString() == BTConst.nordicUARTID) {
         Log.v("Found Nordic UART Service");
         return true;
       }
@@ -269,13 +214,14 @@ class BLEManager extends ChangeNotifier {
     return false;
   }
 
-  Stream<int> rssiStream() async* {
-    if (device != null) {
-      for (;;) {
-        yield await device!.device.readRssi();
-        await Future.delayed(const Duration(seconds: 1));
-      }
+
+  static Stream<int> rssiStream(Device device) async* {
+    for (;;) {
+      yield await device.device.readRssi();
+      await Future.delayed(const Duration(seconds: 1));
     }
 
   }
 }
+
+
