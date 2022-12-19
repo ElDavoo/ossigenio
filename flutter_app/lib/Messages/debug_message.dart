@@ -19,34 +19,34 @@ class DebugMessage extends Message {
   late final Uint8List data;
 
   // Debug constructor
-  DebugMessage.dbgconstr(this.data){
+  DebugMessage.dbgconstr(this.data) {
     rawData = 0;
     temperature = 0;
     humidity = 0;
   }
 
   // Proper constructor
-   DebugMessage(this.rawData, this.temperature, this.humidity) {
-     data = Uint8List(0);
-   }
+  DebugMessage(this.rawData, this.temperature, this.humidity) {
+    data = Uint8List(0);
+  }
 
-   // toString
-    @override
-    String toString() {
-      if (data.isEmpty) {
-        return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity";
-      } else {
-        return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity, data: $data";
-      }
+  // toString
+  @override
+  String toString() {
+    if (data.isEmpty) {
+      return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity";
+    } else {
+      return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity, data: $data";
     }
+  }
 
-    // fromBytes
-    DebugMessage.fromBytes(this.data) {
-      temperature = data[0];
-      humidity = data[1];
-      //co2 instead is a 16 bit number
-      rawData = data[3] + (data[2] << 8);
-    }
+  // fromBytes
+  DebugMessage.fromBytes(this.data) {
+    temperature = data[0];
+    humidity = data[1];
+    //co2 instead is a 16 bit number
+    rawData = data[3] + (data[2] << 8);
+  }
 }
 
 class DebugMessageRequest extends Message {

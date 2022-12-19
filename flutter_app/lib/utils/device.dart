@@ -9,24 +9,22 @@ import '../managers/mqtt_man.dart';
 import 'log.dart';
 
 class Device {
-
   late BTUart btUart;
 
   BluetoothDevice device;
   late MqttManager mqttManager;
+
   //constructor that take blemanager and device and initializes a mqttmanager
   Device(this.device, this.btUart) {
     Log.v("Initializing Device: ${device.name} - ${device.id}");
     mqttManager = MqttManager();
-    mqttManager.connect('','');
+    mqttManager.connect('', '');
     // listen to the stream and publish the messages
     BLEManager().messagesStream?.listen((message) {
       Log.v("Message received");
       if (message.direction == MessageDirection.received) {
-          mqttManager.publish(message.message);
+        mqttManager.publish(message.message);
       }
     });
   }
-
-
 }

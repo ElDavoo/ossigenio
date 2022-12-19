@@ -80,7 +80,8 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(
             height: 10,
           ),
-          TextField(controller: passwordinputController,
+          TextField(
+            controller: passwordinputController,
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
               labelText: 'Password',
@@ -110,15 +111,20 @@ class _RegisterPageState extends State<RegisterPage> {
           // Register button
           ElevatedButton(
             onPressed: () {
-              AccountManager.register(emailinputController.text, usernameinputController.text, passwordinputController.text)
+              AccountManager.register(
+                      emailinputController.text,
+                      usernameinputController.text,
+                      passwordinputController.text)
                   .then((value) => {
-                    if (value) {
-                      //Pop navigator two times
-                      Navigator.of(context).pop(),
-                      Navigator.of(context).pop(),
-                    }
-              });
-            }, child: null,
+                        if (value)
+                          {
+                            //Pop navigator two times
+                            Navigator.of(context).pop(),
+                            Navigator.of(context).pop(),
+                          }
+                      });
+            },
+            child: null,
           ),
         ],
       ),

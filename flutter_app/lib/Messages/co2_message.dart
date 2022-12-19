@@ -19,7 +19,7 @@ class CO2Message extends Message {
   int get type => MessageTypes.co2Message;
 
   // Debug constructor
-  CO2Message.dbgconstr(this.data){
+  CO2Message.dbgconstr(this.data) {
     co2 = 0;
     temperature = 0;
     humidity = 0;
@@ -47,7 +47,6 @@ class CO2Message extends Message {
     //co2 instead is a 16 bit number
     co2 = data[3] + (data[2] << 8);
   }
-
 }
 
 class CO2MessageRequest extends Message {

@@ -13,11 +13,10 @@ import 'log.dart';
 
 typedef uint8_t = int;
 
-
 class SerialComm {
-
   // The start of a message is 0xAA.
   static const int startOfMessage = 0xAA;
+
   // The end of a message is 0xFFFF
   static const int endOfMessage = 0xFF;
 
@@ -28,8 +27,7 @@ class SerialComm {
     uint8_t sum1 = currCrc;
     uint8_t sum2 = (currCrc >> 8);
     int index;
-    for(index = 0; index < data.length; index = index+1)
-    {
+    for (index = 0; index < data.length; index = index + 1) {
       sum1 = (sum1 + data[index]) % 255;
       sum2 = (sum2 + sum1) % 255;
     }
@@ -46,7 +44,8 @@ class SerialComm {
 
     // Check if the message is valid
     if (data[0] != startOfMessage) {
-      Log.v("Invalid start byte: ${data[data.length-2]} is not $startOfMessage");
+      Log.v(
+          "Invalid start byte: ${data[data.length - 2]} is not $startOfMessage");
       return null;
     }
     // Check if the almost last byte is the end of message
@@ -58,46 +57,43 @@ class SerialComm {
     int calculatedChecksum = checksum(data.sublist(1, data.length - 2));
     int receivedChecksum = data[data.length - 1];
     if (calculatedChecksum != receivedChecksum) {
-      Log.v("Checksum should be $calculatedChecksum but it is $receivedChecksum");
+      Log.v(
+          "Checksum should be $calculatedChecksum but it is $receivedChecksum");
       //TODO calculate better checksum on bluefruit side
       //return null;
     }
-      // Check the message type
-      Uint8List payload = data.sublist(2, data.length - 2);
-      switch (data[1]) {
-        case MessageTypes.debugMessage:
-            Log.v("Debug message received");
-          return DebugMessage.dbgconstr(data);
-        case MessageTypes.co2Message:
-            Log.v("CO2 message received");
-          Message message = CO2Message.fromBytes(payload);
-          Log.v('$message');
-          return message;
-        case MessageTypes.extendedMessage:
-          Log.v("Extended message received");
-          // TODO
-          return null;
-        case MessageTypes.feedbackMessage:
-          Log.v("Feedback message received");
-          Message message = FeedbackMessage.fromBytes(payload);
-          Log.v('$message');
-          return message;
-        default:
-          Log.v("Unknown message type");
+    // Check the message type
+    Uint8List payload = data.sublist(2, data.length - 2);
+    switch (data[1]) {
+      case MessageTypes.debugMessage:
+        Log.v("Debug message received");
+        return DebugMessage.dbgconstr(data);
+      case MessageTypes.co2Message:
+        Log.v("CO2 message received");
+        Message message = CO2Message.fromBytes(payload);
+        Log.v('$message');
+        return message;
+      case MessageTypes.extendedMessage:
+        Log.v("Extended message received");
+        // TODO
+        return null;
+      case MessageTypes.feedbackMessage:
+        Log.v("Feedback message received");
+        Message message = FeedbackMessage.fromBytes(payload);
+        Log.v('$message');
+        return message;
+      default:
+        Log.v("Unknown message type");
 
-          return null;
-      }
-
+        return null;
+    }
   }
 
-
-
-  static Uint8List buildMsgg(int msgIndex){
-   return buildMsg(msgIndex, Uint8List(0));
+  static Uint8List buildMsgg(int msgIndex) {
+    return buildMsg(msgIndex, Uint8List(0));
   }
 
-
-  static Uint8List buildMsg(int msgIndex, Uint8List payload){
+  static Uint8List buildMsg(int msgIndex, Uint8List payload) {
     List<int> message = List.empty(growable: true);
     // Add the start of message byte
     message.add(startOfMessage);
@@ -111,5 +107,4 @@ class SerialComm {
     message.add(checksum(Uint8List.fromList(message)));
     return Uint8List.fromList(message);
   }
-
 }

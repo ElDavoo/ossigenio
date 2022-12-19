@@ -6,15 +6,14 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../utils/log.dart';
 
-class AccountConstants{
+class AccountConstants {
   static const String server = 'modena.davidepalma.it';
   static const String port = '80';
   static const String urlLogin = '/login';
   static const String urlRegister = '/signUp';
 }
 
-class AccountManager{
-
+class AccountManager {
   static final AccountManager _instance = AccountManager._internal();
 
   factory AccountManager() {
@@ -23,12 +22,12 @@ class AccountManager{
 
   AccountManager._internal();
 
-
   static Future<bool> login(String username, String password) async {
     // use dio
     Dio dio = Dio();
     // set the base url
-    dio.options.baseUrl = 'http://${AccountConstants.server}:${AccountConstants.port}';
+    dio.options.baseUrl =
+        'http://${AccountConstants.server}:${AccountConstants.port}';
     // set the headers
     /*dio.options.headers = {
       'Content-Type': 'application/json',
@@ -51,11 +50,14 @@ class AccountManager{
       return false;
     }
   }
-  static Future<bool> register(String email, String username, String password) async {
+
+  static Future<bool> register(
+      String email, String username, String password) async {
     // use dio
     Dio dio = Dio();
     // set the base url
-    dio.options.baseUrl = 'http://${AccountConstants.server}:${AccountConstants.port}';
+    dio.options.baseUrl =
+        'http://${AccountConstants.server}:${AccountConstants.port}';
     // set the headers
     /*dio.options.headers = {
       'Content-Type': 'application/json',
@@ -68,7 +70,8 @@ class AccountManager{
       'inputPassword': password,
     });
     // send the request
-    Response response = await dio.post(AccountConstants.urlRegister, data: body);
+    Response response =
+        await dio.post(AccountConstants.urlRegister, data: body);
     Log.v(response.data);
     // check the response
     if (response.statusCode == 200) {

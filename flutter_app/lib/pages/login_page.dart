@@ -40,8 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     // Login page
     return Scaffold(
         resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
+        body: Column(children: [
           // Logo
           const SizedBox(
             height: 100,
@@ -107,8 +106,6 @@ class _LoginPageState extends State<LoginPage> {
             },
             child: const Text('Register'),
           ),
-]
-    ));
+        ]));
   }
-
 }

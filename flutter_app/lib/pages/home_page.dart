@@ -9,14 +9,11 @@ import '../../managers/ble_man.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../managers/perm_man.dart';
 import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
 import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
-import '../utils/device.dart';
 import '../utils/log.dart';
-import 'device_page.dart';
 import 'login_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -104,22 +101,17 @@ class _MyHomePageState extends State<MyHomePage> {
               Icon(Icons.more_vert),
             ],
           ),
-          body:
-          TabBarView(
-
+          body: TabBarView(
             children: <Widget>[
               Consumer<BLEManager>(
                 builder: (context, bleManager, child) {
                   if (bleManager.device != null) {
                     return DevicePage();
                   } else {
-                    return const Center(
-                      child: Text('No device connected')
-                    );
+                    return const Center(child: Text('No device connected'));
                   }
                 },
               ),
-
               debugPage(),
             ],
           ),
@@ -233,8 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
               return ListView.builder(
                 itemCount: bleManager.messages.length,
                 itemBuilder: (context, index) {
-                  return Text(
-                      bleManager.messages[index].toString(),
+                  return Text(bleManager.messages[index].toString(),
                       style: const TextStyle(fontSize: 13));
                 },
               );
@@ -246,130 +237,131 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget DevicePage() {
-    return               RefreshIndicator(
-        child: GridView.count(
+    return RefreshIndicator(
+      child: GridView.count(
         crossAxisCount: 2,
         physics: const AlwaysScrollableScrollPhysics(),
-    children: <Widget>[
-    // Add a card with the device name
-    Card(
-    child: Center(
-    child:
-    // Gauge which listens to message stream
-    StreamBuilder<MessageWithDirection>(
-    stream: BLEManager().messagesStream,
-    builder: (context, snapshot) {
-    int co2 = 0;
-    if (snapshot.hasData) {
-    // If message contains a co2 field
-    if (snapshot.data!.message.type ==
-    MessageTypes.co2Message) {
-    // Cast to CO2Message
-    final CO2Message msg =
-    snapshot.data!.message as CO2Message;
-    co2 = msg.co2;
-    }
-    if (snapshot.data!.message.type ==
-    MessageTypes.feedbackMessage) {
-    final FeedbackMessage msg = snapshot
-        .data!.message as FeedbackMessage;
-    co2 = msg.co2;
-    }
-    }
-    return buildGauge('CO2', 150, 2000, co2);
-    }),
-    ),
-    ),
-    // Add a card with the device address
-    Card(
-    child: Center(
-    child: StreamBuilder<MessageWithDirection>(
-    stream: BLEManager().messagesStream,
-    builder: (context, snapshot) {
-    int temp = 0;
-    if (snapshot.hasData) {
-    // If message contains a co2 field
-    if (snapshot.data!.message.type ==
-    MessageTypes.co2Message) {
-    // Cast to CO2Message
-    final CO2Message msg =
-    snapshot.data!.message as CO2Message;
-    temp = msg.temperature;
-    }
-    if (snapshot.data!.message.type ==
-    MessageTypes.feedbackMessage) {
-    final FeedbackMessage msg =
-    snapshot.data!.message as FeedbackMessage;
-    temp = msg.temperature;
-    }
-    if (snapshot.data!.message.type ==
-    MessageTypes.debugMessage) {
-    final FeedbackMessage msg =
-    snapshot.data!.message as FeedbackMessage;
-    temp = msg.temperature;
-    }
-    }
-    return buildGauge('°C', 0, 30, temp);
-    }),
-    ),
-    ),
-    // Add a card with the device rssi
-    Card(
-    child: Center(
-    child: StreamBuilder<MessageWithDirection>(
-    stream: BLEManager().messagesStream,
-    builder: (context, snapshot) {
-    int hum = 0;
-    if (snapshot.hasData) {
-    // If message contains a co2 field
-    if (snapshot.data!.message.type ==
-    MessageTypes.co2Message) {
-    // Cast to CO2Message
-    final CO2Message msg =
-    snapshot.data!.message as CO2Message;
-    hum = msg.humidity;
-    }
-    if (snapshot.data!.message.type ==
-    MessageTypes.feedbackMessage) {
-    final FeedbackMessage msg =
-    snapshot.data!.message as FeedbackMessage;
-    hum = msg.humidity;
-    }
-    if (snapshot.data!.message.type ==
-    MessageTypes.debugMessage) {
-    final FeedbackMessage msg =
-    snapshot.data!.message as FeedbackMessage;
-    hum = msg.humidity;
-    }
-    }
-    return buildGauge('💧', 0, 100, hum);
-    }),
-    ),
-    ),
-    // Add a card with the device battery
-    Card(
-    child: Center(
-    child: StreamBuilder<MessageWithDirection>(
-    stream: BLEManager().messagesStream,
-    builder: (context, snapshot) {
-    int data = 0;
-    if (snapshot.hasData) {
-    // If message contains a co2 field
-    if (snapshot.data!.message.type ==
-    MessageTypes.debugMessage) {
-    final DebugMessage msg =
-    snapshot.data!.message as DebugMessage;
-    data = msg.rawData;
-    }
-    }
-    return buildGauge('raw', 0, 500, data);
-    }),
-    ),
-    ),
-    ],
-    ),
-    onRefresh: () {
-    return refresh();
-    },);
+        children: <Widget>[
+          // Add a card with the device name
+          Card(
+            child: Center(
+              child:
+                  // Gauge which listens to message stream
+                  StreamBuilder<MessageWithDirection>(
+                      stream: BLEManager().messagesStream,
+                      builder: (context, snapshot) {
+                        int co2 = 0;
+                        if (snapshot.hasData) {
+                          // If message contains a co2 field
+                          if (snapshot.data!.message.type ==
+                              MessageTypes.co2Message) {
+                            // Cast to CO2Message
+                            final CO2Message msg =
+                                snapshot.data!.message as CO2Message;
+                            co2 = msg.co2;
+                          }
+                          if (snapshot.data!.message.type ==
+                              MessageTypes.feedbackMessage) {
+                            final FeedbackMessage msg =
+                                snapshot.data!.message as FeedbackMessage;
+                            co2 = msg.co2;
+                          }
+                        }
+                        return buildGauge('CO2', 150, 2000, co2);
+                      }),
+            ),
+          ),
+          // Add a card with the device address
+          Card(
+            child: Center(
+              child: StreamBuilder<MessageWithDirection>(
+                  stream: BLEManager().messagesStream,
+                  builder: (context, snapshot) {
+                    int temp = 0;
+                    if (snapshot.hasData) {
+                      // If message contains a co2 field
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.co2Message) {
+                        // Cast to CO2Message
+                        final CO2Message msg =
+                            snapshot.data!.message as CO2Message;
+                        temp = msg.temperature;
+                      }
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.feedbackMessage) {
+                        final FeedbackMessage msg =
+                            snapshot.data!.message as FeedbackMessage;
+                        temp = msg.temperature;
+                      }
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.debugMessage) {
+                        final FeedbackMessage msg =
+                            snapshot.data!.message as FeedbackMessage;
+                        temp = msg.temperature;
+                      }
+                    }
+                    return buildGauge('°C', 0, 30, temp);
+                  }),
+            ),
+          ),
+          // Add a card with the device rssi
+          Card(
+            child: Center(
+              child: StreamBuilder<MessageWithDirection>(
+                  stream: BLEManager().messagesStream,
+                  builder: (context, snapshot) {
+                    int hum = 0;
+                    if (snapshot.hasData) {
+                      // If message contains a co2 field
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.co2Message) {
+                        // Cast to CO2Message
+                        final CO2Message msg =
+                            snapshot.data!.message as CO2Message;
+                        hum = msg.humidity;
+                      }
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.feedbackMessage) {
+                        final FeedbackMessage msg =
+                            snapshot.data!.message as FeedbackMessage;
+                        hum = msg.humidity;
+                      }
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.debugMessage) {
+                        final FeedbackMessage msg =
+                            snapshot.data!.message as FeedbackMessage;
+                        hum = msg.humidity;
+                      }
+                    }
+                    return buildGauge('💧', 0, 100, hum);
+                  }),
+            ),
+          ),
+          // Add a card with the device battery
+          Card(
+            child: Center(
+              child: StreamBuilder<MessageWithDirection>(
+                  stream: BLEManager().messagesStream,
+                  builder: (context, snapshot) {
+                    int data = 0;
+                    if (snapshot.hasData) {
+                      // If message contains a co2 field
+                      if (snapshot.data!.message.type ==
+                          MessageTypes.debugMessage) {
+                        final DebugMessage msg =
+                            snapshot.data!.message as DebugMessage;
+                        data = msg.rawData;
+                      }
+                    }
+                    return buildGauge('raw', 0, 500, data);
+                  }),
+            ),
+          ),
+        ],
+      ),
+      onRefresh: () {
+        return refresh();
+      },
+    );
   }
 }

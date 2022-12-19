@@ -19,7 +19,7 @@ class StartupMessage extends Message {
   int get type => MessageTypes.startupMessage;
 
   // Debug constructor
-  StartupMessage.dbgconstr(this.data){
+  StartupMessage.dbgconstr(this.data) {
     model = 0;
     version = 0;
     battery = 0;
@@ -47,7 +47,6 @@ class StartupMessage extends Message {
     version = data[1];
     battery = data[2];
   }
-
 }
 
 class StartupMessageRequest extends Message {

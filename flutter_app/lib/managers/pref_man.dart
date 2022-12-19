@@ -4,13 +4,11 @@ Preferences manager that uses the secure storage to store the preferences
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class PrefConstants{
+class PrefConstants {
   static const String deviceMac = "deviceMac";
 }
 
-
 class PrefManager {
-
   static final PrefManager _instance = PrefManager._internal();
   static const FlutterSecureStorage _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
@@ -41,6 +39,4 @@ class PrefManager {
   Future<Map<String, String>> readAll() async {
     return await _storage.readAll();
   }
-
 }
-

@@ -10,7 +10,6 @@ import '../utils/log.dart';
 import 'package:geolocator/geolocator.dart';
 
 class GpsManager {
-
   static final GpsManager _instance = GpsManager._internal();
 
   factory GpsManager() {
@@ -33,5 +32,4 @@ class GpsManager {
     Log.v(position.toString());
     return position;
   }
-
 }

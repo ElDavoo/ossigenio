@@ -20,23 +20,28 @@ class MessageTypes {
 
 abstract class Message {
   int get type;
+
   //only for debug
   Uint8List get data;
+
   // fromBytes constructor
   Message.fromBytes(Uint8List data);
+
   // generic constructor
   Message();
-
 }
 
 enum MessageDirection { received, sent }
+
 class MessageWithDirection {
   final MessageDirection direction;
+
   //timestamp
   final DateTime timestamp;
   final Message message;
 
   MessageWithDirection(this.direction, this.timestamp, this.message);
+
   //override tostring
   @override
   String toString() {
@@ -45,5 +50,4 @@ class MessageWithDirection {
     String time = timestamp.toString().substring(11, 19);
     return "$dir $time ${message.toString()}";
   }
-
 }
