@@ -12,7 +12,7 @@ import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
 import '../managers/ble_man.dart';
 import '../utils/log.dart';
-
+/*
 class DevicePage extends StatefulWidget {
   final Device devic;
 
@@ -41,65 +41,11 @@ class _DevicePageState extends State<DevicePage> {
 
   // Override back button and disconnect
   Future<bool> _onWillPop() async {
-    widget.devic.bleManager.disconnect();
+    BLEManager().disconnect();
     return true;
   }
 
-  //Build a gauge with minimum, maximum and current value
-  Widget buildGauge(String title, int min, int max, int value) {
-    return Stack(
-      children: [
-        SfRadialGauge(
-          axes: <RadialAxis>[
-            RadialAxis(
-                minimum: min.toDouble(),
-                maximum: max.toDouble(),
-                ranges: <GaugeRange>[
-                  GaugeRange(
-                      startValue: min.toDouble(),
-                      endValue: max.toDouble(),
-                      gradient: const SweepGradient(
-                          colors: <Color>[Colors.green, Colors.red],
-                          stops: <double>[0.25, 0.75]),
-                      startWidth: 10,
-                      endWidth: 10),
-                ],
-                pointers: <GaugePointer>[
-                  NeedlePointer(
-                      value: value.toDouble(),
-                      enableAnimation: true,
-                      animationType: AnimationType.ease,
-                      animationDuration: 500,
-                      needleColor: Colors.red,
-                      needleStartWidth: 1,
-                      needleEndWidth: 5,
-                      lengthUnit: GaugeSizeUnit.factor,
-                      needleLength: 0.8,
-                      knobStyle: const KnobStyle(
-                          knobRadius: 0,
-                          sizeUnit: GaugeSizeUnit.factor,
-                          color: Colors.red))
-                ],
-                annotations: <GaugeAnnotation>[
-                  GaugeAnnotation(
-                      widget: Text(title,
-                          style: const TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold)),
-                      angle: 90,
-                      positionFactor: 0.1)
-                ])
-          ],
-        ),
-        if (value == 0)
-          Container(
-            color: Colors.white.withOpacity(0.5),
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-      ],
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,8 +81,7 @@ class _DevicePageState extends State<DevicePage> {
                               child:
                                   // Gauge which listens to message stream
                                   StreamBuilder<MessageWithDirection>(
-                                      stream: widget
-                                          .devic.bleManager.messagesStream,
+                                      stream: BLEManager().messagesStream,
                                       builder: (context, snapshot) {
                                         int co2 = 0;
                                         if (snapshot.hasData) {
@@ -165,7 +110,7 @@ class _DevicePageState extends State<DevicePage> {
                             child: Center(
                               child: StreamBuilder<MessageWithDirection>(
                                   stream:
-                                      widget.devic.bleManager.messagesStream,
+                                      BLEManager().messagesStream,
                                   builder: (context, snapshot) {
                                     int temp = 0;
                                     if (snapshot.hasData) {
@@ -199,7 +144,7 @@ class _DevicePageState extends State<DevicePage> {
                             child: Center(
                               child: StreamBuilder<MessageWithDirection>(
                                   stream:
-                                      widget.devic.bleManager.messagesStream,
+                                      BLEManager().messagesStream,
                                   builder: (context, snapshot) {
                                     int hum = 0;
                                     if (snapshot.hasData) {
@@ -233,7 +178,7 @@ class _DevicePageState extends State<DevicePage> {
                             child: Center(
                               child: StreamBuilder<MessageWithDirection>(
                                   stream:
-                                      widget.devic.bleManager.messagesStream,
+                                      BLEManager().messagesStream,
                                   builder: (context, snapshot) {
                                     int data = 0;
                                     if (snapshot.hasData) {
@@ -261,31 +206,31 @@ class _DevicePageState extends State<DevicePage> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest0);
+                                BLEManager().sendMsg(MessageTypes.msgRequest0);
                               },
                               child: const Text('Request 0'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest1);
+                                BLEManager().sendMsg(MessageTypes.msgRequest1);
                               },
                               child: const Text('Request 1'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest2);
+                                BLEManager().sendMsg(MessageTypes.msgRequest2);
                               },
                               child: const Text('Request 2'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest3);
+                                BLEManager().sendMsg(MessageTypes.msgRequest3);
                               },
                               child: const Text('Request 3'),
                             ),
                             TextButton(
                               onPressed: () {
-                                widget.devic.bleManager.sendMsg(MessageTypes.msgRequest4);
+                                BLEManager().sendMsg(MessageTypes.msgRequest4);
                               },
                               child: const Text('Request 4'),
                             ),
@@ -295,14 +240,15 @@ class _DevicePageState extends State<DevicePage> {
                           //Consumer of blemanager
                           child: Consumer<BLEManager>(
                             builder: (context, bleManager, child) {
-                              return ListView.builder(
-                                itemCount: bleManager.messages.length,
-                                itemBuilder: (context, index) {
-                                  return Text(
-                                      bleManager.messages[index].toString(),
-                                      style: const TextStyle(fontSize: 13));
-                                },
-                              );
+
+                              // Change page if connected
+                              if (bleManager.device != null){
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => DevicePage(devic: bleManager.device!)),
+                                );
+                              }
+                              return Container();
                             },
                           ),
                         ),
@@ -312,10 +258,6 @@ class _DevicePageState extends State<DevicePage> {
                 ))));
   }
 
-  Future<void> refresh() async {
-    widget.devic.bleManager.sendMsg(MessageTypes.msgRequest1);
-    //widget.devic.bleManager.serial?.sendMsg(MessageTypes.msgRequest2);
-    //Wait to get a packet from the device, so listen to the stream for one packet
-    await widget.devic.bleManager.messagesStream?.first;
-  }
+
 }
+*/
