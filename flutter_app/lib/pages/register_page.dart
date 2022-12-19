@@ -3,7 +3,6 @@ Stateful widget for register page
  */
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
 

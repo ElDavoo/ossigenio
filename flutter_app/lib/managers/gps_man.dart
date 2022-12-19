@@ -3,8 +3,6 @@ Class to handle and retrieve data from the GPS module
  */
 import 'dart:async';
 
-import 'package:flutter_app/Messages/message.dart';
-
 import '../utils/log.dart';
 
 import 'package:geolocator/geolocator.dart';
