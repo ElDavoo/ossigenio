@@ -1,4 +1,7 @@
 import os
+import random
+import re
+import string
 
 from flask import Flask, render_template, json, request
 # from werkzeug import generate_password_hash, check_password_hash
@@ -53,6 +56,11 @@ def user_inserted():
 def registrazione():
     return render_template('signup.html')
 
+# Generates a random string of letters and digits of specified length
+def random_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    result_str = ''.join((random.choice(letters_and_digits) for i in range(length)))
+    return result_str
 
 @app.route('/signUp', methods=['POST'])
 def signUp():
@@ -63,6 +71,9 @@ def signUp():
     # _hashed_password = generate_password_hash(request.form['inputPassword'])
 
     print('fetching data')
+    # generate a random mqtt username and password
+    mqtt_username = random_string(10)
+    mqtt_password = random_string(10)
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute('CREATE TABLE IF NOT EXISTS users (id serial PRIMARY KEY,'
@@ -97,6 +108,25 @@ def signUp():
     # else:
     #    return json.dumps({'html':'<span>Enter the required fields</span>'})
 
+# an api to execute a python file
+@app.route('/api/execute/')
+def execute():
+    # Take  the name of the python script to run
+    script_name = request.args.get('script_name')
+    # sanitize the input
+    if script_name is None:
+        return json.dumps({'error': 'script_name is None'})
+    if script_name == '':
+        return json.dumps({'error': 'script_name is empty'})
+    # regex to check if the script_name is a valid python file name
+    if not re.match(r'^[a-zA-Z0-9_]+\.py$', script_name):
+        return json.dumps({'error': 'script_name is not valid'})
+    # Run the script and get the output
+    output = os.popen('python3 ' + script_name).read()
+    # Return the output
+    return json.dumps({'output': output})
+
+
 
 @app.route('/measurements/')
 def measurements():
@@ -107,6 +137,8 @@ def measurements():
     cur.close()
     conn.close()
     return books
+
+# The login
 
 
 if __name__ == '__main__':
