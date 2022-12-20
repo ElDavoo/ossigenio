@@ -24,11 +24,13 @@ class BTConst {
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 
   // List of allowed OUIs
-  static const List<List<int>> allowedOUIs = [
-    [0xEF, 0x41, 0xB7],
-    [0xE6, 0x4A, 0x29],
-    [0xC4, 0x4F, 0x33]
+  List<Uint8List> allowedOUIs = [
+    Uint8List.fromList([0xEF, 0x41, 0xB7]),
+    Uint8List.fromList([0xE6, 0x4A, 0x29]),
+    Uint8List.fromList([0xC4, 0x4F, 0x33]),
   ];
+
+  static int manufacturerId = 0xF175;
 }
 
 class BTUart {
@@ -198,7 +200,7 @@ class BLEManager extends ChangeNotifier {
 
   static void send(Device device, Uint8List data) {
     if (device.state == BluetoothDeviceState.connected) {
-      device.btUart.txCharacteristic.write(data);
+      device.btUart.rxCharacteristic.write(data);
     } else {
       Log.v("Device not connected");
     }
@@ -214,21 +216,23 @@ class BLEManager extends ChangeNotifier {
       return null;
     }
     // Check if manufacturer ID is 0xF075 ( the key of the map)
-    if (!advertisementData.manufacturerData.containsKey(0xF075)) {
+    if (!advertisementData.manufacturerData.containsKey(BTConst.manufacturerId)) {
       return null;
     }
     // The manufacturer data is the mac address of length 6
-    if (advertisementData.manufacturerData[0xF075]!.length != 6) {
+    if (advertisementData.manufacturerData[BTConst.manufacturerId]!.length != 6) {
       return null;
     }
-    List<int> mac = advertisementData.manufacturerData[0xF075]!;
-    List<int> oui = mac.sublist(0, 3);
+    Uint8List mac = Uint8List.fromList(advertisementData.manufacturerData[BTConst.manufacturerId]!);
+    Uint8List oui = mac.sublist(0, 3);
     // Check if mac is of allowed vendors
-    if (!BTConst.allowedOUIs.contains(oui)) {
-      return null;
+    for (Uint8List allowedOui in BTConst().allowedOUIs) {
+      if (listEquals(oui, allowedOui)) {
+        return mac;
+      }
     }
 
-    return mac;
+    return null;
   }
 
   static Stream<int> rssiStream(Device device) async* {
