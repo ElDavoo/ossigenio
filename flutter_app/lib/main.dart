@@ -11,12 +11,13 @@ void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
     runApp(
-        MultiProvider(providers: [
+        /*MultiProvider(providers: [
           ChangeNotifierProvider(create: (context) => BLEManager()),
 
         ],
           child: const MyApp(),
-        ));
+        ));*/
+        const MyApp());
   });
   /*
   Bisogna mettere qui i ChangeNotifierProvider.
