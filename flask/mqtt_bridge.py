@@ -21,7 +21,7 @@ conn = psycopg2.connect(
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe("sensors/#")
+    client.subscribe("sensors/+/combined")
 
 
 def on_message(client, userdata, msg):
