@@ -20,10 +20,10 @@ cur = conn.cursor()
 # Check if table iot already exists
 cur.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name=%s)", ('measurements',))
 if cur.fetchone()[0]:
-    print("Warning: Table iot already exists, continue? (y/n)")
-    if input() != 'y':
-        exit(1)
-
+    #print("Warning: Table iot already exists, continue? (y/n)")
+    #if input() != 'y':
+    #    exit(1)
+    pass
 
 
 # Execute a command: this creates a new table
