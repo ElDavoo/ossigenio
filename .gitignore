@@ -4,3 +4,4 @@ flask/secrets.env
 mqtt.passwords
 build/*
 .vscode/arduino.json
+.vscode/settings.json
