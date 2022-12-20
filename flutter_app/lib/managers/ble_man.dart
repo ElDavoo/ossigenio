@@ -93,10 +93,11 @@ class BLEManager extends ChangeNotifier {
               if (!BTConst.allowedNames.contains(r.device.name)) {
                 continue;
               }
-              Uint8List? mac = processAdv(r.advertisementData);
+              MacAddress? mac = processAdv(r.advertisementData);
               if (mac == null) {
                 continue;
               }
+
               // Filter devices
               list.add(r);
             }
@@ -211,7 +212,7 @@ class BLEManager extends ChangeNotifier {
     send(device, SerialComm.buildMsgg(msgIndex));
   }
 
-  static Uint8List? processAdv(AdvertisementData advertisementData) {
+  static MacAddress? processAdv(AdvertisementData advertisementData) {
     // Check if manufacturer data is present
     if (advertisementData.manufacturerData.isEmpty) {
       return null;
@@ -229,7 +230,7 @@ class BLEManager extends ChangeNotifier {
     // Check if mac is of allowed vendors
     for (Uint8List allowedOui in BTConst().allowedOUIs) {
       if (listEquals(oui, allowedOui)) {
-        return mac;
+        return MacAddress(mac);
       }
     }
 

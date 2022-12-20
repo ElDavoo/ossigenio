@@ -10,6 +10,38 @@ import '../managers/ble_man.dart';
 import '../managers/mqtt_man.dart';
 import 'log.dart';
 
+// A class that represents a mac address.
+// a mac address is a Uint8List of length 6.
+// The constructor should check the length and throw an exception if it is not 6.
+class MacAddress {
+  final Uint8List mac;
+  late Uint8List oui;
+  late Uint8List nic;
+
+  MacAddress(this.mac) {
+    if (mac.length != 6) {
+      throw Exception('Mac address must be 6 bytes long');
+    }
+    oui = mac.sublist(0, 3);
+    nic = mac.sublist(3, 6);
+    bool ok = false;
+    for (Uint8List oui in BTConst().allowedOUIs) {
+      if (listEquals(this.oui, oui)) {
+        ok = true;
+        break;
+      }
+    }
+    if (!ok) {
+      throw Exception('Mac address is not of allowed vendors');
+    }
+  }
+
+  @override
+  String toString() {
+    //Just return the mac address as a string, without symbols
+    return mac.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
+  }
+}
 
 class Device extends ChangeNotifier {
 
@@ -25,7 +57,7 @@ class Device extends ChangeNotifier {
 
   late Stream<MessageWithDirection> messagesStream;
 
-  late Uint8List _serialNumber;
+  late MacAddress _serialNumber;
 
   //constructor that take blemanager and device and initializes a mqttmanager
   Device(ScanResult result, this.btUart) {
@@ -52,7 +84,7 @@ class Device extends ChangeNotifier {
     messagesStream.listen((message) {
       Log.v("Message received");
       if (message.direction == MessageDirection.received) {
-        MqttManager().publish(message.message);
+        MqttManager(mac: _serialNumber).publish(message.message);
       }
     });
     // make state a broadcast stream

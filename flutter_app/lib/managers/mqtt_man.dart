@@ -3,6 +3,9 @@ Class to handle connections to mqtt server using mqtt5_client package
  */
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
+import 'package:flutter_app/managers/account_man.dart';
+import 'package:flutter_app/managers/pref_man.dart';
+import 'package:flutter_app/utils/device.dart';
 import 'package:mqtt5_client/mqtt5_server_client.dart';
 import 'package:typed_data/typed_buffers.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
@@ -31,31 +34,88 @@ class MqttConstants {
 class MqttManager {
   static final MqttManager _instance = MqttManager._internal();
 
-  factory MqttManager() {
+  factory MqttManager({required MacAddress mac}) {
+    _instance.mac = mac;
     return _instance;
   }
 
-  MqttManager._internal();
+  late MacAddress mac;
 
-  late MqttServerClient client;
+  late Future<bool> _haveCredentials;
+
+  MqttManager._internal() {
+    login().then((value) => client );
+  }
+
+
+
+  Future<MqttServerClient> loginFromSecureStorage() async {
+    Log.l('Logging in from secure storage...');
+    if (await PrefManager().areMqttDataSaved()) {
+      Log.l('Data saved');
+      String username = await PrefManager().read(PrefConstants.mqttUsername) as String;
+      String password = await PrefManager().read(PrefConstants.mqttPassword) as String;
+      try {
+        return await connect(username, password);
+      } catch (e) {
+        // delete saved data
+        await PrefManager().delete(PrefConstants.mqttUsername);
+        await PrefManager().delete(PrefConstants.mqttPassword);
+        return Future.error(e);
+      }
+    } else {
+      return Future.error('No credentials saved');
+    }
+  }
+
+  Future<MqttServerClient> login() async {
+    Log.l('Logging in...');
+    // Try to login with saved credentials.
+    // if it fails, get new credentials from server and try again.
+    try {
+      return await loginFromSecureStorage();
+    } catch (e) {
+      // Get new credentials from server
+      var creds = await AccountManager().getMqttCredentials();
+      // Save credentials
+      PrefManager().write(PrefConstants.mqttUsername, creds['username']!);
+      PrefManager().write(PrefConstants.mqttPassword, creds['password']!);
+      // Try to login again
+      return await loginFromSecureStorage();
+    }
+  }
+
+  // fake client, while we wait for the real one to be ready
+  MqttServerClient client = MqttServerClient(MqttConstants.server, '');
 
   // method to connect to the mqtt server
-  void connect(String username, String password) async {
+  Future<MqttServerClient> connect(String username, String password) async {
     // create the client mqtts://modena.davidepalma.it:8080
-    // TODO add the client id
+    // The client ID is the username
+    Log.l('Connecting to mqtt server...');
 
     client = MqttServerClient.withPort(
-        MqttConstants.server, 'test', MqttConstants.mqttPort);
+        MqttConstants.server, username, MqttConstants.mqttPort);
     //client.secure = true;
     // set the port
     client.logging(on: true);
     // TODO set the username and password
     try {
-      await client
-          .connect('test', 'test2')
-          .then((value) => Log.v(value.toString()));
+      Log.l('Trying to connect...');
+      MqttConnectionStatus? status = await client
+          .connect(username, password);
+      while (status?.state == MqttConnectionState.connecting) {
+        Log.l('Connecting...');
+        await Future.delayed(const Duration(seconds: 1));
+      }
+      if (status?.state ==  MqttConnectionState.connected) {
+        Log.v('Connected to the mqtt server');
+        return client;
+      } else {
+        return Future.error("mqtt can't connect");
+      }
     } catch (e) {
-      Log.v(e.toString());
+      return Future.error("mqtt can't connect");
     }
   }
 
@@ -93,8 +153,8 @@ class MqttManager {
 
   void publishCo2(CO2Message message) {
     // publish the message
-    // TODO device id = ?
-    const String deviceId = '1';
+    String deviceId = mac.toString();
+
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.co2Topic}', MqttQos.atMostOnce,
         stringToBuffer(message.co2.toString()));
@@ -111,8 +171,7 @@ class MqttManager {
 
   void publishDebug(DebugMessage message) {
     // publish the message
-    // TODO device id = ?
-    const String deviceId = '1';
+    String deviceId = mac.toString();
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.debugTopic}',
         MqttQos.atMostOnce, stringToBuffer(message.rawData.toString()));
@@ -129,8 +188,7 @@ class MqttManager {
 
   void publishFeedback(FeedbackMessage message) {
     // publish the message
-    // TODO device id = ?
-    const String deviceId = '1';
+    String deviceId = mac.toString();
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.co2Topic}', MqttQos.atMostOnce,
         stringToBuffer(message.co2.toString()));
@@ -149,8 +207,7 @@ class MqttManager {
 
   void publishStartup(StartupMessage message) {
     // publish the message
-    // TODO device id = ?
-    const String deviceId = '1';
+    String deviceId = mac.toString();
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.modelTopic}',
         MqttQos.atMostOnce, stringToBuffer(message.model.toString()));
@@ -179,4 +236,6 @@ class MqttManager {
     }
     return result;
   }
+
+
 }

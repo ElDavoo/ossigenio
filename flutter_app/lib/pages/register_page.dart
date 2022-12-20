@@ -110,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
           // Register button
           ElevatedButton(
             onPressed: () {
-              AccountManager.register(
+              AccountManager().register(
                       emailinputController.text,
                       usernameinputController.text,
                       passwordinputController.text)

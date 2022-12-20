@@ -91,7 +91,7 @@ class LoginPageState extends State<LoginPage> {
           // Login button
           ElevatedButton(
             onPressed: () {
-              AccountManager.login(
+              AccountManager().loginWith(
                   logininputController.text, registerinputController.text);
             },
             child: const Text('Login'),
