@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/pref_man.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -64,6 +65,17 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  static Widget spinText(String text) {
+
+    return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const CircularProgressIndicator(),
+            Text(text),
+          ],
+        ));
+  }
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called.
@@ -100,35 +112,46 @@ class _MyHomePageState extends State<MyHomePage> {
                 Icon(Icons.more_vert),
               ],
             ),
-            body: FutureBuilder<Device>(
+            body: FutureBuilder<ScanResult>(
                 future: BLEManager().startBLEScan(),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    _device = snapshot.data;
-                    return ChangeNotifierProvider(
-                      create: (context) => _device!,
-                      child: TabBarView(
-                        children: <Widget>[
-                          Consumer<Device>(
-                            builder: (context, device, child) {
-                              return devicePage(device);
-                            },
-                          ),
-                          Consumer<Device>(
-                            builder: (context, device, child) {
-                              return debugPage(device);
-                            },
-                          ),
-                        ],
-                      ),
-                    );
+                    return FutureBuilder<Device>(
+                      future: BLEManager().connectToDevice(snapshot.data!),
+                       builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          _device = snapshot.data;
+                          return ChangeNotifierProvider(
+                            create: (context) => _device!,
+                            child: TabBarView(
+                              children: <Widget>[
+                                Consumer<Device>(
+                                  builder: (context, device, child) {
+                                    return devicePage(device);
+                                  },
+                                ),
+                                Consumer<Device>(
+                                  builder: (context, device, child) {
+                                    return debugPage(device);
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        }
+                        return spinText("Connessione...");
+                       },);
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return const Center(child: CircularProgressIndicator());
+                  return spinText("Scansione...");
                 })));
   }
+
+
 
   //Build a gauge with minimum, maximum and current value
   static Widget buildGauge(String title, int min, int max, int value) {

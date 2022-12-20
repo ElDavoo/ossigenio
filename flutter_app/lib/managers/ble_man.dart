@@ -66,7 +66,7 @@ class BLEManager extends ChangeNotifier {
   bool _isScanning = false;
 
   // Method to scan for BLE devices
-  Future<Device> startBLEScan() async {
+  Future<ScanResult> startBLEScan() async {
     Device? device;
     if (_isScanning) {
       // Wait for the scan to finish
@@ -93,7 +93,7 @@ class BLEManager extends ChangeNotifier {
               if (!BTConst.allowedNames.contains(r.device.name)) {
                 continue;
               }
-              List<int>? mac = processAdv(r.advertisementData);
+              Uint8List? mac = processAdv(r.advertisementData);
               if (mac == null) {
                 continue;
               }
@@ -109,7 +109,7 @@ class BLEManager extends ChangeNotifier {
       // Sort by rssi
       btdevice.sort((a, b) => b.rssi.compareTo(a.rssi));
       // Connect to the first device
-      return await connectToDevice(btdevice.first.device);
+      return btdevice.first;
 
       Log.v("Scanning...");
     } else {
@@ -129,24 +129,25 @@ class BLEManager extends ChangeNotifier {
   }
 
   // Connect to a BLE device
-  Future<Device> connectToDevice(BluetoothDevice device) async {
+  Future<Device> connectToDevice(ScanResult result) async {
     stopBLEScan();
     // Connect to the device with a timeout of 3 seconds
     try {
-      await device.connect().timeout(const Duration(seconds: 3));
+      await result.device.connect().timeout(const Duration(seconds: 3));
     } on TimeoutException {
       Log.v("Timeout!");
       rethrow;
     } on PlatformException catch (e) {
-      if (e.code == 'already_connected')
-        return Device(device, await getUart(device));
+      if (e.code == 'already_connected') {
+        return Device(result, await getUart(result.device));
+      }
       rethrow;
     } on Exception catch (e) {
       Log.v("Error connecting to device: $e");
       rethrow;
     }
 
-    return Device(device, await getUart(device));
+    return Device(result, await getUart(result.device));
 
     // Discover services
     //throw UnimplementedError();
@@ -210,7 +211,7 @@ class BLEManager extends ChangeNotifier {
     send(device, SerialComm.buildMsgg(msgIndex));
   }
 
-  static List<int>? processAdv(AdvertisementData advertisementData) {
+  static Uint8List? processAdv(AdvertisementData advertisementData) {
     // Check if manufacturer data is present
     if (advertisementData.manufacturerData.isEmpty) {
       return null;

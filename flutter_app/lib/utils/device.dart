@@ -15,7 +15,7 @@ class Device extends ChangeNotifier {
 
   late BTUart btUart;
 
-  BluetoothDevice device;
+  late BluetoothDevice device;
 
   // Get the device state
   late Stream<BluetoothDeviceState> _stateStream;
@@ -25,8 +25,12 @@ class Device extends ChangeNotifier {
 
   late Stream<MessageWithDirection> messagesStream;
 
+  late Uint8List _serialNumber;
+
   //constructor that take blemanager and device and initializes a mqttmanager
-  Device(this.device, this.btUart) {
+  Device(ScanResult result, this.btUart) {
+    _serialNumber = BLEManager.processAdv(result.advertisementData)!;
+    device = result.device;
     Log.v("Initializing Device: ${device.name} - ${device.id}");
     messagesStream = btUart.txCharacteristic.value
         .map((value) {
@@ -58,7 +62,7 @@ class Device extends ChangeNotifier {
       state = event;
     });
     bool isConnected() {
-      return this.state == BluetoothDeviceState.connected;
+      return state == BluetoothDeviceState.connected;
     }
   }
 }
