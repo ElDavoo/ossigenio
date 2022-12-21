@@ -27,12 +27,11 @@ def get_db_connection():
 
 
 @app.route('/')
-# def hello_world():  # put application's code here
-#    return 'Ciao a tutti!!!'
 def showMain():
     return render_template('index.html')
 
 
+# registered users show page
 @app.route('/users/')
 def users():
     conn = get_db_connection()
@@ -47,11 +46,13 @@ def users():
     return books
 
 
+# info page
 @app.route('/user_inserted/')
 def user_inserted():
     return render_template('user_inserted.html')
 
 
+# signup page
 @app.route('/registrazione')
 def registrazione():
     return render_template('signup.html')
@@ -62,6 +63,8 @@ def random_string(length):
     result_str = ''.join((random.choice(letters_and_digits) for i in range(length)))
     return result_str
 
+
+# signup post method
 @app.route('/signUp', methods=['POST'])
 def signUp():
     # create user code will be here !!
@@ -85,7 +88,6 @@ def signUp():
     tuple1 = (_name, _email, _password)
     cur.execute(sql_query, tuple1)
 
-    print('buh')
     try:
         data = cur.fetchall()
     except Exception as e:
