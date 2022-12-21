@@ -241,7 +241,7 @@
                 "IDF_VER=\"v4.4.2\"",
                 "ESP_PLATFORM",
                 "_POSIX_READER_WRITER_LOCKS",
-                "F_CPU=160000000L",
+                "F_CPU=80000000L",
                 "ARDUINO=10819",
                 "ARDUINO_ESP32_WROOM_DA",
                 "ARDUINO_ARCH_ESP32",

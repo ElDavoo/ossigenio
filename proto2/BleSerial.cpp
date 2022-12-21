@@ -145,6 +145,9 @@ void BleSerial::begin(const char *name,bool enable_led, int led_pin)
 
 	ConnectedDeviceCount = 0;
 	BLEDevice::init(name);
+	BLEDevice::setPower(ESP_PWR_LVL_N12); // setting ble power to -12dBm; default is ESP_PWR_LVL_P3 (+3 dBm)
+	BLEDevice::setPower(ESP_PWR_LVL_N12,ESP_BLE_PWR_TYPE_ADV);
+	BLEDevice::setPower(ESP_PWR_LVL_N12,ESP_BLE_PWR_TYPE_SCAN);
 	//BLEDevice::setEncryptionLevel(ESP_BLE_SEC_ENCRYPT);
 
 	Server = BLEDevice::createServer();
