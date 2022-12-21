@@ -1,7 +1,5 @@
 {
     "board": "esp32:esp32:esp32da",
-    "sketch": "proto2\\proto2.ino",
     "port": "COM14",
-    "output": "build",
     "configuration": "PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,LoopCore=1,EventsCore=1,DebugLevel=none,EraseFlash=none"
 }

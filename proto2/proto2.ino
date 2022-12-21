@@ -116,7 +116,7 @@ void loop() {
   uint8_t buf[4] = {0x00,0x00,0x00,0x00};
   while (ble.available() > 0){
     int rlen = ble.readBytes(buf, 4);
-    ble.write(buf[0]);
+    //ble.write(buf[0]);
   }
   unsigned long currentMillisCount = millis();
   if (currentMillisCount - lastExecutedMillisCount >= autoSend){
