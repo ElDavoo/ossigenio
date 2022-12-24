@@ -4,10 +4,10 @@ A flutter login page that can also be used as a sign up page.
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/pages/register_page.dart';
+import 'package:flutter_app/ui/pages/register_page.dart';
 
-import '../managers/account_man.dart';
-import '../utils/log.dart';
+import '../../managers/account_man.dart';
+import '../../utils/log.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

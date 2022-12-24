@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
 
-import '../utils/log.dart';
+import '../../utils/log.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
