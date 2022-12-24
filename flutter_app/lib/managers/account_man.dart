@@ -8,6 +8,7 @@ import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/utils/device.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../utils/log.dart';
 
@@ -18,6 +19,7 @@ class AccConsts {
   static const String urlLogin = '/login';
   static const String urlRegister = '/signUp';
   static const String urlCheckMac = '/checkMac';
+  static const String urlGetPlaces = '/getPlaces';
   static const int apiVersion = 0;
 
 }
@@ -177,4 +179,38 @@ class AccountManager {
       return Future.error('Not logged in');
     }
   }
+
+  // A method that, given a coordinate, gives
+  // a list of places nearby. Every place has these properties:
+  // Name of the place, location of the place, air quality (express with a number)
+  Future<List<Place>> getNearbyPlaces(LatLng position) async {
+    Log.v("Getting nearby places...");
+    // Ask to the server, sending position as a post request
+    var body = FormData.fromMap({
+      'latitude': position.latitude,
+      'longitude': position.longitude,
+    });
+    return [
+      Place("a",567,LatLng(44.6291399, 10.9488126)),
+      Place("b",678,LatLng(44.6293399, 10.9488126)),
+      Place("c",789,LatLng(44.6291399, 10.9489126)),
+    ];
+    // send the request
+    Response response =
+        await dio.post(AccConsts.urlGetPlaces, data: body);
+    Log.v(response.data);
+    // check the response
+    if (response.statusCode == 200) {
+      // TODO parse response json to return places
+    }
+  }
+}
+
+class Place {
+  // Defines a place
+  late String name;
+  late int co2Level;
+  late LatLng location;
+
+  Place(this.name, this.co2Level, this.location);
 }

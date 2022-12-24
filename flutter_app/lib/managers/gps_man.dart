@@ -3,6 +3,9 @@ Class to handle and retrieve data from the GPS module
  */
 import 'dart:async';
 
+import 'package:flutter_app/managers/account_man.dart';
+import 'package:latlong2/latlong.dart';
+
 import '../utils/log.dart';
 
 import 'package:geolocator/geolocator.dart';
@@ -21,13 +24,20 @@ class GpsManager {
         .listen((event) {
       Log.l('Position updated: $event');
       position = event;
-    });
+      AccountManager().getNearbyPlaces(
+        LatLng(event.latitude, event.longitude)
+      ).then((list) {
+        placeStream.add(list);
+      });
+      });
     Log.l('GpsManager initialized...');
 
   }
 
   static Position? position;
   Stream<Position> poStream = getPositionStream();
+  //Stream controller for group of nearby places
+  StreamController<List<Place>> placeStream = StreamController<List<Place>>.broadcast();
 
   static const LocationSettings locationSettings =
   LocationSettings(
