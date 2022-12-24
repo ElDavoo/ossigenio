@@ -48,12 +48,14 @@ class BLEManager extends ChangeNotifier {
   }
 
   BLEManager._internal() {
+    Log.v("BLEManager initializing...");
     flutterBlue.isScanning.listen((isScanning) {
       _isScanning = isScanning;
     });
     flutterBlue.state.listen((event) {
       _state = event;
     });
+    Log.v("BLEManager initialized");
   }
 
   // Instance of flutter_blue

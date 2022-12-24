@@ -4,6 +4,7 @@ Class to manage accounts registered in the http server
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/utils/device.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -29,11 +30,13 @@ class AccountManager {
   }
 
   AccountManager._internal() {
+    Log.l('AccountManager initializing...');
     dio.options.baseUrl =
     'https://${AccConsts.server}:${AccConsts.httpsPort}/api/${AccConsts.apiVersion}';
-    Log.l('AccountManager initialized');
     // TODO retrieve token or usename/password from secure storage
     _isLoggedIn = login();
+    Log.l('AccountManager initialized');
+
   }
 
   final Dio dio = Dio();
@@ -117,6 +120,9 @@ class AccountManager {
     if (response.statusCode == 200) {
       // save account data in the local storage
       prefManager.saveAccountData(username, password);
+      // get mqtt credentials
+      Map<String,String> mqttCredentials = await getMqttCredentials();
+      MqttManager.instance.tryLogin();
       // login successful
       return true;
     } else {
@@ -150,6 +156,15 @@ class AccountManager {
       return false;
     }
 
+  }
+
+  void refreshMqtt() {
+    getMqttCredentials().then((mqttCredentials) {
+      prefManager.saveMqttData(
+          mqttCredentials['username']! ,
+          mqttCredentials['password']!);
+      MqttManager.instance.tryLogin();
+    });
   }
 
   // Method to get mqtt credentials

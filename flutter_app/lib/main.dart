@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/managers/account_man.dart';
+import 'package:flutter_app/managers/gps_man.dart';
+import 'package:flutter_app/managers/mqtt_man.dart';
+import 'package:flutter_app/managers/pref_man.dart';
 import 'package:provider/provider.dart';
 import '../managers/ble_man.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,6 +14,13 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
+        /* Start to initialize the various app subsystems
+          * (e.g. BLE, DB, etc.) */
+        PrefManager();
+        AccountManager();
+        BLEManager();
+        GpsManager();
+
     runApp(
         /*MultiProvider(providers: [
           ChangeNotifierProvider(create: (context) => BLEManager()),

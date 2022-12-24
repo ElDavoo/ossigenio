@@ -1,6 +1,8 @@
 /*
 Class to handle connections to mqtt server using mqtt5_client package
  */
+import 'dart:html';
+
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
@@ -32,11 +34,11 @@ class MqttConstants {
 }
 
 class MqttManager {
-  static final MqttManager _instance = MqttManager._internal();
+  static final MqttManager instance = MqttManager._internal();
 
   factory MqttManager({required MacAddress mac}) {
-    _instance.mac = mac;
-    return _instance;
+    instance.mac = mac;
+    return instance;
   }
 
   late MacAddress mac;
@@ -44,10 +46,12 @@ class MqttManager {
   late Future<bool> _haveCredentials;
 
   MqttManager._internal() {
-    login().then((value) => client );
+    tryLogin();
   }
 
-
+  void tryLogin() {
+    login().then((value) => client );
+  }
 
   Future<MqttServerClient> loginFromSecureStorage() async {
     Log.l('Logging in from secure storage...');
@@ -76,7 +80,7 @@ class MqttManager {
       return await loginFromSecureStorage();
     } catch (e) {
       // Get new credentials from server
-      var creds = await AccountManager().getMqttCredentials();
+      Map<String,String> creds = await AccountManager().getMqttCredentials();
       // Save credentials
       PrefManager().write(PrefConstants.mqttUsername, creds['username']!);
       PrefManager().write(PrefConstants.mqttPassword, creds['password']!);
@@ -128,6 +132,11 @@ class MqttManager {
 
   //method to publish a Message to the mqtt server
   void publish(Message message) {
+    // Check that we are connected, otherwise return
+    if (client.connectionStatus?.state != MqttConnectionState.connected) {
+      Log.v('Not connected to mqtt server');
+      return;
+    }
     // check the type of the message
     if (message is CO2Message) {
       // publish the message
@@ -222,13 +231,13 @@ class MqttManager {
         MqttQos.atMostOnce, stringToBuffer(combinedPayload));
   }
 
-  Uint8Buffer intToBuffer(int i) {
+  static Uint8Buffer intToBuffer(int i) {
     var result = Uint8Buffer(4);
     result.buffer.asByteData().setInt32(0, i);
     return result;
   }
 
-  Uint8Buffer stringToBuffer(String s) {
+  static Uint8Buffer stringToBuffer(String s) {
     var result = Uint8Buffer(s.length);
     // convert the string to a list of bytes
     for (int i = 0; i < s.length; i++) {
