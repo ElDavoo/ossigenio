@@ -14,10 +14,29 @@ class GpsManager {
     return _instance;
   }
 
-  GpsManager._internal();
+  GpsManager._internal(){
+    Log.l('GpsManager initializing...');
+    poStream
+    .where((event) => filterEvent(event))
+        .listen((event) {
+      Log.l('Position updated: $event');
+      position = event;
+    });
+    Log.l('GpsManager initialized...');
+
+  }
+
+  static Position? position;
+  Stream<Position> poStream = getPositionStream();
+
+  static const LocationSettings locationSettings =
+  LocationSettings(
+    accuracy: LocationAccuracy.best,
+    distanceFilter: 0,
+  );
 
   // method to get the current position
-  Future<Position> getCurrentPosition() async {
+  static Future<Position> getCurrentPosition() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     Log.v(position.toString());
@@ -25,9 +44,26 @@ class GpsManager {
   }
 
   // method to get the current position
-  Future<Position?> getLastKnownPosition() async {
+  static Future<Position?> getLastKnownPosition() async {
     Position? position = await Geolocator.getLastKnownPosition();
     Log.v(position.toString());
     return position;
+  }
+
+  // Method that gives a stream of positions
+  static Stream<Position> getPositionStream() {
+    return Geolocator.getPositionStream(
+      locationSettings: locationSettings
+    );
+  }
+
+  /* Filter the events so we only get position updates that are:
+  Not mocked, accurate, the user is not moving.
+   */
+  static bool filterEvent(Position position){
+    return !position.isMocked &&
+        position.accuracy < 20 &&
+        position.speed < 1 &&
+        position.speedAccuracy < 1;
   }
 }
