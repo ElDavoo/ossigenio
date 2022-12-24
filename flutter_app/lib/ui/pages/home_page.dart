@@ -19,6 +19,7 @@ import '../../utils/device.dart';
 import '../../utils/log.dart';
 import '../widgets/device_tab.dart';
 import 'login_page.dart';
+import 'map_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -68,16 +69,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   static Widget spinText(String text) {
-
     return Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const CircularProgressIndicator(),
-            Text(text),
-          ],
-        ));
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const CircularProgressIndicator(),
+        Text(text),
+      ],
+    ));
   }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called.
@@ -86,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return DefaultTabController(
         initialIndex: 0,
-        length: 2,
+        length: 3,
         child: Scaffold(
             appBar: AppBar(
               // TODO: Dynamically change the accounts icon based on account status
@@ -108,6 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Tab(
                     text: 'Messages (debug)',
                   ),
+                  Tab(
+                    text: 'Map',
+                  ),
                 ],
               ),
               actions: const [
@@ -120,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (snapshot.hasData) {
                     return FutureBuilder<Device>(
                       future: BLEManager().connectToDevice(snapshot.data!),
-                       builder: (context, snapshot) {
+                      builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           _device = snapshot.data;
                           return ChangeNotifierProvider(
@@ -138,6 +142,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     return DebugTab(device: device);
                                   },
                                 ),
+                                // Add the map page
+                                const MapPage(),
                               ],
                             ),
                           );
@@ -145,14 +151,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           return Text("${snapshot.error}");
                         }
                         return spinText("Connessione...");
-                       },);
+                      },
+                    );
                   } else if (snapshot.hasError) {
                     return Text("${snapshot.error}");
                   }
                   // By default, show a loading spinner.
-                  return spinText("Scansione...");
+                  return TabBarView(children: <Widget>[
+                    spinText("Scansione..."),
+                    spinText("Scansione..."),
+                    const MapPage()]);
                 })));
   }
-
-
 }

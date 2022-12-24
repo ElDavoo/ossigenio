@@ -1,8 +1,6 @@
 /*
 Class to handle connections to mqtt server using mqtt5_client package
  */
-import 'dart:html';
-
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
