@@ -1,3 +1,4 @@
-Flask==2.2.2
-psycopg2==2.9.5
-paho-mqtt==1.6.1
+### Flask app requirements
+flask 
+flask-sqlalchemy 
+flask-login

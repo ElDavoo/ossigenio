@@ -3,3 +3,5 @@
 flask/secrets.env
 mqtt.passwords
 build/*
+flask/auth/bin/python
+flask/auth/bin/python3

@@ -14,8 +14,8 @@ from paho.mqtt.client import ssl
 
 conn = psycopg2.connect(
     host="localhost",
-    database="iot",
-    user="iot",
+    database="flask",
+    user="postgres",
     password=os.environ['DB_PASSWORD'])
 
 

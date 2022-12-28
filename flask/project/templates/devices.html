@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Devices management
+</h1>
+{% with messages = get_flashed_messages() %}
+		{% if messages %}
+    		<div class="notification is-danger">
+        	{{ messages[0] }}
+    		</div>
+		{% endif %}
+	    {% endwith %}
+<table id="data" class="table table-striped is-fullwidth">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th></th>
+      <!--<th>Email</th>
+      <th>Device serial number</th>
+      <th>Is an administrator?</th>
+      <th></th>
+      <th></th>-->
+    </tr>
+  </thead>
+  <tbody>
+    {% for device in devices %}
+      <tr>
+        <td>{{ device.id }}</td>
+        <td><a href="{{url_for('main.devices_delete', id=device.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="column is-4 is-offset-4">
+  <div class="box">
+    <form method="POST" action="/add_devices">
+        <div class="field">
+            <div class="control">
+                <input class="input" type="serialNum" name="serialNum" placeholder="Insert new serial number:">
+            </div>
+        </div>
+        <button class="button is-block is-info is-large is-fullwidth">Add</button>
+    </form>
+  </div>
+</div>
+  <p>
+    <strong>AirQualityMonitor</strong> by AlfaSierra92 & ElDavoo.</br> &copy; All Rights Reserved 2023.
+  </p>
+</div>
+{% endblock %}
