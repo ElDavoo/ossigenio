@@ -3,9 +3,9 @@ Description=Air quality monitor backend
 After=network.target
 
 [Service]
-EnvironmentFile=/home/dietpi/air-quality-monitor/flask/secrets.env
-User=dietpi
-WorkingDirectory=/home/dietpi/air-quality-monitor/flask/
+EnvironmentFile=/home/pi/air-quality-monitor/flask/secrets.env
+User=pi
+WorkingDirectory=/home/pi/air-quality-monitor/flask/
 ExecStart=/usr/bin/python3 -m flask run
 Restart=always
 

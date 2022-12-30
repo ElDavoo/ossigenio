@@ -8,6 +8,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 import psycopg2
+import os
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -15,9 +16,9 @@ db = SQLAlchemy()
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'MySecretKeys'
+    app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/antonio/flask_auth_app/flask.db'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:secretPassword@localhost/flask'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 
     db.init_app(app)
 
