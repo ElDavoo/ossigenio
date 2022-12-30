@@ -12,12 +12,24 @@ import datetime
 import certifi
 from paho.mqtt.client import ssl
 
-conn = psycopg2.connect(
-    host="localhost",
-    database="flask",
-    user="postgres",
-    password=os.environ['DB_PASSWORD'])
+def conn_from_uri(uri):
+    # Get the postgres uri from the environment variable
+    uri = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    # get the various parts of the uri
+    uri_parts = uri.split('://')[1].split('@')
+    # get the username and password
+    user = uri_parts[0].split(':')[0]
+    password = uri_parts[0].split(':')[1]
+    # get the host and port
+    host = uri_parts[1].split('/')[0].split(':')[0]
+    port = int(uri_parts[1].split('/')[0].split(':')[1])
+    # get the database name
+    db = uri_parts[1].split('/')[1].split('?')[0]
+    # connect to the database with ssl
+    conn = psycopg2.connect(dbname=db, user=user, password=password, host=host, port=port, sslmode='require')
+    return conn
 
+conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
@@ -47,8 +59,8 @@ def on_message(client, userdata, msg):
     cur = conn.cursor()
     # insert the data into the database
     try:
-        cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature) "
-                    "VALUES (%s, %s, %s, %s, %s, %s)", (sensor_id, timestamp, co2, humidity, rawdata, temperature))
+        cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, lat, lon) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (sensor_id, timestamp, co2, humidity, rawdata, temperature, 0, 0))
         conn.commit()
     except Exception as e:
         print(e)
