@@ -1,4 +1,8 @@
 ### Flask app requirements
-flask 
+flask~=2.2.2
 flask-sqlalchemy 
 flask-login
+Werkzeug~=2.2.2
+psycopg2~=2.9.5
+paho-mqtt~=1.6.1
+certifi~=2022.9.24
