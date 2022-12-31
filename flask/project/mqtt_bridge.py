@@ -12,6 +12,10 @@ import datetime
 import certifi
 from paho.mqtt.client import ssl
 
+if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
+    print("'SQLALCHEMY_DATABASE_URI'not set")
+    exit(1)
+
 def conn_from_uri(uri):
     # Get the postgres uri from the environment variable
     uri = os.environ.get('SQLALCHEMY_DATABASE_URI')
@@ -66,9 +70,7 @@ def on_message(client, userdata, msg):
         print(e)
         conn.rollback()
 
-if 'DB_PASSWORD' not in os.environ:
-    print("DB_PASSWORD not set")
-    exit(1)
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
