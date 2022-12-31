@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 from . import db
-from models import Utente, Device
-import mqtt_bridge
+from project.models import Utente, Device
+import project.mqtt_bridge
 
 main = Blueprint('main', __name__)
 
