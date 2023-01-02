@@ -1,7 +1,7 @@
 ### Flask app requirements
 flask~=2.2.2
 flask-sqlalchemy 
-flask-login
+flask-login==0.6.2
 Werkzeug~=2.2.2
 psycopg2~=2.9.5
 paho-mqtt~=1.6.1
@@ -11,3 +11,4 @@ marshmallow~=3.19.0
 webargs~=8.2.0
 apispec~=6.0.2
 flask-smorest
+GeoAlchemy2
