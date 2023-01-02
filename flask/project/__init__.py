@@ -3,46 +3,53 @@
 # export FLASK_DEBUG=1
 # and launch with:
 # flask run
-
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-import psycopg2
 import os
-from project.api import common
+from flask_smorest import Api, Blueprint, abort
+
+from project.config import Config
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
 
-def create_app():
-    app = Flask(__name__)
+flask_app = Flask(__name__)
 
-    #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/antonio/flask_auth_app/flask.db'
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/antonio/flask_auth_app/flask.db'
+flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 
-    db.init_app(app)
+flask_app.config.from_object(Config)
 
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
+app = Api(flask_app)
 
-    from project.models import Utente
+db.init_app(flask_app)
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        # since the user_id is just the primary key of our user table, use it in the query for the user
-        return Utente.query.get(int(user_id))
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(flask_app)
 
-    # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
+from project.models import Utente
 
-    # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
 
-    from project.api.v1 import api as api_v1
-    app.register_blueprint(api_v1, name='api_v1', url_prefix="/api/v1")
-    app.register_blueprint(api_v1, name='api_latest', url_prefix="/api")
+@login_manager.user_loader
+def load_user(user_id):
+    # since the user_id is just the primary key of our user table, use it in the query for the user
+    return Utente.query.get(int(user_id))
 
-    return app
+
+# blueprint for auth routes in our app
+from .auth import auth as auth_blueprint
+
+flask_app.register_blueprint(auth_blueprint)
+
+# blueprint for non-auth parts of app
+from .main import main as main_blueprint
+
+flask_app.register_blueprint(main_blueprint)
+
+# blueprint for api
+from project.api import api as api_blueprint
+app.register_blueprint(api_blueprint, url_prefix='/api')
