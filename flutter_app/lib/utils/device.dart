@@ -41,6 +41,11 @@ class MacAddress {
     //Just return the mac address as a string, without symbols
     return mac.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
   }
+
+  int toInt() {
+    //Convert the mac address to an integer
+    return mac.fold(0, (previousValue, element) => (previousValue << 8) + element);
+  }
 }
 
 class Device extends ChangeNotifier {

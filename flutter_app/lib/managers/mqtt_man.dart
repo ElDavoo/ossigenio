@@ -160,7 +160,7 @@ class MqttManager {
 
   void publishCo2(CO2Message message) {
     // publish the message
-    String deviceId = mac.toString();
+    int deviceId = mac.toInt();
 
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.co2Topic}', MqttQos.atMostOnce,
@@ -178,7 +178,7 @@ class MqttManager {
 
   void publishDebug(DebugMessage message) {
     // publish the message
-    String deviceId = mac.toString();
+    int deviceId = mac.toInt();
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.debugTopic}',
         MqttQos.atMostOnce, stringToBuffer(message.rawData.toString()));
@@ -195,7 +195,7 @@ class MqttManager {
 
   void publishFeedback(FeedbackMessage message) {
     // publish the message
-    String deviceId = mac.toString();
+    int deviceId = mac.toInt();
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.co2Topic}', MqttQos.atMostOnce,
         stringToBuffer(message.co2.toString()));
@@ -214,7 +214,7 @@ class MqttManager {
 
   void publishStartup(StartupMessage message) {
     // publish the message
-    String deviceId = mac.toString();
+    int deviceId = mac.toInt();
     String topic = '${MqttConstants.rootTopic}$deviceId/';
     client.publishMessage('$topic${MqttConstants.modelTopic}',
         MqttQos.atMostOnce, stringToBuffer(message.model.toString()));
