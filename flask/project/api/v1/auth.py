@@ -82,7 +82,7 @@ class Signup(MethodView):
         # db.session.execute('PRAGMA foreign_keys = ON;')
         db.session.add(new_user)
         db.session.commit()
-        if login_user(user):
+        if login_user(new_user):
             return 200
         else:
             abort(401, message='Invalid email or password')
