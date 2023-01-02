@@ -20,13 +20,13 @@ from project.models.places import Place, PlaceSchema
 from project.models.co2history import co2_history
 
 
-@places.route('/nearby', methods=['GET'])
+@places.route('/nearby', methods=['POST'])
 
 class Nearby(MethodView):
     @places.arguments(LatLonSchema)
     @login_required
     @places.response(200, PlaceSchema(many=True))
-    def get(self, args):
+    def post(self, args):
         # Get the places closer than 1km
         places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lon']} {args['lat']})") < 1000).all()
         places_list = []
