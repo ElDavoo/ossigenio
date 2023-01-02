@@ -3,8 +3,6 @@
 # export FLASK_DEBUG=1
 # and launch with:
 # flask run
-from apispec import APISpec
-from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -31,7 +29,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(flask_app)
 
-from project.models import Utente
+from project.models.user import Utente
 
 
 @login_manager.user_loader
@@ -41,7 +39,7 @@ def load_user(user_id):
 
 
 # blueprint for auth routes in our app
-from .auth import auth as auth_blueprint
+from project.website.auth import auth as auth_blueprint
 
 flask_app.register_blueprint(auth_blueprint)
 

@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
 from . import db
-from project.models import Utente, Device
+from project.models.user import Utente
+from project.models.device import Device
 # noinspection PyUnresolvedReferences
-import project.mqtt_bridge
+import project.utils.mqtt_bridge
 
 main = Blueprint('main', __name__)
 

@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from werkzeug.security import check_password_hash
 
-from project.models import Utente
+from project.models.user import Utente
 from marshmallow import Schema, fields
 
 auth = Blueprint('auth', __name__)
