@@ -3,7 +3,6 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_login import login_required, current_user
 from marshmallow import Schema, fields
-from project import db
 
 places = Blueprint('places', __name__)
 
@@ -17,7 +16,7 @@ class LatLonSchema(Schema):
     lon = fields.Float(required=True)
 
 
-from project.models.places import Place
+from project.models.places import Place, PlaceSchema
 
 
 @places.route('/nearby', methods=['GET'])
@@ -25,6 +24,7 @@ from project.models.places import Place
 class Nearby(MethodView):
     @places.arguments(LatLonSchema)
     @login_required
+    @places.response(200, PlaceSchema(many=True))
     def get(self, args):
         # Get the places closer than 1km
         places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lon']} {args['lat']})") < 1000).all()
