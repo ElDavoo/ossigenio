@@ -3,21 +3,33 @@ from flask_smorest import Blueprint, abort
 from werkzeug.security import check_password_hash
 
 from project.models import Utente
-from marshmallow import Schema
+from marshmallow import Schema, fields
 
 auth = Blueprint('auth', __name__)
 
 
 class LoginSchema(Schema):
-    fields = ('email', 'password')
+
+    class Meta:
+        strict = True
+        ordered = True
+
+    email = fields.String()
+    password = fields.String()
 
 
 @auth.route('/login', methods=['POST'])
 class Login(MethodView):
-    @auth.arguments(LoginSchema, location='json')
+    @auth.arguments(LoginSchema)
     @auth.response(200, None)
+    @auth.alt_response(401, None)
     def post(self, args):
-        """Login"""
+        """Esegue il login
+
+        Descrizione dell'api
+        ---
+        Internal comment not meant to be exposed.
+        """
         user = Utente.query.filter_by(email=args['email']).first()
         if not user or not check_password_hash(user.password, args['password']):
             abort(401, message='Invalid email or password')

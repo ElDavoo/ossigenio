@@ -1,3 +1,3 @@
 """
-Here we define common functions used in all the API versions
+Here we define common utilities used in all the API versions
 """
