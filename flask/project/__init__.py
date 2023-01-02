@@ -45,7 +45,7 @@ from project.website.auth import auth as auth_blueprint
 flask_app.register_blueprint(auth_blueprint)
 
 # blueprint for non-auth parts of app
-from .main import main as main_blueprint
+from project.website.main import main as main_blueprint
 
 flask_app.register_blueprint(main_blueprint)
 

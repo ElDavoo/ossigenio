@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
-from . import db
+from project import db
 from project.models.user import Utente
 from project.models.device import Device
 # noinspection PyUnresolvedReferences
