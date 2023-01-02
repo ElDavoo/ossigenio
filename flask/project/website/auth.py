@@ -48,27 +48,27 @@ def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
-    serialNum = request.form.get('serialNum')
+    #serialNum = request.form.get('serialNum')
 
     user = Utente.query.filter_by(
         email=email).first()  # if this returns a user, then the email already exists in database
-    if serialNum:
-        serial_usage_check = Utente.query.filter_by(serialnum=serialNum).first()  # check if serial is already used
-    else:
-        flash('Please check data inserted')
-        return redirect(url_for('auth.signup'))
+    #if serialNum:
+    #    serial_usage_check = Utente.query.filter_by(serialnum=serialNum).first()  # check if serial is already used
+    #else:
+    #    flash('Please check data inserted')
+    #    return redirect(url_for('auth.signup'))
 
     if user:  # if a user is found, we want to redirect back to signup page so user can try again
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
 
-    if serial_usage_check:
-        flash('This serial number is already used')
-        return redirect(url_for('auth.signup'))
+    #if serial_usage_check:
+    #    flash('This serial number is already used')
+    #    return redirect(url_for('auth.signup'))
 
     try:
         new_user = Utente(email=email, name=name, password=generate_password_hash(password, method='sha256'),
-                          serialnum=serialNum)
+                          admin=False)
 
         # add the new user to the database
         # db.session.execute('PRAGMA foreign_keys = ON;')
