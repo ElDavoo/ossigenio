@@ -16,6 +16,7 @@ db = SQLAlchemy()
 
 flask_app = Flask(__name__)
 
+flask_app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/antonio/flask_auth_app/flask.db'
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 
