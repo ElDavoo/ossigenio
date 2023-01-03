@@ -28,7 +28,9 @@
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
         {% for device in devices %}
+          {% if device.owner == user.id %}
           <td>{{ device.id }}</td>
+          {% endif %}
         {% endfor %}
         <td>{{ user.admin }}</td>
         <td><a href="{{url_for('main.delete', id=user.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
