@@ -17,6 +17,7 @@
       <th>id</th>
       <th>model</th>
       <th>revision</th>
+      <th>owner</th>
       <th></th>
     </tr>
   </thead>
@@ -26,6 +27,7 @@
         <td>{{ device.id }}</td>
         <td>{{ device.model }}</td>
         <td>{{ device.revision }}</td>
+        <td>{{ device.owner }}</td>
         <td><a href="{{url_for('main.devices_delete', id=device.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
       </tr>
     {% endfor %}
