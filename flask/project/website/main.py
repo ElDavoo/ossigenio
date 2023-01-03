@@ -18,8 +18,8 @@ def index():
 @login_required
 def profile():
     #user = Utente.query.filter_by(email=email).first()
-    device = Device.query.filter_by(owner=user.id).first()
-    return render_template('profile.html', name=current_user.name, serialnum=current_user.serialnum)
+    #device = Device.query.filter_by(owner=user.id).first()
+    return render_template('profile.html', name=current_user.name)
     # if current_user.admin != True: #if user is admin, go to admin page instead to profile page
     #    return render_template('profile.html', name=current_user.name)
     # else:
