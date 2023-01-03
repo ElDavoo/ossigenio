@@ -48,15 +48,15 @@ def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
-    #serialNum = request.form.get('serialNum')
+    serialNum = request.form.get('serialNum')
 
     user = Utente.query.filter_by(
         email=email).first()  # if this returns a user, then the email already exists in database
-    #if serialNum:
-    #    serial_usage_check = Utente.query.filter_by(serialnum=serialNum).first()  # check if serial is already used
-    #else:
-    #    flash('Please check data inserted')
-    #    return redirect(url_for('auth.signup'))
+    if serialNum:
+        serial_usage_check = Utente.query.filter_by(serialnum=serialNum).first()  # check if serial is already used
+    else:
+        flash('Please check data inserted')
+        return redirect(url_for('auth.signup'))
 
     if user:  # if a user is found, we want to redirect back to signup page so user can try again
         flash('Email address already exists')
@@ -65,8 +65,9 @@ def signup_post():
     #if serial_usage_check:
     #    flash('This serial number is already used')
     #    return redirect(url_for('auth.signup'))
+    serial_exists = Device.query.filter_by(id=serialNum).first() # check if serial exists
 
-    try:
+    if serial_exists:
         new_user = Utente(email=email, name=name, password=generate_password_hash(password, method='sha256'),
                           admin=False)
 
@@ -76,7 +77,7 @@ def signup_post():
         db.session.commit()
         # return render_template('signup.html')
         return redirect(url_for('auth.login'))
-    except:
+    else:
         flash('This serial number doesn\'t exist')
         return redirect(url_for('auth.signup'))
 
