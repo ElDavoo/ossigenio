@@ -29,10 +29,12 @@
         <td>{{ user.email }}</td>
         {% for device in devices %}
           {% if device.owner == user.id %}
-            <td>{{ device.id }}</td>
-          {% else %}
-            placeholder
-          {% endif %}
+          <td>{% if device.owner == user.id %}
+                {{ device.id }}
+              {% else %}
+                placeholder
+              {% endif %}
+          </td>
         {% endfor %}
         <td>{{ user.admin }}</td>
         <td><a href="{{url_for('main.delete', id=user.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
