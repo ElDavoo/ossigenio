@@ -120,6 +120,7 @@ def add_devices():
                 new_device = Device(id=serialNum)
                 db.session.add(new_device)
                 db.session.commit()
+                devices = Device.query
                 return render_template('devices.html', name=current_user.name, devices=devices)
         else:
             flash('Please insert a valid serial number.')
