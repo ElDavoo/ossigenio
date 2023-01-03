@@ -125,6 +125,8 @@ def add_devices():
                     new_device = Device(id=serialNum,revision=revision,model=model)
                     db.session.add(new_device)
                     db.session.commit()
+                except Exception as e:
+                    print(e)
                 devices = Device.query
                 return render_template('devices.html', name=current_user.name, devices=devices)
         else:
