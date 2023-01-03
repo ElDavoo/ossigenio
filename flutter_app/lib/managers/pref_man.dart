@@ -13,6 +13,7 @@ class PrefConstants {
   static const String dataVersion = "dataVersion";
   static const String mqttUsername = "mqttUsername";
   static const String mqttPassword = "mqttPassword";
+  static const String cookie = "cookie";
   static int dataVersionValue = 0;
 }
 

@@ -2,6 +2,7 @@
 Class to manage accounts registered in the http server
  */
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/utils/device.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:crypto/crypto.dart';
 
 import '../utils/log.dart';
 
@@ -17,10 +19,11 @@ class AccConsts {
   static const String httpPort = '80';
   static const String httpsPort = '443';
   static const String urlLogin = '/login';
-  static const String urlRegister = '/signUp';
+  static const String urlRegister = '/signup';
   static const String urlCheckMac = '/checkMac';
-  static const String urlGetPlaces = '/getPlaces';
-  static const int apiVersion = 0;
+  static const String urlGetPlaces = '/nearby';
+  static const String urlUserInfo = '/user';
+  static const int apiVersion = 1;
 
 }
 
@@ -34,7 +37,7 @@ class AccountManager {
   AccountManager._internal() {
     Log.l('AccountManager initializing...');
     dio.options.baseUrl =
-    'https://${AccConsts.server}:${AccConsts.httpsPort}/api/${AccConsts.apiVersion}';
+    'https://${AccConsts.server}:${AccConsts.httpsPort}/api/v${AccConsts.apiVersion}';
     // TODO retrieve token or usename/password from secure storage
     _isLoggedIn = login();
     Log.l('AccountManager initialized');
@@ -53,6 +56,21 @@ class AccountManager {
 
   Future<bool> login() async {
     Log.l('Logging in...');
+    // First try to get user api with cookie
+    try {
+      Response response = await dio.get(AccConsts.urlUserInfo,
+          options: Options(
+              headers: {
+                'Cookie': await prefManager.read(PrefConstants.cookie) as String
+              }
+          )
+      );
+      Log.l('Logged in with cookie');
+      _loginStatusController.add(true);
+      return true;
+    } on DioError catch (e) {
+      Log.l('Error while logging in with cookie: ${e.message}');
+    }
     if (await areDataSaved()) {
       Log.l('Data saved');
       String username = await prefManager.read(PrefConstants.username) as String;
@@ -82,23 +100,37 @@ class AccountManager {
   }
 
   Future<bool> loginWith(String username, String password) async {
+    // crypt the password with sha256 1 milion times
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    for (int i = 0; i < 1000000; i++) {
+      digest = sha256.convert(digest.bytes);
+    }
+
     // set the body
-    var body = {
-      'inputName': username,
-      'inputPassword': password,
-    };
+    var body = jsonEncode({
+      'email': username,
+      'password': digest.toString(),
+    });
     // FIXME
     // notify the stream
-    _loginStatusController.add(true);
-    prefManager.saveAccountData(username, password);
-    return true;
     // send the request
-    Response response = await dio.post(AccConsts.urlLogin, data: body);
-    Log.v(response.data);
+    Response? response;
+    try {
+      response = await dio.post(AccConsts.urlLogin, data: body);
+    } catch (e) {
+      Log.v(e.toString());
+      return false;
+    }
     // check the response
     if (response.statusCode == 200) {
       // login successful, save data
       prefManager.saveAccountData(username, password);
+      // Get the cookie from the headers response
+      String cookie = response.headers['set-cookie']![0];
+      // Save the cookie in the secure storage
+      prefManager.write("cookie", cookie);
+
       return true;
     } else {
       // login failed
@@ -108,20 +140,32 @@ class AccountManager {
 
   Future<bool> register(
       String email, String username, String password) async {
-    // set the body as multipart form
-    var body = FormData.fromMap({
-      'inputEmail': email,
-      'inputName': username,
-      'inputPassword': password,
+    // crypt the password with sha256 1 milion times
+    var bytes = utf8.encode(password);
+    var digest = sha256.convert(bytes);
+    for (int i = 0; i < 1000000; i++) {
+      digest = sha256.convert(digest.bytes);
+    }
+    var body = jsonEncode({
+      'email': email,
+      'password': digest.toString(),
+      'name': username,
     });
+    Response? response;
     // send the request
-    Response response =
-        await dio.post(AccConsts.urlRegister, data: body);
-    Log.v(response.data);
+    try {
+      response = await dio.post(AccConsts.urlRegister, data: body);
+    } catch (e) {
+      Log.v(e.toString());
+      return false;
+    }
     // check the response
     if (response.statusCode == 200) {
       // save account data in the local storage
       prefManager.saveAccountData(username, password);
+      // save cookie
+      String cookie = response.headers['set-cookie']![0];
+      prefManager.write("cookie", cookie);
       // get mqtt credentials
       Map<String,String> mqttCredentials = await getMqttCredentials();
       MqttManager.instance.tryLogin();
