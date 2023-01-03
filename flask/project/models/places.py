@@ -25,8 +25,8 @@ class Place(db.Model):
     def serialize(self):
         # Convert the location to a pair of coordinates
         location = to_shape(self.location)
-        long = location.x
-        lat = location.y
+        long = location.y
+        lat = location.x
         return {
             'id': self.id,
             'lat': lat,
