@@ -228,24 +228,35 @@ class AccountManager {
   // a list of places nearby. Every place has these properties:
   // Name of the place, location of the place, air quality (express with a number)
   Future<List<Place>> getNearbyPlaces(LatLng position) async {
+    // ensure we are logged in
+    await _isLoggedIn;
     Log.v("Getting nearby places...");
     // Ask to the server, sending position as a post request
-    var body = FormData.fromMap({
-      'latitude': position.latitude,
-      'longitude': position.longitude,
+    var body = jsonEncode({
+      'lat': position.latitude,
+      'lon': position.longitude,
     });
-    return [
-      Place("a",567,LatLng(44.6291399, 10.9488126)),
-      Place("b",678,LatLng(44.6293399, 10.9488126)),
-      Place("c",789,LatLng(44.6291399, 10.9489126)),
-    ];
+    // Read authentication cookie
+    String cookie = await prefManager.read("cookie") as String;
     // send the request
-    Response response =
-        await dio.post(AccConsts.urlGetPlaces, data: body);
-    Log.v(response.data);
+    Response? response;
+    try {
+      response = await dio.post(AccConsts.urlGetPlaces,
+          data: body, options: Options(headers: {'cookie': cookie}));
+    } catch (e) {
+      Log.v(e.toString());
+      return [];
+    }
     // check the response
     if (response.statusCode == 200) {
-      // TODO parse response json to return places
+      // parse response json to return places
+      List<Place> places = [];
+      for (var place in response.data) {
+        places.add(Place.fromJson(place));
+      }
+      return places;
+    } else {
+      return Future.error('Error getting nearby places');
     }
   }
 }
@@ -257,4 +268,15 @@ class Place {
   late LatLng location;
 
   Place(this.name, this.co2Level, this.location);
+
+  // fromJson
+  Place.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
+    try {
+    co2Level = json['co2'];
+    } catch (e) {
+      co2Level = 0;
+    }
+    location = LatLng(json['lat'], json['lon']);
+  }
 }
