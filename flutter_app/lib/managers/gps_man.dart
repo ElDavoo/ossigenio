@@ -70,10 +70,22 @@ class GpsManager {
   /* Filter the events so we only get position updates that are:
   Not mocked, accurate, the user is not moving.
    */
-  static bool filterEvent(Position position){
-    return !position.isMocked &&
-        position.accuracy < 20 &&
-        position.speed < 1 &&
-        position.speedAccuracy < 1;
+  static bool filterEvent(Position pos){
+    // Different criteria if we don't have a position yet
+    if (position == null){
+      return pos.accuracy < 50 && pos.speed < 10 && !pos.isMocked;
+    }
+
+    // Return false if pos is between 50 and 100 meters from the last position
+    if (position != null && Geolocator.distanceBetween(
+        pos.latitude, pos.longitude,
+        position!.latitude, position!.longitude) < 30) {
+      return false;
+    }
+
+    return !pos.isMocked &&
+        pos.accuracy < 30 &&
+        pos.speed < 1 &&
+        pos.speedAccuracy < 1;
   }
 }
