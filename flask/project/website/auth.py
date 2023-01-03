@@ -61,11 +61,22 @@ def signup_post():
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
 
-    if device.owner != NULL:
-        flash('This serial number is already used')
-        return redirect(url_for('auth.signup'))
-    serial_exists = Device.query.filter_by(id=serialNum).first() # check if serial exists
+    #if device.owner != NULL:
+    #    flash('This serial number is already used')
+    #    return redirect(url_for('auth.signup'))
+    #serial_exists = Device.query.filter_by(id=serialNum).first() # check if serial exists
 
+    new_user = Utente(email=email, name=name, password=generate_password_hash(password, method='sha256'),
+                          admin=False)
+
+    # add the new user to the database
+    db.session.add(new_user)
+    db.session.commit()
+    user = Utente.query.filter_by(email=email).first()
+    db.session.query(Device).filter(Device.id == serialNum).update({'owner': user.id})
+    db.session.commit()
+    return redirect(url_for('auth.login'))
+    
     if serial_exists.owner != NULL:
         new_user = Utente(email=email, name=name, password=generate_password_hash(password, method='sha256'),
                           admin=False)
