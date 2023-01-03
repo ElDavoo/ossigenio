@@ -53,7 +53,9 @@ class _MapPageState extends State<MapPage> {
     return FlutterMap(
       options: MapOptions(
         center: LatLng(44.6291399, 10.9488126),
-        zoom: 17.0,
+        zoom: 15.0,
+        maxZoom: 18.0,
+        interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
         onPositionChanged: (MapPosition position, bool hasGesture) {
           if (hasGesture) {
             setState(
@@ -81,6 +83,20 @@ class _MapPageState extends State<MapPage> {
             ),
           ),
         ),
+        Positioned(
+          right: 120,
+          bottom: 20,
+          child: FloatingActionButton(
+            onPressed: () {
+              // Automatically center the location marker on the map when location updated until user interact with the map.
+              refresh();
+            },
+            child: const Icon(
+              Icons.refresh,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ],
       children: [
         TileLayer(
@@ -96,7 +112,7 @@ class _MapPageState extends State<MapPage> {
           markers: _markers,
         ),
       ],
-    );
+        );
   }
   static List<Marker> latlngtomarkers(List<LatLng> coords){
     return coords
@@ -127,6 +143,16 @@ class _MapPageState extends State<MapPage> {
       ),
     ))
         .toList();
+  }
+
+  Future<void> refresh() async {
+    // User requested a manual refresh.
+    // Check if we have a memorized location.
+    GpsManager.position ??= await GpsManager.getCurrentPosition();
+    List<Place> places = await AccountManager().getNearbyPlaces(LatLng
+      (GpsManager.position!.latitude,
+        GpsManager.position!.longitude));
+    return GpsManager().placeStream.add(places);
   }
 
 }
