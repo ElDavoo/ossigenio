@@ -21,8 +21,6 @@ extern BleSerial ble;
 extern volatile uint8_t feedback;
 extern volatile bool feed;
 #include <stdint.h>
-#define MODEL 1
-#define VERSION 1
 #include "serialNumber.h"
 extern const uint32_t serialNumber;
 
