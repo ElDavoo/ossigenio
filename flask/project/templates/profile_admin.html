@@ -27,7 +27,7 @@
       <tr>
         <td>{{ user.name }}</td>
         <td>{{ user.email }}</td>
-        <td>{{ user.serialnum }}</td>
+        <td>{{ device.id }}</td>
         <td>{{ user.admin }}</td>
         <td><a href="{{url_for('main.delete', id=user.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
         <td><a href="{{url_for('main.toggle', id=user.id)}}" class="btn btn-danger" style="color:blue">Admin/not admin</a></td>
