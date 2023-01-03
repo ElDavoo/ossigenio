@@ -15,18 +15,17 @@
   <thead>
     <tr>
       <th>id</th>
+      <th>model</th>
+      <th>revision</th>
       <th></th>
-      <!--<th>Email</th>
-      <th>Device serial number</th>
-      <th>Is an administrator?</th>
-      <th></th>
-      <th></th>-->
     </tr>
   </thead>
   <tbody>
     {% for device in devices %}
       <tr>
         <td>{{ device.id }}</td>
+        <td>{{ device.model }}</td>
+        <td>{{ device.revision }}</td>
         <td><a href="{{url_for('main.devices_delete', id=device.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
       </tr>
     {% endfor %}
@@ -39,6 +38,8 @@
         <div class="field">
             <div class="control">
                 <input class="input" type="serialNum" name="serialNum" placeholder="Insert new serial number:">
+                <input class="input" type="model" name="model" placeholder="Insert model:">
+                <input class="input" type="revision" name="revision" placeholder="Insert revision:">
             </div>
         </div>
         <button class="button is-block is-info is-large is-fullwidth">Add</button>

@@ -112,6 +112,8 @@ def devices_delete():
 def add_devices():
     if current_user.admin == True:  # restrict access to admin page only to admins
         serialNum = request.form.get('serialNum')
+        model = request.form.get('model')
+        revision = request.form.get('revision')
         devices = Device.query
         if serialNum:
             device = Device.query.filter_by(id=serialNum).first()
@@ -119,9 +121,10 @@ def add_devices():
                 flash('The Serial number already exists.')
                 return render_template('devices.html', name=current_user.name, devices=devices)
             else:
-                new_device = Device(id=serialNum)
-                db.session.add(new_device)
-                db.session.commit()
+                try:
+                    new_device = Device(id=serialNum,revision=revision,model=model)
+                    db.session.add(new_device)
+                    db.session.commit()
                 devices = Device.query
                 return render_template('devices.html', name=current_user.name, devices=devices)
         else:
