@@ -30,8 +30,6 @@
         {% for device in devices %}
           {% if device.owner == user.id %}
             <td>{{ device.id }}</td>
-          {% else %}
-            <td>placeholder</td>
           {% endif %}
         {% endfor %}
         <td>{{ user.admin }}</td>
