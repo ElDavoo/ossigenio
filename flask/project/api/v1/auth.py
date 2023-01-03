@@ -1,8 +1,9 @@
+from flask import jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import login_user, login_required, logout_user
-from project.models.user import Utente
+from flask_login import login_user, login_required, logout_user, current_user
+from project.models.user import Utente, UserResponseSchema
 from marshmallow import Schema, fields
 from project import db
 
@@ -86,3 +87,22 @@ class Signup(MethodView):
             return 200
         else:
             abort(401, message='Invalid email or password')
+
+
+@auth.route('/user', methods=['GET'])
+class User(MethodView):
+    @auth.response(200, UserResponseSchema)
+    @login_required
+    def get(self):
+        """Ritorna i dettagli dell'utente collegato
+
+        Usare per controllare se il cookie è valido
+        e se c'è connessione
+        ---
+        Internal comment not meant to be exposed.
+        """
+        # Get the user from the database
+        user = Utente.query.filter_by(email=current_user.email).first().serialize_partial()
+        if not user:
+            abort(401, message='Invalid cookie')
+        return jsonify(user)
