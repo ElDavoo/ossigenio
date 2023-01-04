@@ -7,7 +7,7 @@ import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
-import 'package:flutter_app/ui/pages/splash.dart';
+import 'package:flutter_app/ui/pages/login_page.dart';
 import 'package:provider/provider.dart';
 import '../managers/ble_man.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -47,8 +47,32 @@ void main() {
 
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late Widget initialWidget;
+
+  @override
+  void initState() {
+    super.initState();
+    initialWidget = const Text("Errore");
+    AccountManager().login().then((value) {
+      if (value) {
+        setState(() {
+          initialWidget = const MyHomePage();
+        });
+      } else {
+        setState(() {
+          initialWidget = const LoginPage();
+        });
+      }
+    });
+  }
 
   // This widget is the root of your application.
   @override
@@ -62,7 +86,7 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: const SplashPage(),
+      home: initialWidget,
     );
   }
 }

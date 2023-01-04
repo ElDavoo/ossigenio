@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ui/pages/register_page.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import '../../managers/account_man.dart';
 import '../../utils/log.dart';
@@ -27,6 +28,7 @@ class LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _log = Log.addListener(context);
+    FlutterNativeSplash.remove();
   }
 
   @override

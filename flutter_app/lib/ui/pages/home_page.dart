@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -56,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _log = Log.addListener(context);
     // Add a disconnection event
     BLEManager().disconnectstream.add(null);
+    FlutterNativeSplash.remove();
   }
 
   @override
