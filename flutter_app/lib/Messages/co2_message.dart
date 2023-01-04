@@ -47,6 +47,14 @@ class CO2Message extends Message {
     //co2 instead is a 16 bit number
     co2 = data[3] + (data[2] << 8);
   }
+
+  Map <String, dynamic> toDict() {
+    return {
+      "temperature": temperature,
+      "humidity": humidity,
+      "co2": co2,
+    };
+  }
 }
 
 class CO2MessageRequest extends Message {

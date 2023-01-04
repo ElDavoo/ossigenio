@@ -47,6 +47,14 @@ class StartupMessage extends Message {
     version = data[1];
     battery = data[2];
   }
+
+  Map <String, dynamic> toDict() {
+    return {
+      "model": model,
+      "version": version,
+      "battery": battery,
+    };
+  }
 }
 
 class StartupMessageRequest extends Message {

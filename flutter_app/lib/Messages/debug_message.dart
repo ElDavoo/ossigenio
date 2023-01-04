@@ -47,6 +47,14 @@ class DebugMessage extends Message {
     //co2 instead is a 16 bit number
     rawData = data[3] + (data[2] << 8);
   }
+
+  Map <String, dynamic> toDict() {
+    return {
+      "rawData": rawData,
+      "temperature": temperature,
+      "humidity": humidity,
+    };
+  }
 }
 
 class DebugMessageRequest extends Message {

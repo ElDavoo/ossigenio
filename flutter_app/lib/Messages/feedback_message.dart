@@ -46,6 +46,15 @@ class FeedbackMessage extends Message {
     co2 = data[3] + (data[2] << 8);
     feedback = FeedbackValues.values[data[4]];
   }
+
+  Map <String, dynamic> toDict() {
+    return {
+      "temperature": temperature,
+      "humidity": humidity,
+      "co2": co2,
+      "feedback": feedback.toString().split(".")[1],
+    };
+  }
 }
 
 class FeedbackMessageRequest extends Message {
