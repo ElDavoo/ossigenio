@@ -40,3 +40,13 @@ class Nearby(MethodView):
             places_list.append(lst)
         return jsonify(places_list)
     # TODO optimize query
+
+@places.route('/place/<int:place_id>', methods=['GET'])
+class Plc(MethodView):
+    @login_required
+    @places.response(200, PlaceSchema)
+    def get(self, place_id):
+        place = Place.query.filter_by(id=place_id).first()
+        if place is None:
+            return "Place not found", 404
+        return jsonify(place.serialize())
