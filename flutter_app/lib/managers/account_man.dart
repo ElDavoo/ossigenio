@@ -285,6 +285,22 @@ class AccountManager {
       return Future.error('Error getting place');
     }
   }
+  void logout() {
+    // Call the logout api
+    // Read authentication cookie
+    // String cookie = PrefManager().read("cookie") as String;
+    // send the request
+    // dio.post(AccConsts.urlLogout, options: Options(headers: {'cookie': cookie}));
+    // delete cookie
+    PrefManager().delete("cookie");
+    // delete account data
+    PrefManager().delete("username");
+    PrefManager().delete("password");
+    // delete mqtt data
+    PrefManager().delete("mqttUsername");
+    PrefManager().delete("mqttPassword");
+
+  }
 }
 
 class Place {
@@ -307,4 +323,6 @@ class Place {
     }
     location = LatLng(json['lat'], json['lon']);
   }
+
+
 }
