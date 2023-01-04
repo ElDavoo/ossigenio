@@ -1,6 +1,8 @@
 /*
 Class to handle connections to mqtt server using mqtt5_client package
  */
+import 'dart:convert';
+
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
@@ -14,7 +16,7 @@ import '../Messages/message.dart';
 import '../Messages/co2_message.dart';
 import '../utils/log.dart';
 
-class MqttConstants {
+class MqttConsts {
   static const String server = 'modena.davidepalma.it';
   static const int mqttsPort = 8080;
   static const String rootTopic = 'sensors/';
@@ -88,7 +90,7 @@ class MqttManager {
   }
 
   // fake client, while we wait for the real one to be ready
-  MqttServerClient client = MqttServerClient(MqttConstants.server, '');
+  MqttServerClient client = MqttServerClient(MqttConsts.server, '');
 
   // method to connect to the mqtt server
   Future<MqttServerClient> connect(String username, String password) async {
@@ -97,10 +99,10 @@ class MqttManager {
     Log.l('Connecting to mqtt server...');
 
     client = MqttServerClient.withPort(
-        MqttConstants.server, username, MqttConstants.mqttPort);
+        MqttConsts.server, username, MqttConsts.mqttPort);
     //client.secure = true;
     // set the port
-    client.logging(on: true);
+    client.logging(on: false);
     // TODO set the username and password
     try {
       Log.l('Trying to connect...');
@@ -162,71 +164,56 @@ class MqttManager {
     // publish the message
     int deviceId = mac.toInt();
 
-    String topic = '${MqttConstants.rootTopic}$deviceId/';
-    client.publishMessage('$topic${MqttConstants.co2Topic}', MqttQos.atMostOnce,
-        stringToBuffer(message.co2.toString()));
-    client.publishMessage('$topic${MqttConstants.humidityTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.humidity.toString()));
-    client.publishMessage('$topic${MqttConstants.temperatureTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.temperature.toString()));
-    // Build the combined payload as json string
-    String combinedPayload =
-        '{"co2": ${message.co2}, "humidity": ${message.humidity}, "temperature": ${message.temperature}}';
-    client.publishMessage('$topic${MqttConstants.combinedTopic}',
-        MqttQos.atMostOnce, stringToBuffer(combinedPayload));
+    String topic = '${MqttConsts.rootTopic}$deviceId/';
+    sendInt('$topic${MqttConsts.co2Topic}', message.co2);
+    sendInt('$topic${MqttConsts.humidityTopic}', message.humidity);
+    sendInt('$topic${MqttConsts.temperatureTopic}', message.temperature);
+    // Build the combined payload
+    // TODO add location
+    Map <String, dynamic> payload = message.toDict();
+    sendDict('$topic${MqttConsts.combinedTopic}', payload);
   }
 
   void publishDebug(DebugMessage message) {
     // publish the message
     int deviceId = mac.toInt();
-    String topic = '${MqttConstants.rootTopic}$deviceId/';
-    client.publishMessage('$topic${MqttConstants.debugTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.rawData.toString()));
-    client.publishMessage('$topic${MqttConstants.humidityTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.humidity.toString()));
-    client.publishMessage('$topic${MqttConstants.temperatureTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.temperature.toString()));
+    String topic = '${MqttConsts.rootTopic}$deviceId/';
+    sendInt('$topic${MqttConsts.debugTopic}', message.rawData);
+    sendInt('$topic${MqttConsts.humidityTopic}', message.humidity);
+    sendInt('$topic${MqttConsts.temperatureTopic}', message.temperature);
     // Build the combined payload as json string
-    String combinedPayload =
-        '{"rawData": ${message.rawData}, "humidity": ${message.humidity}, "temperature": ${message.temperature}}';
-    client.publishMessage('$topic${MqttConstants.combinedTopic}',
-        MqttQos.atMostOnce, stringToBuffer(combinedPayload));
+    sendDict('$topic${MqttConsts.combinedTopic}', message.toDict());
   }
 
   void publishFeedback(FeedbackMessage message) {
     // publish the message
     int deviceId = mac.toInt();
-    String topic = '${MqttConstants.rootTopic}$deviceId/';
-    client.publishMessage('$topic${MqttConstants.co2Topic}', MqttQos.atMostOnce,
-        stringToBuffer(message.co2.toString()));
-    client.publishMessage('$topic${MqttConstants.humidityTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.humidity.toString()));
-    client.publishMessage('$topic${MqttConstants.temperatureTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.temperature.toString()));
-    client.publishMessage('$topic${MqttConstants.feedbackTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.feedback.toString()));
-    // Build the combined payload as json string
-    String combinedPayload =
-        '{"co2": ${message.co2}, "humidity": ${message.humidity}, "temperature": ${message.temperature}, "feedback": ${message.feedback}}';
-    client.publishMessage('$topic${MqttConstants.combinedTopic}',
-        MqttQos.atMostOnce, stringToBuffer(combinedPayload));
+    String topic = '${MqttConsts.rootTopic}$deviceId/';
+    sendInt('$topic${MqttConsts.co2Topic}', message.co2);
+    sendInt('$topic${MqttConsts.humidityTopic}',message.humidity);
+    sendInt('$topic${MqttConsts.temperatureTopic}', message.temperature);
+    sendInt('$topic${MqttConsts.feedbackTopic}', message.feedback.index);
+    // Build the combined payload
+    sendDict('$topic${MqttConsts.combinedTopic}', message.toDict());
   }
 
   void publishStartup(StartupMessage message) {
     // publish the message
     int deviceId = mac.toInt();
-    String topic = '${MqttConstants.rootTopic}$deviceId/';
-    client.publishMessage('$topic${MqttConstants.modelTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.model.toString()));
-    client.publishMessage('$topic${MqttConstants.versionTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.version.toString()));
-    client.publishMessage('$topic${MqttConstants.batteryTopic}',
-        MqttQos.atMostOnce, stringToBuffer(message.battery.toString()));
-    // Build the combined payload as json string
-    String combinedPayload =
-        '{"model": ${message.model}, "version": ${message.version}, "battery": ${message.battery}}';
-    client.publishMessage('$topic${MqttConstants.combinedTopic}',
-        MqttQos.atMostOnce, stringToBuffer(combinedPayload));
+    String topic = '${MqttConsts.rootTopic}$deviceId/';
+    sendInt('$topic${MqttConsts.modelTopic}',message.model);
+    sendInt('$topic${MqttConsts.versionTopic}', message.version);
+    sendInt('$topic${MqttConsts.batteryTopic}', message.battery);
+    // Build the combined payload
+    sendDict('$topic${MqttConsts.combinedTopic}', message.toDict());
+  }
+
+  void sendInt(String topic, int value) {
+    client.publishMessage(topic, MqttQos.atMostOnce, stringToBuffer(value.toString()));
+  }
+
+  void sendDict(String topic, Map<String, dynamic> dict) {
+    client.publishMessage(topic, MqttQos.atMostOnce, stringToBuffer(jsonEncode(dict)));
   }
 
   static Uint8Buffer intToBuffer(int i) {
