@@ -363,7 +363,7 @@ packages:
       name: mqtt5_client
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.3.3"
+    version: "3.3.4"
   nested:
     dependency: transitive
     description:
@@ -620,7 +620,7 @@ packages:
       name: syncfusion_flutter_gauges
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "20.4.41"
+    version: "20.4.42"
   syncfusion_flutter_sliders:
     dependency: "direct main"
     description:

@@ -23,6 +23,7 @@ class AccConsts {
   static const String urlCheckMac = '/checkMac';
   static const String urlGetPlaces = '/nearby';
   static const String urlUserInfo = '/user';
+  static const String urlPlace = '/place/';
   static const int apiVersion = 1;
 
 }
@@ -262,8 +263,25 @@ class AccountManager {
   }
 
   Future<Place> getPlace(int placeId) async {
-    //TODO call the place api to get details
-    return Place(placeId, placeId.toString(), 666, LatLng(0, 0));
+    //call the place api to get details
+    // Read authentication cookie
+    String cookie = await prefManager.read("cookie") as String;
+    // send the request
+    Response? response;
+    try {
+      response = await dio.get(AccConsts.urlPlace + placeId.toString(),
+          options: Options(headers: {'cookie': cookie}));
+    } catch (e) {
+      Log.v(e.toString());
+      return Future.error('Error getting place');
+    }
+    // check the response
+    if (response.statusCode == 200) {
+      // parse response json to return places
+      return Place.fromJson(response.data);
+    } else {
+      return Future.error('Error getting place');
+    }
   }
 }
 
@@ -283,7 +301,7 @@ class Place {
     try {
     co2Level = json['co2'];
     } catch (e) {
-      co2Level = 0;
+      co2Level = 400;
     }
     location = LatLng(json['lat'], json['lon']);
   }
