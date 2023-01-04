@@ -49,4 +49,11 @@ class Plc(MethodView):
         place = Place.query.filter_by(id=place_id).first()
         if place is None:
             return "Place not found", 404
-        return jsonify(place.serialize())
+        # add the last co2 value from the co2_history table
+        lst = place.serialize()
+        last_co2 = co2_history.query.filter_by(place_id=place.id).order_by(co2_history.timestamp.desc()).first()
+        if last_co2 is not None:
+            lst['co2'] = last_co2.co2
+        else:
+            lst['co2'] = None
+        return jsonify(lst)
