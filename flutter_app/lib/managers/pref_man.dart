@@ -40,6 +40,9 @@ class PrefManager {
   }
 
   Future<void> delete(String key) async {
+    // Set the value to null first
+    await _storage.write(key: key, value: null);
+    // Then delete the key
     await _storage.delete(key: key);
   }
 

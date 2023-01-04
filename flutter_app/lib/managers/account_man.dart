@@ -285,20 +285,20 @@ class AccountManager {
       return Future.error('Error getting place');
     }
   }
-  void logout() {
+  Future<void> logout() async {
     // Call the logout api
     // Read authentication cookie
     // String cookie = PrefManager().read("cookie") as String;
     // send the request
     // dio.post(AccConsts.urlLogout, options: Options(headers: {'cookie': cookie}));
     // delete cookie
-    PrefManager().delete("cookie");
+    await PrefManager().delete(PrefConstants.cookie);
     // delete account data
-    PrefManager().delete("username");
-    PrefManager().delete("password");
+    await PrefManager().delete(PrefConstants.username);
+    await PrefManager().delete(PrefConstants.password);
     // delete mqtt data
-    PrefManager().delete("mqttUsername");
-    PrefManager().delete("mqttPassword");
+    await PrefManager().delete(PrefConstants.mqttUsername);
+    await PrefManager().delete(PrefConstants.mqttPassword);
 
   }
 }

@@ -121,22 +121,21 @@ class _MyHomePageState extends State<MyHomePage> {
                           "AppLocalizations.of(context)!.logoutConfirmMessage"),
                       actions: [
                         TextButton(
-                          child: Text("AppLocalizations.of(context)!.cancel"),
-                          onPressed: () {
-                            AccountManager().logout();
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginPage()));
-                          },
-                        ),
+                            child: Text("AppLocalizations.of(context)!.cancel"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            }),
                         TextButton(
                           child: Text("AppLocalizations.of(context)!.logout"),
                           onPressed: () {
                             // Logout
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginPage()));
+                            AccountManager().logout().then((value) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const LoginPage()),
+                                  (route) => false);
+                            });
                           },
                         ),
                       ],

@@ -38,7 +38,7 @@ class LoginPageState extends State<LoginPage> {
 
   void onPressed() {
     AccountManager()
-        .loginWith(emailinputController.text, emailinputController.text)
+        .loginWith(emailinputController.text, passwordinputController.text)
         .then((value) => {
               if (value)
                 {

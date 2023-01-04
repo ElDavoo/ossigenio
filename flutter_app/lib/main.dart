@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
+import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/splash.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ void main() {
           * (e.g. BLE, DB, etc.) */
         PrefManager();
         BLEManager();
+        PermissionManager().checkPermissions();
         if (kDebugMode) {
           //debugPaintSizeEnabled=true;
         }
