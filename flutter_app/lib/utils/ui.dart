@@ -7,7 +7,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
 class UIWidgets {
-  static Widget verticalSlider(Color color, double value) {
+  static Widget verticalSlider(int value) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(70, 0, 0, 0),
       child: SfSliderTheme(
@@ -29,9 +29,8 @@ class UIWidgets {
           onChanged: (dynamic newvalue) {
             newvalue = value;
           },
-          thumbIcon: Icon(Icons.home, color: color, size: 10),
-          inactiveColor: Colors.red,
-          activeColor: color,
+          inactiveColor: Colors.blue,
+          activeColor: Colors.red,
           tooltipTextFormatterCallback: (actualValue, formattedText) {
             //add the unit to the value
             return "${actualValue.toInt()} ppm";
