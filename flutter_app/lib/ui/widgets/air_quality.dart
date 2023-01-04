@@ -8,16 +8,18 @@ import '../../Messages/co2_message.dart';
 
 // A stateful widget which gets the stream of co2 values
 // from a BLE device and displays them
-class AirQualityLocal extends StatefulWidget {
-  final Device device;
+class AirQuality extends StatefulWidget {
+  int co2;
+  int ?temperature;
+  int ?humidity;
 
-  const AirQualityLocal({Key? key, required this.device}) : super(key: key);
+  AirQuality({Key? key, required this.co2, this.temperature, this.humidity}) : super(key: key);
 
   @override
-  _AirQualityLocalState createState() => _AirQualityLocalState();
+  _AirQualityState createState() => _AirQualityState();
 }
 
-class _AirQualityLocalState extends State<AirQualityLocal> {
+class _AirQualityState extends State<AirQuality> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,17 +36,7 @@ class _AirQualityLocalState extends State<AirQualityLocal> {
 
         //Padding to separate the text from the dropdown
         //const Padding(padding: EdgeInsets.all(10.0)),
-        StreamBuilder(
-          stream: BLEManager().dvc != null
-              ? BLEManager().dvc!.messagesStream
-              : null,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              MessageWithDirection msg = snapshot.data;
-              if (msg.message is CO2Message) {
-                CO2Message co2 = msg.message as CO2Message;
-
-                return SizedBox(
+         SizedBox(
                   height: 390,
                   child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -53,66 +45,56 @@ class _AirQualityLocalState extends State<AirQualityLocal> {
                           Expanded(
                               child: Column(
                             children: [
-                              AirQualityText(co2: co2.co2),
+                              AirQualityText(co2: widget.co2),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                 child: Text(
                                     // Insert temperature
-                                    buildExplanationText(co2),
+                                    buildExplanationText(widget.co2),
                                     style: const TextStyle(fontSize: 16),
                                   ),
                               ),
                             ],
                           )),
 
-                          UIWidgets.verticalSlider(
-                                Colors.green, co2.co2.toDouble()),
+                          UIWidgets.verticalSlider(widget.co2),
                         ]
                   ),
-                );
-              } else {
-                return const Text("Loading...");
-              }
-            } else {
-              return const Text("Loading...");
-            }
-          },
-        )
+                ),
       ],
     );
   }
 
-  static String buildExplanationText(Message message) {
-    String text = "lol";
-    if (message is CO2Message) {
-      CO2Message co2 = message;
-      text = "Temperatura: ${co2.temperature}°C\nUmidità: ${co2.humidity}%";
+  static String buildExplanationText(int co2, [int ?temperature, int ?humidity]) {
+    String text = "";
+    if (temperature != null&& humidity != null) {
+      text = "Temperatura: $temperature°C\nUmidità: $humidity%";
+}
       text += "\nMisurare la concentrazione di anidride carbonica nell'aria è "
           "importante per assicurare un ambiente sano e confortevole. "
           "Un livello di CO2 troppo alto può causare sonnolenza, "
           "mal di testa, perdita di concentrazione e altri sintomi. "
           "La CO2 viene misurata in PPM (parti per milione).";
 
-      if (co2.co2 < 500) {
+      if (co2 < 500) {
         text += "\nLa concentrazione di CO2 è ottima, "
             "non è necessario intervenire.";
-      } else if (co2.co2 < 600) {
+      } else if (co2 < 600) {
         text += "\nLa concentrazione di CO2 è buona, "
             "non è necessario intervenire.";
-      } else if (co2.co2 < 700) {
+      } else if (co2 < 700) {
         text += "\nLa concentrazione di CO2 è accettabile, "
             "non è necessario intervenire.";
-      } else if (co2.co2 < 800) {
+      } else if (co2 < 800) {
         text += "\nLa concentrazione di CO2 è scarsa, "
             "è necessario intervenire.";
-      } else if (co2.co2 < 900) {
+      } else if (co2 < 900) {
         text += "\nLa concentrazione di CO2 è pessima, "
             "è necessario intervenire.";
       } else {
         text += "\nLa concentrazione di CO2 è pericolosa, "
             "è necessario intervenire.";
       }
-    }
 
     return text;
   }

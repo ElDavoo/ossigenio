@@ -10,6 +10,8 @@ import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/utils/ui.dart';
 
 import '../../utils/log.dart';
+import '../widgets/air_quality_local.dart';
+import '../widgets/air_quality_place.dart';
 
 
 class NewHomePage extends StatefulWidget {
@@ -75,10 +77,13 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
     void onSelectedPlace(Place? place){
       if (place != null) {
         Log.l("Selected place: ${place.name}");
-        MqttManager.place = place;
       } else {
         Log.l("Selected place: null");
+
       }
+      setState(() {
+        MqttManager.place = place;
+      });
     }
     return Padding(
         padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
@@ -92,14 +97,17 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
                 ),
               ),
             UIWidgets.buildCard(WhereAreYou(onPlaceSelected: onSelectedPlace,)),
+            if (MqttManager.place != null && BLEManager().dvc == null)
+              UIWidgets.buildCard(AirQualityPlace(placeId: MqttManager.place!.id)),
             StreamBuilder(
               stream: BLEManager().devicestream.stream,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
+                // Hack to make the previous card disappear
+
                 if (snapshot.hasData) {
                   return UIWidgets.buildCard(AirQualityLocal(device: snapshot.data));
-                } else {
-                  return UIWidgets.buildCard(const Text("Loading..."));
                 }
+                return Container();
               },
             )
           ],

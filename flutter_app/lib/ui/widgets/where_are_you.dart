@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/managers/mqtt_man.dart';
 
 import '../../managers/account_man.dart';
 import '../../managers/gps_man.dart';
@@ -7,7 +8,6 @@ import '../../managers/gps_man.dart';
 // And asks the user to select one of them
 // And saves the selection in its state
 class WhereAreYou extends StatefulWidget {
-  Place? selectedPlace;
   // A function which is called when the user selects a place
   Function(Place? place) onPlaceSelected;
 
@@ -43,11 +43,8 @@ class _WhereAreYouState extends State<WhereAreYou> {
                 child: Text("Nessuno"),
               ));
             return DropdownButton<Place>(
-              value: widget.selectedPlace,
+              value: MqttManager.place,
               onChanged: (Place? newValue) {
-                setState(() {
-                  widget.selectedPlace = newValue;
-                });
                 widget.onPlaceSelected(newValue);
               },
               items: items,

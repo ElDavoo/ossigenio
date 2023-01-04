@@ -260,6 +260,11 @@ class AccountManager {
       return Future.error('Error getting nearby places');
     }
   }
+
+  Future<Place> getPlace(int placeId) async {
+    //TODO call the place api to get details
+    return Place(placeId, placeId.toString(), 666, LatLng(0, 0));
+  }
 }
 
 class Place {
