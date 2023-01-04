@@ -54,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
       }*/
     });
     _log = Log.addListener(context);
+    // Add a disconnection event
+    BLEManager().disconnectstream.add(null);
   }
 
   @override
