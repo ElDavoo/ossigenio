@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/gps_man.dart';
@@ -20,6 +22,9 @@ void main() {
         AccountManager();
         BLEManager();
         GpsManager();
+        if (kDebugMode) {
+          //debugPaintSizeEnabled=true;
+        }
 
     runApp(
         /*MultiProvider(providers: [

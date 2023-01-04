@@ -19,7 +19,7 @@ class MapPage extends StatefulWidget {
   _MapPageState createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin<MapPage> {
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   late StreamSubscription<List<Place>> _nearbyPlacesSubscription;
@@ -154,6 +154,9 @@ class _MapPageState extends State<MapPage> {
         GpsManager.position!.longitude));
     return GpsManager().placeStream.add(places);
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }
 

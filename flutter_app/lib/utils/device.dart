@@ -97,6 +97,10 @@ class Device extends ChangeNotifier {
     // listen to the state stream and update the state
     _stateStream.listen((event) {
       state = event;
+      // If we are disconnected, tell BLEManager
+      if (state == BluetoothDeviceState.disconnected) {
+        BLEManager().disconnect(this);
+      }
     });
     bool isConnected() {
       return state == BluetoothDeviceState.connected;

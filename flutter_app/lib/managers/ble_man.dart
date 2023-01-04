@@ -55,6 +55,22 @@ class BLEManager extends ChangeNotifier {
     flutterBlue.state.listen((event) {
       _state = event;
     });
+    // When we receive a scan result, we try to connect to it
+    scanstream.stream.listen((event) {
+      _scanResult = event;
+      Log.v("Scan result received, trying to connect...");
+      connectToDevice(event);
+    });
+    // When we receive a disconnection event, we start scanning again
+    disconnectstream.stream.listen((event) {
+      _scanResult = null;
+      dvc = null;
+      Log.v("Disconnected from device, starting scan again");
+      startBLEScan();
+    });
+    // Add a disconnession event to kickstart the scan
+    disconnectstream.add(null);
+
     Log.v("BLEManager initialized");
   }
 
@@ -67,8 +83,19 @@ class BLEManager extends ChangeNotifier {
 
   bool _isScanning = false;
 
+  // Stream of device connected
+  StreamController<Device> devicestream = StreamController<Device>.broadcast();
+  // Stream of disconnection events
+  StreamController<void> disconnectstream = StreamController<void>.broadcast();
+  // Stream of ScanResults (devices found)
+  StreamController<ScanResult> scanstream = StreamController<ScanResult>.broadcast();
+  // Last device connected
+  Device? dvc;
+  // Last scan result
+  ScanResult? _scanResult;
+
   // Method to scan for BLE devices
-  Future<ScanResult> startBLEScan() async {
+  void startBLEScan() async {
     Device? device;
     if (_isScanning) {
       // Wait for the scan to finish
@@ -111,8 +138,9 @@ class BLEManager extends ChangeNotifier {
       flutterBlue.stopScan();
       // Sort by rssi
       btdevice.sort((a, b) => b.rssi.compareTo(a.rssi));
-      // Connect to the first device
-      return btdevice.first;
+      // Add the first device to the stream and return
+      scanstream.add(btdevice.first);
+      return;
 
       Log.v("Scanning...");
     } else {
@@ -132,7 +160,7 @@ class BLEManager extends ChangeNotifier {
   }
 
   // Connect to a BLE device
-  Future<Device> connectToDevice(ScanResult result) async {
+  void connectToDevice(ScanResult result) async {
     stopBLEScan();
     // Connect to the device with a timeout of 3 seconds
     try {
@@ -142,15 +170,18 @@ class BLEManager extends ChangeNotifier {
       rethrow;
     } on PlatformException catch (e) {
       if (e.code == 'already_connected') {
-        return Device(result, await getUart(result.device));
+        dvc = Device(result, await getUart(result.device));
+        devicestream.add(dvc!);
+        return;
       }
       rethrow;
     } on Exception catch (e) {
       Log.v("Error connecting to device: $e");
       rethrow;
     }
-
-    return Device(result, await getUart(result.device));
+    dvc = Device(result, await getUart(result.device));
+    devicestream.add(dvc!);
+    return;
 
     // Discover services
     //throw UnimplementedError();
@@ -198,8 +229,11 @@ class BLEManager extends ChangeNotifier {
     }
   }
 
-  static Future disconnect(Device device) {
-    return device.device.disconnect();
+  void disconnect(Device device) {
+    device.device.disconnect();
+    dvc = null;
+    _scanResult = null;
+    disconnectstream.add(null);
   }
 
   static void send(Device device, Uint8List data) {

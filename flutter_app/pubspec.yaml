@@ -54,6 +54,8 @@ dependencies:
   latlong: ^0.6.1
   latlong2: ^0.8.1
   flutter_map_location_marker: ^5.1.0+1
+  new_gradient_app_bar: ^0.2.0
+  syncfusion_flutter_sliders: ^20.4.42
 
 dev_dependencies:
   flutter_test:

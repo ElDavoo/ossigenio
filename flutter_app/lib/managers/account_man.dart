@@ -252,6 +252,7 @@ class AccountManager {
       // parse response json to return places
       List<Place> places = [];
       for (var place in response.data) {
+        Log.v("Place: ${place['name']}");
         places.add(Place.fromJson(place));
       }
       return places;

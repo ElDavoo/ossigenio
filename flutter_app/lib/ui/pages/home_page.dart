@@ -9,7 +9,7 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../../../managers/ble_man.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'new_home_page.dart';
 import '../../Messages/co2_message.dart';
 import '../../Messages/debug_message.dart';
 import '../../Messages/feedback_message.dart';
@@ -20,6 +20,7 @@ import '../../utils/log.dart';
 import '../widgets/device_tab.dart';
 import 'login_page.dart';
 import 'map_page.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -61,6 +62,8 @@ class _MyHomePageState extends State<MyHomePage> {
     //bleManager.startBLEScan();
   }
 
+  int _selectedIndex = 0;
+
   @override
   void dispose() {
     BLEManager().stopBLEScan();
@@ -68,15 +71,29 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  static Widget spinText(String text) {
-    return Center(
-        child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        const CircularProgressIndicator(),
-        Text(text),
-      ],
-    ));
+
+
+  final List<Widget> _pages = <Widget>[
+    const NewHomePage(),
+    const MapPage(),
+  ];
+  PageController pageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
+
+  void pageChanged(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  void bottomTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      pageController.animateToPage(index,
+          duration: const Duration(milliseconds: 100), curve: Curves.ease);
+    });
   }
 
   @override
@@ -85,82 +102,77 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return DefaultTabController(
-        initialIndex: 0,
-        length: 3,
-        child: Scaffold(
-            appBar: AppBar(
-              // TODO: Dynamically change the accounts icon based on account status
-              leading: IconButton(
-                icon: const Icon(Icons.no_accounts),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-              ),
-              title: Text(AppLocalizations.of(context)!.title),
-              bottom: const TabBar(
-                tabs: <Widget>[
-                  Tab(
-                    text: 'Device',
-                  ),
-                  Tab(
-                    text: 'Messages (debug)',
-                  ),
-                  Tab(
-                    text: 'Map',
-                  ),
-                ],
-              ),
-              actions: const [
-                Icon(Icons.more_vert),
-              ],
+    return Scaffold(
+      appBar: NewGradientAppBar(
+          gradient: const LinearGradient(
+            colors: [Colors.blue, Colors.blueAccent],
+          ),
+          // TODO: Dynamically change the accounts icon based on account status
+          leading: IconButton(
+            icon: const Icon(Icons.no_accounts),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+            },
+          ),
+          title: Text(AppLocalizations.of(context)!.title),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: bluetoothStateWidget(),
             ),
-            body: FutureBuilder<ScanResult>(
-                future: BLEManager().startBLEScan(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return FutureBuilder<Device>(
-                      future: BLEManager().connectToDevice(snapshot.data!),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          _device = snapshot.data;
-                          return ChangeNotifierProvider(
-                            create: (context) => _device!,
-                            child: TabBarView(
-                              children: <Widget>[
-                                Consumer<Device>(
-                                  builder: (context, device, child) {
-                                    return DeviceTab(device: device);
-                                  },
-                                ),
-                                Consumer<Device>(
-                                  builder: (context, device, child) {
-                                    // Put debug tab here
-                                    return DebugTab(device: device);
-                                  },
-                                ),
-                                // Add the map page
-                                const MapPage(),
-                              ],
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-                        return spinText("Connessione...");
-                      },
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  // By default, show a loading spinner.
-                  return TabBarView(children: <Widget>[
-                    spinText("Scansione..."),
-                    spinText("Scansione..."),
-                    const MapPage()]);
-                })));
+          ]),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Color.fromRGBO(227, 252, 230, 0.8),
+              Color.fromRGBO(111, 206, 250, 0.5)
+            ],
+          ),
+        ),
+        child: PageView.builder(
+          controller: pageController,
+          onPageChanged: (index) {
+            pageChanged(index);
+          },
+          itemCount: _pages.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _pages[index];
+          },
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        elevation: 50,
+        selectedFontSize: 15,
+        selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
+        selectedItemColor: Colors.blue,
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Mappa',
+            backgroundColor: Colors.green,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: bottomTapped,
+      ),
+    );
+  }
+
+  GestureDetector bluetoothStateWidget() {
+    return GestureDetector(
+      onTap: () {},
+      child: const Icon(Icons.bluetooth),
+    );
   }
 }
