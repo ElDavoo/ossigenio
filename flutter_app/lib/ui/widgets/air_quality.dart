@@ -44,28 +44,32 @@ class _AirQualityLocalState extends State<AirQualityLocal> {
               if (msg.message is CO2Message) {
                 CO2Message co2 = msg.message as CO2Message;
 
-                return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                          child: Column(
+                return SizedBox(
+                  height: 390,
+                  child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          AirQualityText(co2: co2.co2),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                            child: Text(
-                              // Insert temperature
-                              buildExplanationText(co2),
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ],
-                      )),
+                          Expanded(
+                              child: Column(
+                            children: [
+                              AirQualityText(co2: co2.co2),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                child: Text(
+                                    // Insert temperature
+                                    buildExplanationText(co2),
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                              ),
+                            ],
+                          )),
 
-                      UIWidgets.verticalSlider(
-                            Colors.green, co2.co2.toDouble()),
-                    ]);
+                          UIWidgets.verticalSlider(
+                                Colors.green, co2.co2.toDouble()),
+                        ]
+                  ),
+                );
               } else {
                 return const Text("Loading...");
               }
