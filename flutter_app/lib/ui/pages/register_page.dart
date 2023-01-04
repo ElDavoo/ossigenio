@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
+import 'package:flutter_app/ui/pages/home_page.dart';
 
 import '../../utils/log.dart';
 
@@ -35,97 +36,97 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  void onPressed() {
+    AccountManager().register(emailinputController.text, usernameinputController.text, passwordinputController.text)
+        .then((value) => {
+              if (value)
+                {
+                  Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const MyHomePage()),
+                  )
+                }
+              else
+                {Log.l('Register failed')}
+            });
+  }
+
   @override
   Widget build(BuildContext context) {
     // Register page
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          // Logo
-          const SizedBox(
-            height: 100,
-          ),
-          const Text(
-            'Logo',
-            style: TextStyle(fontSize: 50),
-          ),
-          const SizedBox(
-            height: 100,
-          ),
-          // Email
-          const Text(
-            'Email',
-            style: TextStyle(fontSize: 20),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-            controller: emailinputController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Email',
+      resizeToAvoidBottomInset: true,
+      body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Color.fromRGBO(227, 252, 230, 0.8),
+                Color.fromRGBO(111, 206, 250, 0.5)
+              ],
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          // Password
-          const Text(
-            'Password',
-            style: TextStyle(fontSize: 20),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-            controller: passwordinputController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Password',
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+                  child: const FlutterLogo(
+                    size: 120,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  child: TextField(
+                    controller: usernameinputController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      labelText: 'Nome utente',
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  child: TextField(
+                    controller: emailinputController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      labelText: 'Email',
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  child: TextField(
+                    controller: passwordinputController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      labelText: 'Password',
+                    ),
+                  ),
+                ),
+                Container(
+                    height: 80,
+                    padding: const EdgeInsets.fromLTRB(150, 30, 150, 0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size.fromHeight(50),
+                      ),
+                      onPressed: onPressed,
+                      child: const Text('Registrati'),
+                    )),
+              ],
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          // Confirm password
-          const Text(
-            'Confirm password',
-            style: TextStyle(fontSize: 20),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-            controller: usernameinputController,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'username',
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          // Register button
-          ElevatedButton(
-            onPressed: () {
-              AccountManager().register(
-                      emailinputController.text,
-                      usernameinputController.text,
-                      passwordinputController.text)
-                  .then((value) => {
-                        if (value)
-                          {
-                            //Pop navigator two times
-                            Navigator.of(context).pop(),
-                            Navigator.of(context).pop(),
-                          }
-                      });
-            },
-            child: null,
-          ),
-        ],
+          )
       ),
     );
   }

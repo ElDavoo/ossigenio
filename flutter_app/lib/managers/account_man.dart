@@ -47,8 +47,6 @@ class AccountManager {
   final Dio dio = Dio();
   final PrefManager prefManager = PrefManager();
 
-  late final Future<bool> _isLoggedIn;
-
   // a stream to notify the app when the login status changes
   final StreamController<bool> _loginStatusController = StreamController<bool>.broadcast();
   Stream<bool> get loginStatus => _loginStatusController.stream;
@@ -94,6 +92,9 @@ class AccountManager {
   }
 
   Future<bool> areDataSaved() async {
+    if (await prefManager.read(PrefConstants.cookie) != null) {
+      return true;
+    }
     if (await prefManager.read(PrefConstants.username) != null &&
         await prefManager.read(PrefConstants.password) != null) {
       return true;
@@ -182,7 +183,7 @@ class AccountManager {
   Future<bool> checkIfValid(MacAddress mac) async {
     // Check if a mac address is original, if not, return false
     // First ensure we are logged in
-    if (await _isLoggedIn) {
+    if (await areDataSaved()) {
       // TODO check if the token is valid
       return true;
       var body = FormData.fromMap({
@@ -217,7 +218,7 @@ class AccountManager {
 
   // Method to get mqtt credentials
   Future<Map<String, String>> getMqttCredentials() async {
-    if (await _isLoggedIn) {
+    if (await areDataSaved()) {
       // check if there are
       // TODO
       return {'username': 'test', 'password': 'test2'};
@@ -231,7 +232,7 @@ class AccountManager {
   // Name of the place, location of the place, air quality (express with a number)
   Future<List<Place>> getNearbyPlaces(LatLng position) async {
     // ensure we are logged in
-    await _isLoggedIn;
+    await areDataSaved();
     Log.v("Getting nearby places...");
     // Ask to the server, sending position as a post request
     var body = jsonEncode({
