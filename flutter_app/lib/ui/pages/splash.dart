@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'home_page.dart';
+import 'login_page.dart';
 
 // A splash screen
 
@@ -16,10 +18,27 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3)).then( (_) {
+    AccountManager().login().then((value) {
+      if (value) {
+        FlutterNativeSplash.remove();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyHomePage()),
+        );
+      } else {
+        FlutterNativeSplash.remove();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      }
+    })
+    .catchError((error) {
       FlutterNativeSplash.remove();
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const MyHomePage()));
+        context,
+        MaterialPageRoute(builder: (context) => const LoginPage()),
+      );
     });
   }
 
