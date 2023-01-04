@@ -25,6 +25,7 @@ class AccConsts {
   static const String urlUserInfo = '/user';
   static const String urlPlace = '/place/';
   static const int apiVersion = 1;
+  static const int shaIterations = 1000;
 
 }
 
@@ -39,8 +40,6 @@ class AccountManager {
     Log.l('AccountManager initializing...');
     dio.options.baseUrl =
     'https://${AccConsts.server}:${AccConsts.httpsPort}/api/v${AccConsts.apiVersion}';
-    // TODO retrieve token or usename/password from secure storage
-    _isLoggedIn = login();
     Log.l('AccountManager initialized');
 
   }
@@ -56,7 +55,7 @@ class AccountManager {
 
 
   Future<bool> login() async {
-    Log.l('Logging in...');
+    Log.l('Logging in with cookie...');
     // First try to get user api with cookie
     try {
       Response response = await dio.get(AccConsts.urlUserInfo,
@@ -71,9 +70,11 @@ class AccountManager {
       return true;
     } on DioError catch (e) {
       Log.l('Error while logging in with cookie: ${e.message}');
+    } catch (e) {
+      Log.l('Error while logging in with cookie: ${e.toString()}');
     }
     if (await areDataSaved()) {
-      Log.l('Data saved');
+      Log.l('Data saved, logging in...');
       String username = await prefManager.read(PrefConstants.username) as String;
       String password = await prefManager.read(PrefConstants.password) as String;
       bool areSavedValid = await loginWith(username, password);
@@ -104,7 +105,7 @@ class AccountManager {
     // crypt the password with sha256 1 milion times
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < AccConsts.shaIterations; i++) {
       digest = sha256.convert(digest.bytes);
     }
 
@@ -144,7 +145,7 @@ class AccountManager {
     // crypt the password with sha256 1 milion times
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < AccConsts.shaIterations; i++) {
       digest = sha256.convert(digest.bytes);
     }
     var body = jsonEncode({
