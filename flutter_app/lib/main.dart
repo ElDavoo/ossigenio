@@ -24,9 +24,7 @@ void main() {
         /* Start to initialize the various app subsystems
           * (e.g. BLE, DB, etc.) */
         PrefManager();
-        AccountManager();
         BLEManager();
-        GpsManager();
         if (kDebugMode) {
           //debugPaintSizeEnabled=true;
         }

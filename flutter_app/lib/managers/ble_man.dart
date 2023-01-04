@@ -69,7 +69,7 @@ class BLEManager extends ChangeNotifier {
       startBLEScan();
     });
     // Add a disconnession event to kickstart the scan
-    disconnectstream.add(null);
+    // disconnectstream.add(null);
 
     Log.v("BLEManager initialized");
   }
