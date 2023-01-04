@@ -263,15 +263,17 @@ class AccountManager {
 }
 
 class Place {
+  late int id;
   // Defines a place
   late String name;
   late int co2Level;
   late LatLng location;
 
-  Place(this.name, this.co2Level, this.location);
+  Place(this.id, this.name, this.co2Level, this.location);
 
   // fromJson
   Place.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     name = json['name'];
     try {
     co2Level = json['co2'];

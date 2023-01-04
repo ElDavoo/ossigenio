@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/ble_man.dart';
+import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/widgets/air_quality.dart';
 import 'package:flutter_app/ui/widgets/where_are_you.dart';
@@ -74,6 +75,7 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
     void onSelectedPlace(Place? place){
       if (place != null) {
         Log.l("Selected place: ${place.name}");
+        MqttManager.place = place;
       } else {
         Log.l("Selected place: null");
       }
