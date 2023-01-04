@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:provider/provider.dart';
@@ -122,7 +123,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         TextButton(
                           child: Text("AppLocalizations.of(context)!.cancel"),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            AccountManager().logout();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()));
                           },
                         ),
                         TextButton(
