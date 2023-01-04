@@ -6,14 +6,19 @@ import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
+import 'package:flutter_app/ui/pages/splash.dart';
 import 'package:provider/provider.dart';
 import '../managers/ble_man.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'ui/pages/home_page.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
         /* Start to initialize the various app subsystems
@@ -57,7 +62,7 @@ class MyApp extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: const SplashPage(),
     );
   }
 }

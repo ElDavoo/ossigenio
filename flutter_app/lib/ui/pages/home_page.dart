@@ -107,14 +107,37 @@ class _MyHomePageState extends State<MyHomePage> {
           gradient: const LinearGradient(
             colors: [Colors.blue, Colors.blueAccent],
           ),
-          // TODO: Dynamically change the accounts icon based on account status
           leading: IconButton(
             icon: const Icon(Icons.no_accounts),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
+              // Show a dialog to confirm logout
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("AppLocalizations.of(context)!.logout"),
+                      content: Text(
+                          "AppLocalizations.of(context)!.logoutConfirmMessage"),
+                      actions: [
+                        TextButton(
+                          child: Text("AppLocalizations.of(context)!.cancel"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text("AppLocalizations.of(context)!.logout"),
+                          onPressed: () {
+                            // Logout
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (context) => const LoginPage()));
+                          },
+                        ),
+                      ],
+                    );
+                  });
             },
           ),
           title: Text(AppLocalizations.of(context)!.title),
