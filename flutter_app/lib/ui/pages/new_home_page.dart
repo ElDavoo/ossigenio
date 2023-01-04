@@ -8,6 +8,8 @@ import 'package:flutter_app/ui/widgets/where_are_you.dart';
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/utils/ui.dart';
 
+import '../../utils/log.dart';
+
 
 class NewHomePage extends StatefulWidget {
   const NewHomePage({Key? key}) : super(key: key);
@@ -69,6 +71,13 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
         });
       }
     });
+    void onSelectedPlace(Place? place){
+      if (place != null) {
+        Log.l("Selected place: ${place.name}");
+      } else {
+        Log.l("Selected place: null");
+      }
+    }
     return Padding(
         padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
         child: SingleChildScrollView(
@@ -80,7 +89,7 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
                   child: greetingText(name),
                 ),
               ),
-            UIWidgets.buildCard(WhereAreYou()),
+            UIWidgets.buildCard(WhereAreYou(onPlaceSelected: onSelectedPlace,)),
             StreamBuilder(
               stream: BLEManager().devicestream.stream,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
