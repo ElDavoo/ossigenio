@@ -59,6 +59,7 @@ dependencies:
     git:
       url: https://github.com/KingWu/gen_lang.git
       ref: master # branch name
+  flutter_map_marker_cluster: ^1.0.1
 
 dev_dependencies:
   flutter_test:

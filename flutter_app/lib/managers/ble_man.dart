@@ -283,7 +283,7 @@ class BLEManager extends ChangeNotifier {
   static Stream<int> rssiStream(Device device) async* {
     for (;;) {
       yield await device.device.readRssi();
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 2));
     }
   }
 }

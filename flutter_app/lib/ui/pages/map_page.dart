@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../managers/account_man.dart';
@@ -20,6 +21,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin<MapPage> {
+  final PopupController _popupController = PopupController();
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   late StreamSubscription<List<Place>> _nearbyPlacesSubscription;
@@ -50,11 +52,18 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin<Ma
 
   @override
   Widget build(BuildContext context) {
+    final popupState = PopupState.maybeOf(context, listen: false);
+    LatLng center = LatLng(44.6291399, 10.9488126);
+    if (GpsManager.position != null) {
+      center = LatLng(GpsManager.position!.latitude, GpsManager.position!.longitude);
+    }
     return FlutterMap(
       options: MapOptions(
-        center: LatLng(44.6291399, 10.9488126),
+        center: center,
+        minZoom: 9.0,
         zoom: 15.0,
-        maxZoom: 18.0,
+        maxZoom: 21.0,
+        maxBounds: LatLngBounds(LatLng(48, 6), LatLng(36, 19)),
         interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
         onPositionChanged: (MapPosition position, bool hasGesture) {
           if (hasGesture) {
@@ -99,19 +108,70 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin<Ma
         ),
       ],
       children: [
+
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'it.eldavo.aqm',
+          maxNativeZoom: 18.0,
         ),
         CurrentLocationLayer(
           centerCurrentLocationStream:
           _centerCurrentLocationStreamController.stream,
           centerOnLocationUpdate: _centerOnLocationUpdate,
         ),
-        MarkerLayer(
-          markers: _markers,
+
+        MarkerClusterLayerWidget(
+            options: MarkerClusterLayerOptions(
+            spiderfyCircleRadius: 80,
+            spiderfySpiralDistanceMultiplier: 2,
+            circleSpiralSwitchover: 12,
+            maxClusterRadius: 120,
+            rotate: true,
+            size: const Size(40, 40),
+        anchor: AnchorPos.align(AnchorAlign.center),
+        fitBoundsOptions: const FitBoundsOptions(
+          padding: EdgeInsets.all(50),
+          maxZoom: 15,
         ),
+        markers: _markers,
+        polygonOptions: const PolygonOptions(
+            borderColor: Colors.blueAccent,
+            color: Colors.black12,
+            borderStrokeWidth: 3),
+        popupOptions: PopupOptions(
+          popupState: PopupState(),
+            popupSnap: PopupSnap.markerTop,
+            popupController: _popupController,
+            popupBuilder: (_, marker) => Container(
+              width: 200,
+              height: 100,
+              color: Colors.white,
+              child: GestureDetector(
+                onTap: () {
+                  // close the popup
+                  _popupController.hideAllPopups();
+                },
+                child: Text(
+                  'Container popup for marker at ${marker.point}',
+                ),
+              ),
+            )),
+        builder: (context, markers) {
+          return Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                color: Colors.blue),
+            child: Center(
+              child: Text(
+                markers.length.toString(),
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        },),),
+
       ],
+
         );
   }
   static List<Marker> latlngtomarkers(List<LatLng> coords){
