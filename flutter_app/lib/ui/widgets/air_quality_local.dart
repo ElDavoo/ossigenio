@@ -20,18 +20,20 @@ class AirQualityLocal extends StatefulWidget {
 class _AirQualityLocalState extends State<AirQualityLocal> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<MessageWithDirection>(
-        stream: widget.device.messagesStream,
+    return StreamBuilder<CO2Message>(
+        stream: widget.device.messagesStream
+                    .where((m) => m.direction == MessageDirection.received)
+                    .where((m) => m.message is CO2Message)
+                .map((m) => m.message as CO2Message)
+                .cast<CO2Message>(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            if (snapshot.data!.message is CO2Message) {
-              CO2Message msg = snapshot.data!.message as CO2Message;
-              return AirQuality(
-                co2: msg.co2,
-                temperature: msg.temperature,
-                humidity: msg.humidity,
+             return AirQuality(
+                co2: snapshot.data!.co2 > 400 ? snapshot.data!.co2 : 400,
+                temperature: snapshot.data?.temperature,
+                humidity: snapshot.data?.humidity,
+                isHeating: widget.device.isHeating,
               );
-            }
           }
           return const Text('No data');
         });

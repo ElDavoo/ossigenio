@@ -12,8 +12,9 @@ class AirQuality extends StatefulWidget {
   int co2;
   int ?temperature;
   int ?humidity;
+  bool ?isHeating;
 
-  AirQuality({Key? key, required this.co2, this.temperature, this.humidity}) : super(key: key);
+  AirQuality({Key? key, required this.co2, this.temperature, this.humidity, this.isHeating}) : super(key: key);
 
   @override
   _AirQualityState createState() => _AirQualityState();
@@ -26,6 +27,31 @@ class _AirQualityState extends State<AirQuality> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        if (widget.isHeating != null && widget.isHeating!)
+
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.yellow.shade200,
+            ),
+            width: double.infinity,
+            child: Center(
+              child: Row(
+                children: const [
+                  Text( '⚠️ ', style: TextStyle(fontSize: 40),),
+                  Center(
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Il sensore si sta riscaldando.\nI valori potrebbero non essere precisi',
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         const FittedBox(
             fit: BoxFit.fitWidth,
             alignment: Alignment.topLeft,

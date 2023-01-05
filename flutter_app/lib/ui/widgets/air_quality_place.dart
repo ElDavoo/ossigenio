@@ -26,7 +26,9 @@ class _AirQualityPlaceState extends State<AirQualityPlace> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return AirQuality(
-              co2: snapshot.data!.co2Level,
+              co2: snapshot.data!.co2Level > 400
+                  ? snapshot.data!.co2Level
+                  : 400,
             );
           }
           return const Text('No data');

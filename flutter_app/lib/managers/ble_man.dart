@@ -242,7 +242,10 @@ class BLEManager extends ChangeNotifier {
 
   static void send(Device device, Uint8List data) {
     if (device.state == BluetoothDeviceState.connected) {
-      device.btUart.rxCharacteristic.write(data);
+
+      device.btUart.rxCharacteristic.write(data).catchError((error) {
+        Log.v("Error sending data: $error");
+      });
     } else {
       Log.v("Device not connected");
     }
