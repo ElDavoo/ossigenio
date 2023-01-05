@@ -151,6 +151,10 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
+              child: bluetoothRSSI(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
               child: bluetoothStateWidget(),
             ),
           ]),
@@ -217,5 +221,43 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       child: const Icon(Icons.bluetooth),
     );
+  }
+  Widget bluetoothRSSI() {
+    return StreamBuilder(
+        stream: BLEManager().disconnectstream.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container();
+          } else {
+            return StreamBuilder(
+              stream: BLEManager().devicestream.stream,
+              builder: (context, snapshot) {
+                if (BLEManager().dvc != null) {
+                  return StreamBuilder<int>(
+                      stream: BLEManager.rssiStream(BLEManager().dvc!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          int rssi = snapshot.data!;
+                          if (rssi > -70) {
+                            return const Icon(Icons.signal_cellular_alt_sharp);
+                          } else if (rssi > -90) {
+                            return const Icon(
+                                Icons.signal_cellular_alt_2_bar_sharp);
+                          } else {
+                            return const Icon(
+                                Icons.signal_cellular_alt_1_bar_sharp);
+                          }
+                        } else {
+                          return Container();
+                        }
+                      });
+                } else {
+                  return Container();
+                }
+              },);
+
+          }
+        });
+
   }
 }
