@@ -70,7 +70,6 @@ class _DebugTabState extends State<DebugTab> {
                   StreamBuilder<MessageWithDirection>(
                       stream: widget.device.messagesStream,
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
                           return ListView.builder(
                             itemCount: widget.device.messages.length,
                             itemBuilder: (context, index) {
@@ -78,9 +77,6 @@ class _DebugTabState extends State<DebugTab> {
                                   style: const TextStyle(fontSize: 13));
                             },
                           );
-                        } else {
-                          return const Text('No data');
-                        }
                       }),
             ),
           ],

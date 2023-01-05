@@ -10,7 +10,7 @@ class MessageTypes {
   static const co2Message = 0x81;
   static const extendedMessage = 0x82;
   static const startupMessage = 0x83;
-  static const feedbackMessage = 0x94;
+  static const feedbackMessage = 0x84;
   static const msgRequest0 = 0x1f;
   static const msgRequest1 = 0x1e;
   static const msgRequest2 = 0x1d;

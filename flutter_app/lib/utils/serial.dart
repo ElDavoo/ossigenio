@@ -82,7 +82,7 @@ class SerialComm {
         message = FeedbackMessage.fromBytes(payload);
         break;
       default:
-        Log.v("Unknown message type");
+        Log.v("Unknown message type ${data[1]}");
         return null;
     }
     Log.l(message.toString());

@@ -39,7 +39,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   //BLEManager bleManager = BLEManager();
   // get BLEManager from ChangeNotifierProvider
 
@@ -56,19 +56,45 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     _log = Log.addListener(context);
     // Add a disconnection event
+    BLEManager().devicestream.stream.listen((event) {
+      if (BLEManager().dvc !=  null) {
+        BLEManager().dvc!.messagesStream.where((event)
+        {
+          if (event.direction == MessageDirection.received) {
+            if (event.message is FeedbackMessage) {
+              return true;
+            }
+          }
+          return false;
+        })
+        .map((msg) => msg.message)
+        .cast<FeedbackMessage>()
+            .listen((event) {
+          _showOverlay(context, fbvalue: event.feedback);
+        });
+        }
+      }
+    );
     BLEManager().disconnectstream.add(null);
+
     FlutterNativeSplash.remove();
   }
 
   @override
   void initState() {
     super.initState();
+    animationController =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 250));
+    animation =
+        CurveTween(curve: Curves.fastOutSlowIn).animate(animationController!);
     _init();
+
     //bleManager.startBLEScan();
   }
 
   int _selectedIndex = 0;
-
+  AnimationController? animationController;
+  Animation<double>? animation;
   @override
   void dispose() {
     BLEManager().stopBLEScan();
@@ -260,4 +286,55 @@ class _MyHomePageState extends State<MyHomePage> {
         });
 
   }
+
+  void _showOverlay(BuildContext context, {required FeedbackValues fbvalue}) async {
+    // Convert the fbvalue to an emoji with a dict
+    final Map<FeedbackValues, String> emojiDict = {
+      FeedbackValues.negative: "🙁",
+      FeedbackValues.neutral: "😐",
+      FeedbackValues.positive: "😉",
+    };
+    final String emoji = emojiDict[fbvalue]!;
+
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry overlayEntry;
+    overlayEntry = OverlayEntry(builder: (context) {
+      return               FadeTransition(
+      opacity: animation!,
+        child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              Color.fromRGBO(227, 252, 230, 0.9),
+              Color.fromRGBO(111, 206, 250, 0.6)
+            ],
+          ),
+        ),
+        child: Center(
+          child: Material(
+
+                child: Text(
+                    emoji,
+                    style: const TextStyle(fontSize: 80),
+                  ),
+              ),
+            ),
+
+        ),
+      );
+    });
+    animationController!.addListener(() {
+      overlayState!.setState(() {});
+    });
+    // inserting overlay entry
+    overlayState!.insert(overlayEntry);
+    animationController!.forward();
+    await Future.delayed(const Duration(seconds: 1))
+        .whenComplete(() => animationController!.reverse())
+    // removing overlay entry after stipulated time.
+        .whenComplete(() => overlayEntry.remove());
+  }
+
 }
