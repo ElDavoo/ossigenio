@@ -28,7 +28,7 @@ class Nearby(MethodView):
     @places.response(200, PlaceSchema(many=True))
     def post(self, args):
         # Get the places closer than 1km
-        places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})") < 200).all()
+        places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})") < 100).all()
         places_list = []
         for place in places:
             lst = place.serialize()
