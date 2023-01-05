@@ -30,7 +30,10 @@ class SerialComm {
       sum1 = (sum1 + data[index]) % 255;
       sum2 = (sum2 + sum1) % 255;
     }
-    return (sum2 << 8) | sum1;
+    if (sum1 < 1) {
+      sum1 += 255;
+    }
+    return sum1 - 2;
   }
 
   static Message? receive(List<int> list) {
@@ -63,29 +66,27 @@ class SerialComm {
     }
     // Check the message type
     Uint8List payload = data.sublist(2, data.length - 2);
+    Message ?message;
     switch (data[1]) {
       case MessageTypes.debugMessage:
-        Log.v("Debug message received");
-        return DebugMessage.dbgconstr(data);
+        message = DebugMessage.dbgconstr(data);
+        break;
       case MessageTypes.co2Message:
-        Log.v("CO2 message received");
-        Message message = CO2Message.fromBytes(payload);
-        Log.v('$message');
-        return message;
+        message = CO2Message.fromBytes(payload);
+        break;
       case MessageTypes.extendedMessage:
         Log.v("Extended message received");
         // TODO
         return null;
       case MessageTypes.feedbackMessage:
-        Log.v("Feedback message received");
-        Message message = FeedbackMessage.fromBytes(payload);
-        Log.v('$message');
-        return message;
+        message = FeedbackMessage.fromBytes(payload);
+        break;
       default:
         Log.v("Unknown message type");
-
         return null;
     }
+    Log.l(message.toString());
+    return message;
   }
 
   static Uint8List buildMsgg(int msgIndex) {

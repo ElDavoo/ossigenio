@@ -50,7 +50,8 @@ class _AirQualityState extends State<AirQuality> {
                                 padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                 child: Text(
                                     // Insert temperature
-                                    buildExplanationText(widget.co2),
+                                    buildExplanationText(widget.co2,
+                                        widget.temperature, widget.humidity),
                                     style: const TextStyle(fontSize: 16),
                                   ),
                               ),

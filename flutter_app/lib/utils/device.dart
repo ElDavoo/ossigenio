@@ -62,11 +62,11 @@ class Device extends ChangeNotifier {
 
   late Stream<MessageWithDirection> messagesStream;
 
-  late MacAddress _serialNumber;
+  late MacAddress serialNumber;
 
   //constructor that take blemanager and device and initializes a mqttmanager
   Device(ScanResult result, this.btUart) {
-    _serialNumber = BLEManager.processAdv(result.advertisementData)!;
+    serialNumber = BLEManager.processAdv(result.advertisementData)!;
     device = result.device;
     Log.v("Initializing Device: ${device.name} - ${device.id}");
     messagesStream = btUart.txCharacteristic.value
@@ -89,7 +89,7 @@ class Device extends ChangeNotifier {
     messagesStream.listen((message) {
       Log.v("Message received");
       if (message.direction == MessageDirection.received) {
-        MqttManager(mac: _serialNumber).publish(message.message);
+        MqttManager(mac: serialNumber).publish(message.message);
       }
     });
     // make state a broadcast stream
