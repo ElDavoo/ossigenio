@@ -182,6 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
         selectedItemColor: Colors.blue,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        backgroundColor: Color.fromRGBO(255,255,255, 0.2),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
