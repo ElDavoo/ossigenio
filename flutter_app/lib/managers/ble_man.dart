@@ -59,7 +59,11 @@ class BLEManager extends ChangeNotifier {
     scanstream.stream.listen((event) {
       _scanResult = event;
       Log.v("Scan result received, trying to connect...");
-      connectToDevice(event);
+      connectToDevice(event).catchError((e) {
+        Log.l("Error connecting to device: $e");
+        event.device.disconnect();
+        disconnectstream.add(null);
+      });
     });
     // When we receive a disconnection event, we start scanning again
     disconnectstream.stream.listen((event) {
@@ -160,7 +164,7 @@ class BLEManager extends ChangeNotifier {
   }
 
   // Connect to a BLE device
-  void connectToDevice(ScanResult result) async {
+  Future<void> connectToDevice(ScanResult result) async {
     stopBLEScan();
     // Connect to the device with a timeout of 3 seconds
     try {

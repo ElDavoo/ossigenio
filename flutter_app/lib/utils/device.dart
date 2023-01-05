@@ -99,6 +99,7 @@ class Device extends ChangeNotifier {
       state = event;
       // If we are disconnected, tell BLEManager
       if (state == BluetoothDeviceState.disconnected) {
+        device.disconnect();
         BLEManager().disconnect(this);
       }
     });
