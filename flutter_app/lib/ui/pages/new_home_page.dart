@@ -15,7 +15,8 @@ import '../widgets/air_quality_local.dart';
 import '../widgets/air_quality_place.dart';
 
 class NewHomePage extends StatefulWidget {
-  const NewHomePage({Key? key}) : super(key: key);
+  String name = "null";
+  NewHomePage({Key? key}) : super(key: key);
 
   @override
   _NewHomePageState createState() => _NewHomePageState();
@@ -70,11 +71,11 @@ class _NewHomePageState extends State<NewHomePage>
   Widget build(BuildContext context) {
     // Get the name of the user from the preferences
     // and display it in the greeting text
-    String name = "null";
+
     PrefManager().read(PrefConstants.username).then((value) {
       if (value != null) {
         setState(() {
-          name = value;
+          widget.name = value;
         });
       }
     });
@@ -98,7 +99,7 @@ class _NewHomePageState extends State<NewHomePage>
               FittedBox(
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topLeft,
-                child: greetingText(name),
+                child: greetingText(widget.name),
               ),
             ),
             UIWidgets.buildCard(WhereAreYou(

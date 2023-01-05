@@ -8,8 +8,8 @@ import '../utils/log.dart';
 
 class PrefConstants {
   static const String deviceMac = "deviceMac";
+  static const String email = "email";
   static const String username = "username";
-  static const String password = "password";
   static const String dataVersion = "dataVersion";
   static const String mqttUsername = "mqttUsername";
   static const String mqttPassword = "mqttPassword";
@@ -54,25 +54,17 @@ class PrefManager {
     return await _storage.readAll();
   }
 
-  void saveAccountData(String username, String password) {
+  void saveAccountData(String username, String email) {
     write(PrefConstants.username, username);
     // no need to encrypt the password, we are in encrypted storage
     // TODO save token instead of password
-    write(PrefConstants.password, password);
+    write(PrefConstants.email, email);
   }
 
   void saveMqttData(String username, String password) {
     write(PrefConstants.mqttUsername, username);
     // no need to encrypt the password, we are in encrypted storage
     write(PrefConstants.mqttPassword, password);
-  }
-
-  Future<bool> areAccountDataSaved() async {
-    if (await read(PrefConstants.username) != null &&
-        await read(PrefConstants.password) != null) {
-      return true;
-    }
-    return false;
   }
 
   Future<bool> areMqttDataSaved() async {

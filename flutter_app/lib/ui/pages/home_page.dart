@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   final List<Widget> _pages = <Widget>[
-    const NewHomePage(),
+    NewHomePage(),
     const MapPage(),
   ];
   PageController pageController = PageController(
