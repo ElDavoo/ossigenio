@@ -63,46 +63,35 @@ class AccountManager {
               }
           )
       );
-      Log.l('Logged in with cookie');
-      _loginStatusController.add(true);
-      return true;
+      if (response.statusCode == 200) {
+        Log.l('Logged in with cookie');
+        String username = response.data['name'];
+        String email = response.data['email'];
+        // save the username and password
+        PrefManager().saveAccountData(username, email);
+        _loginStatusController.add(true);
+        return true;
+      } else {
+        Log.l('Cookie login failed');
+        AccountManager().logout();
+        return false;
+      }
     } on DioError catch (e) {
       Log.l('Error while logging in with cookie: ${e.message}');
     } catch (e) {
       Log.l('Error while logging in with cookie: ${e.toString()}');
     }
-    if (await areDataSaved()) {
-      Log.l('Data saved, logging in...');
-      String username = await prefManager.read(PrefConstants.username) as String;
-      String password = await prefManager.read(PrefConstants.password) as String;
-      bool areSavedValid = await loginWith(username, password);
-      if (areSavedValid) {
-        Log.l('Saved credentials are valid');
-        return true;
-      } else {
-        Log.l('Saved credentials are not valid');
-        await prefManager.delete(PrefConstants.username);
-        await prefManager.delete(PrefConstants.password);
-        return false;
-      }
-    } else {
-      Log.l('Data not saved');
-      return false;
-    }
+    return false;
   }
 
   Future<bool> areDataSaved() async {
     if (await prefManager.read(PrefConstants.cookie) != null) {
       return true;
     }
-    if (await prefManager.read(PrefConstants.username) != null &&
-        await prefManager.read(PrefConstants.password) != null) {
-      return true;
-    }
     return false;
   }
 
-  Future<bool> loginWith(String username, String password) async {
+  Future<bool> loginWith(String email, String password) async {
     // crypt the password with sha256 1 milion times
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
@@ -112,7 +101,7 @@ class AccountManager {
 
     // set the body
     var body = jsonEncode({
-      'email': username,
+      'email': email,
       'password': digest.toString(),
     });
     // FIXME
@@ -121,24 +110,43 @@ class AccountManager {
     Response? response;
     try {
       response = await dio.post(AccConsts.urlLogin, data: body);
+      if (response.statusCode == 200) {
+        // login successful, query user api
+
+        // Get the cookie from the headers response
+        String cookie = response.headers['set-cookie']![0];
+        // Save the cookie in the secure storage
+        prefManager.write("cookie", cookie);
+        response = await dio.get(AccConsts.urlUserInfo,
+            options: Options(
+                headers: {
+                  'Cookie': await prefManager.read(PrefConstants.cookie) as String
+                }
+            )
+        );
+        if (response.statusCode == 200) {
+          String username = response.data['name'];
+          String email = response.data['email'];
+          // save the username and password
+          PrefManager().saveAccountData(username, email);
+          // notify the stream
+          _loginStatusController.add(true);
+          return true;
+        } else {
+          Log.l('Error while logging in: ${response.statusCode}');
+          return false;
+        }
+        return true;
+      } else {
+        // login failed
+        return false;
+      }
     } catch (e) {
       Log.v(e.toString());
       return false;
     }
     // check the response
-    if (response.statusCode == 200) {
-      // login successful, save data
-      prefManager.saveAccountData(username, password);
-      // Get the cookie from the headers response
-      String cookie = response.headers['set-cookie']![0];
-      // Save the cookie in the secure storage
-      prefManager.write("cookie", cookie);
 
-      return true;
-    } else {
-      // login failed
-      return false;
-    }
   }
 
   Future<bool> register(
@@ -165,7 +173,7 @@ class AccountManager {
     // check the response
     if (response.statusCode == 200) {
       // save account data in the local storage
-      prefManager.saveAccountData(username, password);
+      prefManager.saveAccountData(username, email);
       // save cookie
       String cookie = response.headers['set-cookie']![0];
       prefManager.write("cookie", cookie);
@@ -297,7 +305,7 @@ class AccountManager {
     await PrefManager().delete(PrefConstants.cookie);
     // delete account data
     await PrefManager().delete(PrefConstants.username);
-    await PrefManager().delete(PrefConstants.password);
+    await PrefManager().delete(PrefConstants.email);
     // delete mqtt data
     await PrefManager().delete(PrefConstants.mqttUsername);
     await PrefManager().delete(PrefConstants.mqttPassword);
