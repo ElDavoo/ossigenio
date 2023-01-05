@@ -118,7 +118,7 @@ class Device extends ChangeNotifier {
         .cast<DebugMessage>()
         .listen((event) {
           if (isHeating) {
-            isHeating = (event.rawData - event.temperature).abs() <= 4;
+            isHeating = (event.rawData - event.temperature).abs() <= 3;
             if (!isHeating) {
               timer.cancel();
               timer = Timer.periodic(const Duration(seconds: 60), (_) => periodicallyRequest);
