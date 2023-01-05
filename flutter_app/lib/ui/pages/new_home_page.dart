@@ -5,6 +5,7 @@ import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/widgets/air_quality.dart';
 import 'package:flutter_app/ui/widgets/where_are_you.dart';
+
 // import gpsmanager
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/utils/ui.dart';
@@ -13,7 +14,6 @@ import '../../utils/log.dart';
 import '../widgets/air_quality_local.dart';
 import '../widgets/air_quality_place.dart';
 
-
 class NewHomePage extends StatefulWidget {
   const NewHomePage({Key? key}) : super(key: key);
 
@@ -21,12 +21,13 @@ class NewHomePage extends StatefulWidget {
   _NewHomePageState createState() => _NewHomePageState();
 }
 
-class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClientMixin<NewHomePage> {
+class _NewHomePageState extends State<NewHomePage>
+    with AutomaticKeepAliveClientMixin<NewHomePage> {
   get name => "null";
 
   Widget greetingText(String name) {
     const stylesmall = TextStyle(
-    fontSize: 60.0, color: Colors.black87, fontWeight: FontWeight.w300);
+        fontSize: 60.0, color: Colors.black87, fontWeight: FontWeight.w300);
     const stylebig = TextStyle(
       fontWeight: FontWeight.w500,
       color: Colors.blueAccent,
@@ -56,12 +57,15 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
       ),
     );
   }
-  WidgetSpan buildCenteredTextSpan({required String text, required TextStyle style}) {
+
+  WidgetSpan buildCenteredTextSpan(
+      {required String text, required TextStyle style}) {
     return WidgetSpan(
       alignment: PlaceholderAlignment.middle,
       child: Text(text, style: style),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     // Get the name of the user from the preferences
@@ -74,42 +78,52 @@ class _NewHomePageState extends State<NewHomePage> with AutomaticKeepAliveClient
         });
       }
     });
-    void onSelectedPlace(Place? place){
+    void onSelectedPlace(Place? place) {
       if (place != null) {
         Log.l("Selected place: ${place.name}");
       } else {
         Log.l("Selected place: null");
-
       }
       setState(() {
         MqttManager.place = place;
       });
     }
+
     return Padding(
         padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
         child: SingleChildScrollView(
-        child: Column(
+            child: Column(
           children: <Widget>[
-            UIWidgets.buildCard(FittedBox(
-                  fit: BoxFit.fitWidth,
-                  alignment: Alignment.topLeft,
-                  child: greetingText(name),
-                ),
+            UIWidgets.buildCard(
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.topLeft,
+                child: greetingText(name),
               ),
-            UIWidgets.buildCard(WhereAreYou(onPlaceSelected: onSelectedPlace,)),
+            ),
+            UIWidgets.buildCard(WhereAreYou(
+              onPlaceSelected: onSelectedPlace,
+            )),
             if (MqttManager.place != null && BLEManager().dvc == null)
-              UIWidgets.buildCard(AirQualityPlace(placeId: MqttManager.place!.id)),
+              UIWidgets.buildCard(
+                  AirQualityPlace(placeId: MqttManager.place!.id)),
             StreamBuilder(
-              stream: BLEManager().devicestream.stream,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                // Hack to make the previous card disappear
-
+              stream: BLEManager().disconnectstream.stream,
+              builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  return UIWidgets.buildCard(AirQualityLocal(device: snapshot.data));
+                  return Container();
+                } else {
+                  if (BLEManager().dvc != null) {
+                          return UIWidgets.buildCard(
+                              AirQualityLocal(device: BLEManager().dvc!));
+
+
+                  } else {
+                    return Container();
+                  }
                 }
-                return Container();
               },
-            )
+            ),
           ],
         )));
   }

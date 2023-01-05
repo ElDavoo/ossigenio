@@ -265,6 +265,7 @@ class AccountManager {
   }
 
   Future<Place> getPlace(int placeId) async {
+    Log.l("Getting place with id $placeId");
     //call the place api to get details
     // Read authentication cookie
     String cookie = await prefManager.read("cookie") as String;
@@ -280,6 +281,7 @@ class AccountManager {
     // check the response
     if (response.statusCode == 200) {
       // parse response json to return places
+      Log.l("Place: ${response.data['name']}");
       return Place.fromJson(response.data);
     } else {
       return Future.error('Error getting place');
