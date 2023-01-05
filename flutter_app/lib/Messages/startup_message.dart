@@ -11,6 +11,7 @@ class StartupMessage extends Message {
   late final int model;
   late final int version;
   late final int battery;
+  late final int serial;
 
   @override
   late final Uint8List data;
@@ -34,9 +35,9 @@ class StartupMessage extends Message {
   @override
   String toString() {
     if (data.isEmpty) {
-      return "StartupMessage: model: $model, version: $version, battery: $battery";
+      return "StartupMessage: model: $model, version: $version, battery: $battery, serial: $serial";
     } else {
-      return "StartupMessage: model: $model, version: $version, battery: $battery, data: $data";
+      return "StartupMessage: model: $model, version: $version, battery: $battery, serial: $serial, data: $data";
     }
   }
 
@@ -45,7 +46,9 @@ class StartupMessage extends Message {
     //TODO implement
     model = data[0];
     version = data[1];
-    battery = data[2];
+    // The serial number is here now, it's 4 bytes long
+    serial = data[5] + (data[4] << 8) + (data[3] << 16) + (data[2] << 24);
+    battery = data[6];
   }
 
   Map <String, dynamic> toDict() {

@@ -3,6 +3,7 @@ Class to communicate with the serial port.
  */
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_app/Messages/startup_message.dart';
 
 import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
@@ -69,7 +70,7 @@ class SerialComm {
     Message ?message;
     switch (data[1]) {
       case MessageTypes.debugMessage:
-        message = DebugMessage.dbgconstr(data);
+        message = DebugMessage.fromBytes(payload);
         break;
       case MessageTypes.co2Message:
         message = CO2Message.fromBytes(payload);
@@ -78,6 +79,9 @@ class SerialComm {
         Log.v("Extended message received");
         // TODO
         return null;
+      case MessageTypes.startupMessage:
+        message = StartupMessage.fromBytes(payload);
+        break;
       case MessageTypes.feedbackMessage:
         message = FeedbackMessage.fromBytes(payload);
         break;

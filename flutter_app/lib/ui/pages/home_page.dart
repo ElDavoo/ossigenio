@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -177,6 +178,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 10.0),
+              child: bluetoothBatt(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
               child: bluetoothRSSI(),
             ),
             Padding(
@@ -273,6 +278,60 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                             return const Icon(
                                 Icons.signal_cellular_alt_1_bar_sharp);
                           }
+                        } else {
+                          return Container();
+                        }
+                      });
+                } else {
+                  return Container();
+                }
+              },);
+
+          }
+        });
+
+  }
+
+  Widget bluetoothBatt() {
+    return StreamBuilder(
+        stream: BLEManager().disconnectstream.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container();
+          } else {
+            return StreamBuilder(
+              stream: BLEManager().devicestream.stream,
+              builder: (context, snapshot) {
+                if (BLEManager().dvc != null) {
+                  return StreamBuilder<int>(
+                      stream: BLEManager().dvc!.messagesStream
+                      .where((element) => element.direction == MessageDirection.received)
+                          .where((element) => element.message is StartupMessage)
+                          .map((event) => event.message as StartupMessage)
+                          .map((event) => event.battery),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          int battery = snapshot.data!;
+                          if (battery == 100) {
+                            return const Icon(Icons.power);
+                          } else if (battery > 88) {
+                            return const Icon(Icons.battery_full);
+                          } else if (battery > 76) {
+                            return const Icon(Icons.battery_6_bar);
+                          } else if (battery > 64) {
+                            return const Icon(Icons.battery_5_bar);
+                          } else if (battery > 52) {
+                            return const Icon(Icons.battery_4_bar);
+                          } else if (battery > 40) {
+                            return const Icon(Icons.battery_3_bar);
+                          } else if (battery > 28) {
+                            return const Icon(Icons.battery_2_bar);
+                          } else if (battery > 16) {
+                            return const Icon(Icons.battery_1_bar);
+                          } else {
+                            return const Icon(Icons.battery_alert);
+                          }
+
                         } else {
                           return Container();
                         }
