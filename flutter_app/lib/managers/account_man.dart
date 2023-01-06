@@ -9,7 +9,6 @@ import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/place_page.dart';
 import 'package:flutter_app/utils/device.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:crypto/crypto.dart';
 
@@ -139,7 +138,6 @@ class AccountManager {
           Log.l('Error while logging in: ${response.statusCode}');
           return false;
         }
-        return true;
       } else {
         // login failed
         return false;
@@ -181,7 +179,6 @@ class AccountManager {
       String cookie = response.headers['set-cookie']![0];
       prefManager.write("cookie", cookie);
       // get mqtt credentials
-      Map<String,String> mqttCredentials = await getMqttCredentials();
       MqttManager.instance.tryLogin();
       // login successful
       return true;

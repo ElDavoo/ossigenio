@@ -18,10 +18,10 @@ class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
 
   @override
-  _MapPageState createState() => _MapPageState();
+  MapPageState createState() => MapPageState();
 }
 
-class _MapPageState extends State<MapPage>
+class MapPageState extends State<MapPage>
     with AutomaticKeepAliveClientMixin<MapPage> {
   final PopupController _popupController = PopupController();
   late CenterOnLocationUpdate _centerOnLocationUpdate;
@@ -121,7 +121,7 @@ class _MapPageState extends State<MapPage>
 
   @override
   Widget build(BuildContext context) {
-    final popupState = PopupState.maybeOf(context, listen: false);
+    super.build(context);
     LatLng center = LatLng(44.6291399, 10.9488126);
     if (GpsManager.position != null) {
       center =

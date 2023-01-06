@@ -53,7 +53,6 @@ class BLEManager extends ChangeNotifier {
       _isScanning = isScanning;
     });
     flutterBlue.state.listen((event) {
-      _state = event;
     });
     // When we receive a scan result, we try to connect to it
     scanstream.stream.listen((event) {
@@ -83,7 +82,6 @@ class BLEManager extends ChangeNotifier {
 
   // State of BT radio
   Stream<BluetoothState> get state => flutterBlue.state;
-  BluetoothState _state = BluetoothState.unknown;
 
   bool _isScanning = false;
 
@@ -100,7 +98,6 @@ class BLEManager extends ChangeNotifier {
 
   // Method to scan for BLE devices
   void startBLEScan() async {
-    Device? device;
     if (_isScanning) {
       // Wait for the scan to finish
       await flutterBlue.stopScan();
@@ -110,7 +107,6 @@ class BLEManager extends ChangeNotifier {
       // Start scanning
       flutterBlue.startScan();
       // Listen for devices
-      StreamSubscription? scansub;
       List<ScanResult> btdevice = await flutterBlue.scanResults
           .map((results) {
             List<ScanResult> list = [];
@@ -146,7 +142,6 @@ class BLEManager extends ChangeNotifier {
       scanstream.add(btdevice.first);
       return;
 
-      Log.v("Scanning...");
     } else {
       Log.v("Permissions not granted");
       return Future.error('Permissions not granted');

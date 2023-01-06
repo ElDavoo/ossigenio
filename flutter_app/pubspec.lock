@@ -72,7 +72,7 @@ packages:
     source: hosted
     version: "3.1.1"
   crypto:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: crypto
       url: "https://pub.dartlang.org"
@@ -729,7 +729,7 @@ packages:
     source: hosted
     version: "1.1.1"
   syncfusion_flutter_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"

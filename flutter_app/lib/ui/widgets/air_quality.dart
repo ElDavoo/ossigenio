@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/Messages/message.dart';
-import 'package:flutter_app/managers/ble_man.dart';
-import 'package:flutter_app/utils/device.dart';
 import 'package:flutter_app/utils/ui.dart';
-
-import '../../Messages/co2_message.dart';
 
 // A stateful widget which gets the stream of co2 values
 // from a BLE device and displays them
@@ -17,10 +12,10 @@ class AirQuality extends StatefulWidget {
   AirQuality({Key? key, required this.co2, this.temperature, this.humidity, this.isHeating}) : super(key: key);
 
   @override
-  _AirQualityState createState() => _AirQualityState();
+  AirQualityState createState() => AirQualityState();
 }
 
-class _AirQualityState extends State<AirQuality> {
+class AirQualityState extends State<AirQuality> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -134,10 +129,10 @@ class AirQualityText extends StatefulWidget {
   const AirQualityText({Key? key, required this.co2}) : super(key: key);
 
   @override
-  _AirQualityTextState createState() => _AirQualityTextState();
+  AirQualityTextState createState() => AirQualityTextState();
 }
 
-class _AirQualityTextState extends State<AirQualityText> {
+class AirQualityTextState extends State<AirQualityText> {
   @override
   Widget build(BuildContext context) {
     String text = "Loading...";

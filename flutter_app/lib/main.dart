@@ -1,17 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/account_man.dart';
-import 'package:flutter_app/managers/gps_man.dart';
-import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/login_page.dart';
-import 'package:provider/provider.dart';
 import '../managers/ble_man.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'ui/pages/home_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -51,10 +46,10 @@ class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   late Widget initialWidget;
 
   @override

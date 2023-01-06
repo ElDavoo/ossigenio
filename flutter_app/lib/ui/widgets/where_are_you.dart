@@ -15,10 +15,10 @@ class WhereAreYou extends StatefulWidget {
   WhereAreYou({Key? key, required this.onPlaceSelected}) : super(key: key);
 
   @override
-  _WhereAreYouState createState() => _WhereAreYouState();
+  WhereAreYouState createState() => WhereAreYouState();
 }
 
-class _WhereAreYouState extends State<WhereAreYou> {
+class WhereAreYouState extends State<WhereAreYou> {
   @override
   Widget build(BuildContext context) {
     return Row(

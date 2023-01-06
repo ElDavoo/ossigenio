@@ -8,7 +8,6 @@ import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/utils/device.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:mqtt5_client/mqtt5_server_client.dart';
 import 'package:typed_data/typed_buffers.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
@@ -16,7 +15,6 @@ import '../Messages/debug_message.dart';
 import '../Messages/message.dart';
 import '../Messages/co2_message.dart';
 import '../utils/log.dart';
-import 'gps_man.dart';
 
 class MqttConsts {
   static const String server = 'modena.davidepalma.it';
@@ -46,8 +44,6 @@ class MqttManager {
   }
 
   late MacAddress mac;
-
-  late Future<bool> _haveCredentials;
 
   MqttManager._internal() {
     tryLogin();
@@ -175,7 +171,7 @@ class MqttManager {
     // Build the combined payload
     Map <String, dynamic> payload = message.toDict();
     // Get the selected place
-    if (place != null && place!.id != null) {
+    if (place != null) {
       payload['place'] = place?.id;
 
     }

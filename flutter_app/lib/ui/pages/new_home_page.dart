@@ -3,13 +3,9 @@ import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/ble_man.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
-import 'package:flutter_app/ui/widgets/air_quality.dart';
 import 'package:flutter_app/ui/widgets/where_are_you.dart';
-
-// import gpsmanager
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/utils/ui.dart';
-
 import '../../utils/log.dart';
 import '../widgets/air_quality_local.dart';
 import '../widgets/air_quality_place.dart';
@@ -19,10 +15,10 @@ class NewHomePage extends StatefulWidget {
   NewHomePage({Key? key}) : super(key: key);
 
   @override
-  _NewHomePageState createState() => _NewHomePageState();
+  NewHomePageState createState() => NewHomePageState();
 }
 
-class _NewHomePageState extends State<NewHomePage>
+class NewHomePageState extends State<NewHomePage>
     with AutomaticKeepAliveClientMixin<NewHomePage> {
   get name => "null";
 
@@ -85,6 +81,7 @@ class _NewHomePageState extends State<NewHomePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // Get the name of the user from the preferences
     // and display it in the greeting text
 

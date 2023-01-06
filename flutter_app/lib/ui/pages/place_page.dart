@@ -13,7 +13,7 @@ class PredictionPlace extends StatefulWidget {
   PredictionPlace({Key? key, required this.place}) : super(key: key);
 
   @override
-  _PredictionPlaceState createState() => _PredictionPlaceState();
+  PredictionPlaceState createState() => PredictionPlaceState();
 }
 
 // A Prediction is a pair of "timestamp - co2 level"
@@ -29,7 +29,7 @@ class Prediction {
         co2 = json['co2'];
 }
 
-class _PredictionPlaceState extends State<PredictionPlace> {
+class PredictionPlaceState extends State<PredictionPlace> {
   late Future<List<Prediction>> future;
 
   @override
@@ -150,8 +150,6 @@ class _PredictionPlaceState extends State<PredictionPlace> {
       fontFamily: 'Digital',
       fontSize: 18,
     );
-    String text;
-
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: Text(hhmm(value.toInt()), style: style),

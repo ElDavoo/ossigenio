@@ -4,8 +4,6 @@ It shows data in a cool way, with radiants
  */
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import '../../Messages/message.dart';
 import '../../managers/ble_man.dart';
 import '../../utils/device.dart';
@@ -16,10 +14,10 @@ class DebugTab extends StatefulWidget {
   const DebugTab({Key? key, required this.device}) : super(key: key);
 
   @override
-  _DebugTabState createState() => _DebugTabState();
+  DebugTabState createState() => DebugTabState();
 }
 
-class _DebugTabState extends State<DebugTab> {
+class DebugTabState extends State<DebugTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

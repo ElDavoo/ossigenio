@@ -14,10 +14,10 @@ class AirQualityLocal extends StatefulWidget {
   const AirQualityLocal({Key? key, required this.device}) : super(key: key);
 
   @override
-  _AirQualityLocalState createState() => _AirQualityLocalState();
+  AirQualityLocalState createState() => AirQualityLocalState();
 }
 
-class _AirQualityLocalState extends State<AirQualityLocal> {
+class AirQualityLocalState extends State<AirQualityLocal> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<CO2Message>(

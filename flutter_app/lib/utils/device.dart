@@ -9,7 +9,6 @@ import 'package:flutter_app/utils/serial.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../Messages/message.dart';
-import '../Messages/startup_message.dart';
 import '../managers/ble_man.dart';
 import '../managers/mqtt_man.dart';
 import 'log.dart';
@@ -126,9 +125,6 @@ class Device extends ChangeNotifier {
           }
           Log.l("Diff: ${(event.rawData - event.temperature).abs()}");
     });
-    bool isConnected() {
-      return state == BluetoothDeviceState.connected;
-    }
     // Send a startup message request
     BLEManager.sendMsg(this, MessageTypes.msgRequest0);
     Future.delayed(const Duration(milliseconds: 100)).then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest1));

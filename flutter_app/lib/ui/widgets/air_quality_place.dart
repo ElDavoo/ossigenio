@@ -2,10 +2,6 @@
 // Asks the api for the place data and displays it
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/Messages/message.dart';
-
-import '../../Messages/co2_message.dart';
-
 import '../../managers/account_man.dart';
 import 'air_quality.dart';
 
@@ -15,10 +11,10 @@ class AirQualityPlace extends StatefulWidget {
   AirQualityPlace({Key? key, required this.placeId}) : super(key: key);
 
   @override
-  _AirQualityPlaceState createState() => _AirQualityPlaceState();
+  AirQualityPlaceState createState() => AirQualityPlaceState();
 }
 
-class _AirQualityPlaceState extends State<AirQualityPlace> {
+class AirQualityPlaceState extends State<AirQualityPlace> {
   late Future<Place> future;
 
   @override

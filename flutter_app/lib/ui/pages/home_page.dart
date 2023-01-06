@@ -4,23 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
-
 import '../../../managers/ble_man.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'new_home_page.dart';
-import '../../Messages/co2_message.dart';
-import '../../Messages/debug_message.dart';
 import '../../Messages/feedback_message.dart';
 import '../../Messages/message.dart';
 import '../widgets/debug_tab.dart';
-import '../../utils/device.dart';
 import '../../utils/log.dart';
-import '../widgets/device_tab.dart';
 import 'login_page.dart';
 import 'map_page.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
@@ -45,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   // get BLEManager from ChangeNotifierProvider
 
   StreamSubscription? _log;
-  Device? _device;
 
   void _init() {
     // Read the device mac address from shared preferences
