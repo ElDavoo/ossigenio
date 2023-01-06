@@ -21,16 +21,17 @@ def generate():
         db.session.commit()
 
 
-def run():
+def run(app):
     print("Starting the CO2 generator")
     while True:
         # Wait 30 minutes
         time.sleep(1800)
         # Generate the CO2 values
         print("Generating CO2 values")
-        generate()
+        with app.app_context():
+            generate()
 
 
 # Start the thread and make it possible to fork it to the background
-def start():
-    return threading.Thread(target=run).start()
+def start(app):
+    return threading.Thread(target=run, args=app).start()
