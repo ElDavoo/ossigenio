@@ -23,7 +23,7 @@ class Predictions(MethodView):
         # Get the last co2 value of this place from the co2_history table
         last_co2 = co2_history.query.filter_by(place_id=place.id).order_by(co2_history.timestamp.desc()).first()
         # Get the predictions
-        predictions_iter = plausible_random(last_co2, 400, 2000)
+        predictions_iter = plausible_random(last_co2.co2, 400,2000)
         predicts = []
         timenow = datetime.datetime.now()
         for i in range(24):
