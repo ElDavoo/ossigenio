@@ -21,14 +21,14 @@ from project.models.co2history import co2_history
 
 
 @places.route('/nearby', methods=['POST'])
-
 class Nearby(MethodView):
     @places.arguments(LatLonSchema)
     @login_required
     @places.response(200, PlaceSchema(many=True))
     def post(self, args):
         # Get the places closer than 1km
-        places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})") < 100).all()
+        places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})") < 100)\
+            .order_by(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})")).limit(10).all()
         places_list = []
         for place in places:
             lst = place.serialize()
@@ -40,6 +40,7 @@ class Nearby(MethodView):
             places_list.append(lst)
         return jsonify(places_list)
     # TODO optimize query
+
 
 @places.route('/place/<int:place_id>', methods=['GET'])
 class Plc(MethodView):
