@@ -24,6 +24,7 @@ class AccConsts {
   static const String urlGetPlaces = '/nearby';
   static const String urlUserInfo = '/user';
   static const String urlPlace = '/place/';
+  static const String urlPlaces = '/places';
   static const int apiVersion = 1;
   static const int shaIterations = 1000;
 
@@ -271,6 +272,44 @@ class AccountManager {
       return Future.error('Error getting nearby places');
     }
   }
+
+  // A method that, given a coordinate, gives
+  // a list of places nearby. Every place has these properties:
+  // Name of the place, location of the place, air quality (express with a number)
+  Future<List<Place>> getPlaces(LatLng position) async {
+    // ensure we are logged in
+    await areDataSaved();
+    Log.v("Getting places...");
+    // Ask to the server, sending position as a post request
+    var body = jsonEncode({
+      'lat': position.latitude,
+      'lon': position.longitude,
+    });
+    // Read authentication cookie
+    String cookie = await prefManager.read("cookie") as String;
+    // send the request
+    Response? response;
+    try {
+      response = await dio.post(AccConsts.urlPlaces,
+          data: body, options: Options(headers: {'cookie': cookie}));
+    } catch (e) {
+      Log.v(e.toString());
+      return [];
+    }
+    // check the response
+    if (response.statusCode == 200) {
+      // parse response json to return places
+      List<Place> places = [];
+      for (var place in response.data) {
+        Log.v("Place: ${place['name']}");
+        places.add(Place.fromJson(place));
+      }
+      return places;
+    } else {
+      return Future.error('Error getting nearby places');
+    }
+  }
+
 
   Future<Place> getPlace(int placeId) async {
     Log.l("Getting place with id $placeId");

@@ -24,23 +24,27 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin<Ma
   final PopupController _popupController = PopupController();
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
-  late StreamSubscription<List<Place>> _nearbyPlacesSubscription;
   List<Marker> _markers = [];
+
+  void refresh() {
+    AccountManager().getPlaces(
+        LatLng(GpsManager.position!.latitude, GpsManager.position!.longitude)
+    ).then((value) {
+      onNearbyPlacesChanged(value);
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _centerOnLocationUpdate = CenterOnLocationUpdate.never;
     _centerCurrentLocationStreamController = StreamController<double?>();
-    _nearbyPlacesSubscription = GpsManager().
-    placeStream.
-    stream.listen((event) => onNearbyPlacesChanged(event));
+    refresh();
   }
 
   @override
   void dispose() {
     _centerCurrentLocationStreamController.close();
-    _nearbyPlacesSubscription.cancel();
     super.dispose();
   }
 
@@ -203,16 +207,6 @@ class _MapPageState extends State<MapPage> with AutomaticKeepAliveClientMixin<Ma
       ),
     ))
         .toList();
-  }
-
-  Future<void> refresh() async {
-    // User requested a manual refresh.
-    // Check if we have a memorized location.
-    GpsManager.position ??= await GpsManager.getCurrentPosition();
-    List<Place> places = await AccountManager().getNearbyPlaces(LatLng
-      (GpsManager.position!.latitude,
-        GpsManager.position!.longitude));
-    return GpsManager().placeStream.add(places);
   }
 
   @override
