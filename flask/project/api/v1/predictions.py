@@ -25,8 +25,11 @@ class Predictions(MethodView):
         timenow = datetime.datetime.now()
         for i in range(24):
             # Add a timestamp to the prediction
+            tstamp = timenow + datetime.timedelta(hours=i)
+            # Set it as ISO format
+            tstamp = tstamp.isoformat()
             predicts.append({
-                'timestamp': timenow + datetime.timedelta(hours=i),
+                'timestamp': tstamp,
                 'co2': next(predictions_iter)
             })
         return jsonify(predicts)
