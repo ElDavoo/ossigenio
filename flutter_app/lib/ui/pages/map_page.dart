@@ -35,7 +35,7 @@ class _MapPageState extends State<MapPage>
         element.location == marker.point);
     return Container(
       width: 200,
-      height: 300,
+      height: 150,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.bottomCenter,
@@ -45,19 +45,47 @@ class _MapPageState extends State<MapPage>
             Color.fromRGBO(111, 206, 250, 0.9)
           ],
         ),
+
       ),
-      child: GestureDetector(
-        onTap: () {
-                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => PredictionPlace(place: place)),
-                    );
-        },
-        child: Text(
-          'Container popup for marker at ${marker.point}',
+      child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  place.name,
+                  style: const TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  "CO2 Attuale: ${place.co2Level} ppm",
+                  style: const TextStyle(
+                    fontSize: 40,
+                  ),
+                ),
+              ),
+              // Button to go to the place's page
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PredictionPlace(place: place)),
+                  );
+                },
+                child: const Text("Predizioni"),
+              ),
+            ],
+          ),
         ),
-      ),
     );
   }
 
