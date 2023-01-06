@@ -1,35 +1,39 @@
-/*
-Class that manages the connection to a BLE device.
- */
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/perm_man.dart';
-import '../../utils/serial.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
+import '../../utils/serial.dart';
 import '../utils/device.dart';
 import '../utils/log.dart';
 
+/// Classe che contiene le costanti usate nell'ambito del Bluetooth.
 class BTConst {
-  // List of allowed names
+  /// Lista dei nomi consentiti per i dispositivi.
   static const List<String> allowedNames = [
     'Adafruit Bluefruit LE',
     'AirQualityMonitor',
     'AirQualityMonitorEBV',
   ];
 
+  /// L'UUID del servizio di comunicazione usato nel BLE.
   static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+  /// La caratteristica di scrittura usata nel BLE.
   static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+  /// La caratteristica di lettura usata nel BLE.
   static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
 
-  // List of allowed OUIs
+  /// Lista degli OUI consentiti per i dispositivi.
   List<Uint8List> allowedOUIs = [
     Uint8List.fromList([0xEF, 0x41, 0xB7]),
     Uint8List.fromList([0xE6, 0x4A, 0x29]),
     Uint8List.fromList([0xC4, 0x4F, 0x33]),
   ];
 
+  /// Questo intero viene trasmesso dal dispositivo per distinguerlo
+  /// dagli altri dispositivi.
   static int manufacturerId = 0xF175;
 }
 
@@ -52,8 +56,7 @@ class BLEManager extends ChangeNotifier {
     flutterBlue.isScanning.listen((isScanning) {
       _isScanning = isScanning;
     });
-    flutterBlue.state.listen((event) {
-    });
+    flutterBlue.state.listen((event) {});
     // When we receive a scan result, we try to connect to it
     scanstream.stream.listen((event) {
       _scanResult = event;
@@ -87,12 +90,17 @@ class BLEManager extends ChangeNotifier {
 
   // Stream of device connected
   StreamController<Device> devicestream = StreamController<Device>.broadcast();
+
   // Stream of disconnection events
   StreamController<void> disconnectstream = StreamController<void>.broadcast();
+
   // Stream of ScanResults (devices found)
-  StreamController<ScanResult> scanstream = StreamController<ScanResult>.broadcast();
+  StreamController<ScanResult> scanstream =
+      StreamController<ScanResult>.broadcast();
+
   // Last device connected
   Device? dvc;
+
   // Last scan result
   ScanResult? _scanResult;
 
@@ -141,7 +149,6 @@ class BLEManager extends ChangeNotifier {
       // Add the first device to the stream and return
       scanstream.add(btdevice.first);
       return;
-
     } else {
       Log.v("Permissions not granted");
       return Future.error('Permissions not granted');
@@ -237,7 +244,6 @@ class BLEManager extends ChangeNotifier {
 
   static void send(Device device, Uint8List data) {
     if (device.state == BluetoothDeviceState.connected) {
-
       device.btUart.rxCharacteristic.write(data).catchError((error) {
         Log.v("Error sending data: $error");
       });
@@ -256,14 +262,17 @@ class BLEManager extends ChangeNotifier {
       return null;
     }
     // Check if manufacturer ID is 0xF075 ( the key of the map)
-    if (!advertisementData.manufacturerData.containsKey(BTConst.manufacturerId)) {
+    if (!advertisementData.manufacturerData
+        .containsKey(BTConst.manufacturerId)) {
       return null;
     }
     // The manufacturer data is the mac address of length 6
-    if (advertisementData.manufacturerData[BTConst.manufacturerId]!.length != 6) {
+    if (advertisementData.manufacturerData[BTConst.manufacturerId]!.length !=
+        6) {
       return null;
     }
-    Uint8List mac = Uint8List.fromList(advertisementData.manufacturerData[BTConst.manufacturerId]!);
+    Uint8List mac = Uint8List.fromList(
+        advertisementData.manufacturerData[BTConst.manufacturerId]!);
     Uint8List oui = mac.sublist(0, 3);
     // Check if mac is of allowed vendors
     for (Uint8List allowedOui in BTConst().allowedOUIs) {

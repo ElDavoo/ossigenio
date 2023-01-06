@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+/// Classe di Log, per stampare messaggi di debug.
 class Log {
   static final Log _instance = Log._internal();
 
@@ -12,10 +13,11 @@ class Log {
 
   Log._internal();
 
-  // a stream of strings
+  /// Stream di stringhe a cui vengono aggiunti i messaggi di log.
   static final StreamController<String> snackStream =
       StreamController<String>.broadcast();
 
+  /// Trova il nome della funzione chiamante e la prepende al messaggio.
   static String formatMsg(String stacktrace, String msg) {
     // get the line of the log
     String lol = stacktrace.split("\n")[1];
