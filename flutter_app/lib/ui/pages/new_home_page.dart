@@ -91,7 +91,7 @@ class _NewHomePageState extends State<NewHomePage>
     }
 
     return Padding(
-        padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
         child: SingleChildScrollView(
             child: Column(
           children: <Widget>[

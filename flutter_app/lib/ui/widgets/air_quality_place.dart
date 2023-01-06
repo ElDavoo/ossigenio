@@ -10,19 +10,27 @@ import '../../managers/account_man.dart';
 import 'air_quality.dart';
 
 class AirQualityPlace extends StatefulWidget {
-  final int placeId;
+  int placeId;
 
-  const AirQualityPlace({Key? key, required this.placeId}) : super(key: key);
+  AirQualityPlace({Key? key, required this.placeId}) : super(key: key);
 
   @override
   _AirQualityPlaceState createState() => _AirQualityPlaceState();
 }
 
 class _AirQualityPlaceState extends State<AirQualityPlace> {
+  late Future<Place> future;
+
+  @override
+  void initState() {
+    super.initState();
+    future = AccountManager().getPlace(widget.placeId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Place>(
-        future: AccountManager().getPlace(widget.placeId),
+        future: future,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return AirQuality(
