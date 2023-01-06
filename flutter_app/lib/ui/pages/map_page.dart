@@ -239,19 +239,44 @@ class _MapPageState extends State<MapPage>
 
   static List<Marker> placetomarkers(List<Place> coords) {
     return coords
-        .map((point) => Marker(
+        .map((point) {
+          Color clr = decideColor(point.co2Level);
+          return Marker(
               point: point.location,
               width: 60,
               height: 60,
-              builder: (context) => const Icon(
-                Icons.pin_drop,
-                size: 60,
-                color: Colors.blueAccent,
+              builder: (context) => Icon(
+                Icons.location_on_outlined,
+                size: 30,
+                color: clr,
               ),
-            ))
+            );})
         .toList();
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  static decideColor(int co2level) {
+    // Decide color with a linear grdient with the lerp method
+    // https://api.flutter.dev/flutter/dart-ui/lerpDouble.html
+
+    // The color gradient is from green to red
+    Color startColor = Colors.green;
+    Color endColor = Colors.red;
+
+    // The gradient is from 0 to 1000
+    double startValue = 0;
+    double endValue = 1000;
+
+    // The value to be converted
+    double value = co2level.toDouble();
+
+    // The value converted to a percentage
+    double percentage = (value - startValue) / (endValue - startValue);
+
+    // The color to be returned
+    Color color = Color.lerp(startColor, endColor, percentage)!;
+    return color;
+  }
 }
