@@ -4,17 +4,18 @@ Here we define common utilities used in all the API versions
 import random
 
 
-def plausible_random(start, end):
+def plausible_random(start_value, start, end):
     """
     A generator that chooses a random number and generates random numbers around it
-
+    :param start_value: The starting value
     :param start: The start number
     :param end: The end number
     """
     # Choose a random number
-    number = random.randint(start, end)
-    # Generate random numbers around it
-    yield number
+    if start_value == 0:
+        number = random.randint(start, end)
+    else:
+        number = start_value
     rng = (end - start) // 40
     while True:
         if (end - start) // 2 < number:

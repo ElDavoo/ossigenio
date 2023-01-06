@@ -27,7 +27,7 @@ def generate(rnd_iter):
 
 def run(app):
     print("Starting the CO2 generator")
-    rnd_gen = plausible_random(400, 2000)
+    rnd_gen = plausible_random(0, 400, 2000)
     while True:
         # Wait 30 minutes
         time.sleep(1800)
