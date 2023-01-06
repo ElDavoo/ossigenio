@@ -24,13 +24,14 @@ from project.models.co2history import co2_history
 @places.route('/places', methods=['POST'])
 class Placs(MethodView):
     @places.arguments(LatLonSchema)
+    @places.response(200, PlaceSchema(many=True))
     def post(self, args):
         # Get the closest places
         placs = Place.query.order_by(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})")).limit(
-            1000)
+            1000).all()
         places = []
         for plc in placs:
-            plc_json = PlaceSchema().dump(plc)
+            plc_json = plc.serialize()
             last_co2 = co2_history.query.filter_by(place_id=plc.id).order_by(co2_history.timestamp.desc()).first()
             if last_co2 is not None:
                 plc_json['co2'] = last_co2.co2
