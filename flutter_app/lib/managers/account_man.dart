@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
+import 'package:flutter_app/ui/pages/place_page.dart';
 import 'package:flutter_app/utils/device.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:latlong2/latlong.dart';
@@ -25,6 +26,7 @@ class AccConsts {
   static const String urlUserInfo = '/user';
   static const String urlPlace = '/place/';
   static const String urlPlaces = '/places';
+  static const String urlPredictions = '/predictions/';
   static const int apiVersion = 1;
   static const int shaIterations = 1000;
 
@@ -349,6 +351,28 @@ class AccountManager {
     await PrefManager().delete(PrefConstants.mqttUsername);
     await PrefManager().delete(PrefConstants.mqttPassword);
 
+  }
+
+  Future<List<Prediction>> getPredictions(int id) async {
+    // Read authentication cookie
+    String cookie = await PrefManager().read("cookie") as String;
+    // send the request
+    return dio
+        .get(AccConsts.urlPredictions + id.toString(),
+            options: Options(headers: {'cookie': cookie}))
+        .then((response) {
+      // check the response
+      if (response.statusCode == 200) {
+        // parse response json to return places
+        List<Prediction> predictions = [];
+        for (var prediction in response.data) {
+          predictions.add(Prediction.fromJson(prediction));
+        }
+        return predictions;
+      } else {
+        return Future.error('Error getting predictions');
+      }
+    });
   }
 }
 

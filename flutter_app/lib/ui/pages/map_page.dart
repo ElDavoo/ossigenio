@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/gps_man.dart';
+import 'package:flutter_app/ui/pages/place_page.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
@@ -26,16 +27,32 @@ class _MapPageState extends State<MapPage>
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
   List<Marker> _markers = [];
+  List<Place> _places = [];
 
   Widget popupBuilder(BuildContext context, marker) {
+    // Find in _places a place with the same position of the marker
+    final place = _places.firstWhere((element) =>
+        element.location == marker.point);
     return Container(
       width: 200,
-      height: 100,
-      color: Colors.green,
+      height: 300,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            Color.fromRGBO(227, 252, 230, 1),
+            Color.fromRGBO(111, 206, 250, 0.9)
+          ],
+        ),
+      ),
       child: GestureDetector(
         onTap: () {
-          // close the popup
-          _popupController.hideAllPopups();
+                   Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PredictionPlace(place: place)),
+                    );
         },
         child: Text(
           'Container popup for marker at ${marker.point}',
@@ -50,6 +67,7 @@ class _MapPageState extends State<MapPage>
             GpsManager.position!.latitude, GpsManager.position!.longitude))
         .then((value) {
       onNearbyPlacesChanged(value);
+      _places = value;
     });
   }
 
