@@ -34,4 +34,4 @@ def run(app):
 
 # Start the thread and make it possible to fork it to the background
 def start(app):
-    return threading.Thread(target=run, args=(app,).start()
+    return threading.Thread(target=run, args=(app,)).start()
