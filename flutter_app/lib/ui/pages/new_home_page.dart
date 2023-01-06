@@ -26,6 +26,22 @@ class _NewHomePageState extends State<NewHomePage>
     with AutomaticKeepAliveClientMixin<NewHomePage> {
   get name => "null";
 
+  @override
+  void initState() {
+    super.initState();
+    GpsManager().placeStream.stream.listen((event) => onUpdatedPlaces(event));
+  }
+  void onSelectedPlace(Place? place) {
+    if (place != null) {
+      Log.l("Selected place: ${place.name}");
+    } else {
+      Log.l("Selected place: null");
+    }
+    setState(() {
+      MqttManager.place = place;
+    });
+  }
+
   Widget greetingText(String name) {
     const stylesmall = TextStyle(
         fontSize: 60.0, color: Colors.black87, fontWeight: FontWeight.w300);
@@ -79,16 +95,7 @@ class _NewHomePageState extends State<NewHomePage>
         });
       }
     });
-    void onSelectedPlace(Place? place) {
-      if (place != null) {
-        Log.l("Selected place: ${place.name}");
-      } else {
-        Log.l("Selected place: null");
-      }
-      setState(() {
-        MqttManager.place = place;
-      });
-    }
+
 
     return Padding(
         padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
@@ -131,4 +138,12 @@ class _NewHomePageState extends State<NewHomePage>
 
   @override
   bool get wantKeepAlive => true;
+
+  onUpdatedPlaces(List<Place> event) {
+    if (!event.contains(MqttManager.place)) {
+      setState(() {
+        onSelectedPlace(null);
+      });
+    }
+  }
 }

@@ -334,5 +334,18 @@ class Place {
     location = LatLng(json['lat'], json['lon']);
   }
 
+  // Implement equality
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Place &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          location == other.location;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode ^ location.hashCode;
+
 
 }

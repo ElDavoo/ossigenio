@@ -10,6 +10,7 @@ import '../../managers/gps_man.dart';
 class WhereAreYou extends StatefulWidget {
   // A function which is called when the user selects a place
   Function(Place? place) onPlaceSelected;
+  Place? selectedPlace;
 
   WhereAreYou({Key? key, required this.onPlaceSelected}) : super(key: key);
 
@@ -43,9 +44,11 @@ class _WhereAreYouState extends State<WhereAreYou> {
                 child: Text("Nessuno"),
               ));
             return DropdownButton<Place>(
+              // Check if the value is in the value list
               value: MqttManager.place,
               onChanged: (Place? newValue) {
                 widget.onPlaceSelected(newValue);
+                widget.selectedPlace = newValue;
               },
               items: items,
           );
