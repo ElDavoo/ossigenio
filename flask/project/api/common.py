@@ -19,13 +19,13 @@ def plausible_random(start, end):
     while True:
         if (end - start) // 2 < number:
             # 51% of chance to generate a positive number
-            if random.randint(0, 100) > 51:
+            if random.randint(0, 100) > 60:
                 number += random.randint(0, rng)
             else:
                 number -= random.randint(0, rng)
         else:
             # 51% of chance to generate a negative number
-            if random.randint(0, 100) > 51:
+            if random.randint(0, 100) > 60:
                 number -= random.randint(0, rng)
             else:
                 number += random.randint(0, rng)
