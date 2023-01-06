@@ -5,7 +5,7 @@ from flask.views import MethodView
 from flask_login import login_required
 from flask_smorest import Blueprint
 
-from models.co2history import co2_history
+from project.models.co2history import co2_history
 from project.api.common import plausible_random
 from project.models.places import Place
 
