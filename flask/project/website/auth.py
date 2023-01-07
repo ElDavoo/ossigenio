@@ -17,7 +17,7 @@ def login():
 def login_post():
     # login code goes here
     email = request.form.get('email')
-    password = request.form.get('password')
+    password = request.form.get('password_hidden')
     remember = True if request.form.get('remember') else False
 
     user = Utente.query.filter_by(email=email).first()
