@@ -1,22 +1,18 @@
 {
-    "title": "AQM en",
+    "title": "Ossigenio",
     "@title": {
       "description": "Title of the application"
     },
-    "requestPermissionButton": "Request permission",
-    "@requestPermissionButton": {
-      "description": "Button to request permission"
+    "logout": "Logout",
+    "@logout": {
+      "description": "Logout button"
     },
-    "startScanButton": "Start scan",
-    "@startScanButton": {
-      "description": "Button to start scanning"
+    "logoutConfirmMessage": "Are you sure you want to logout?",
+    "@logoutConfirm": {
+      "description": "Logout confirmation message"
     },
-    "stopScanButton": "Stop scan",
-    "@stopScanButton": {
-      "description": "Button to stop scanning"
-    },
-    "noDevicesFound": "No devices found",
-    "@noDevicesFound": {
-      "description": "No devices found"
+    "cancel": "Cancel",
+    "@cancel": {
+      "description": "Cancel button"
     }
 }

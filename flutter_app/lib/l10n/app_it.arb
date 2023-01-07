@@ -1,22 +1,18 @@
 {
-    "requestPermissionButton": "Chiedi permesso",
-    "@requestPermissionButton": {
-      "description": "Bottone per chiedere il permesso"
-    },
-    "startScanButton": "Scansiona",
-    "@startScanButton": {
-      "description": "Bottone per iniziare la scansione"
-    },
-    "stopScanButton": "Stop scansione",
-    "@stopScanButton": {
-      "description": "Bottone per fermare la scansione"
-    },
-    "title": "Monitor aria",
+    "title": "Ossigenio",
     "@title": {
       "description": "Titolo della pagina"
     },
-    "noDevicesFound": "Nessun dispositivo trovato",
-    "@noDevicesFound": {
-      "description": "Messaggio quando nessun dispositivo è stato trovato"
+    "logout": "Esci",
+    "@logout": {
+      "description": "Testo del pulsante di logout"
+    },
+    "logoutConfirmMessage": "Sei sicuro di voler uscire?",
+    "@logoutConfirmMessage": {
+      "description": "Messaggio di conferma di logout"
+    },
+    "cancel": "Annulla",
+    "@cancel": {
+      "description": "Testo del pulsante di annullamento"
     }
 }

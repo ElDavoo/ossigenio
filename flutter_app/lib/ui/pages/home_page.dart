@@ -16,7 +16,7 @@ import '../../utils/log.dart';
 import '../widgets/debug_tab.dart';
 import 'login_page.dart';
 import 'map_page.dart';
-import 'new_home_page.dart';
+import 'main_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -83,8 +83,6 @@ class _MyHomePageState extends State<MyHomePage>
     animation =
         CurveTween(curve: Curves.fastOutSlowIn).animate(animationController!);
     _init();
-
-    //bleManager.startBLEScan();
   }
 
   int _selectedIndex = 0;
@@ -140,19 +138,19 @@ class _MyHomePageState extends State<MyHomePage>
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: const Text("AppLocalizations.of(context)!.logout"),
-                      content: const Text(
-                          "AppLocalizations.of(context)!.logoutConfirmMessage"),
+                      title: Text(AppLocalizations.of(context)!.logout),
+                      content: Text(
+                          AppLocalizations.of(context)!.logoutConfirmMessage),
                       actions: [
                         TextButton(
-                            child: const Text(
-                                "AppLocalizations.of(context)!.cancel"),
+                            child: Text(
+                                AppLocalizations.of(context)!.cancel),
                             onPressed: () {
                               Navigator.of(context).pop();
                             }),
                         TextButton(
-                          child: const Text(
-                              "AppLocalizations.of(context)!.logout"),
+                          child: Text(
+                              AppLocalizations.of(context)!.logout),
                           onPressed: () {
                             // Logout
                             AccountManager().logout().then((value) {
