@@ -6,37 +6,12 @@ import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 import '../../utils/serial.dart';
+import '../utils/constants.dart';
 import '../utils/device.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
 
-/// Classe che contiene le costanti usate nell'ambito del Bluetooth.
-class BTConst {
-  /// Lista dei nomi consentiti per i dispositivi.
-  static const List<String> allowedNames = [
-    'Adafruit Bluefruit LE',
-    'AirQualityMonitor',
-    'AirQualityMonitorEBV',
-  ];
 
-  /// L'UUID del servizio di comunicazione usato nel BLE.
-  static const nordicUARTID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
-  /// La caratteristica di scrittura usata nel BLE.
-  static const nordicUARTRXID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
-  /// La caratteristica di lettura usata nel BLE.
-  static const nordicUARTTXID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
-
-  /// Lista degli OUI consentiti per i dispositivi.
-  List<Uint8List> allowedOUIs = [
-    Uint8List.fromList([0xEF, 0x41, 0xB7]),
-    Uint8List.fromList([0xE6, 0x4A, 0x29]),
-    Uint8List.fromList([0xC4, 0x4F, 0x33]),
-  ];
-
-  /// Questo intero viene trasmesso dal dispositivo per distinguerlo
-  /// dagli altri dispositivi.
-  static int manufacturerId = 0xF175;
-}
 
 class BTUart {
   late BluetoothCharacteristic rxCharacteristic;
@@ -270,7 +245,7 @@ class BLEManager extends ChangeNotifier {
         advertisementData.manufacturerData[BTConst.manufacturerId]!);
     Uint8List oui = mac.sublist(0, 3);
     // Check if mac is of allowed vendors
-    for (Uint8List allowedOui in BTConst().allowedOUIs) {
+    for (Uint8List allowedOui in BTConst.allowedOUIs) {
       if (listEquals(oui, allowedOui)) {
         return MacAddress(mac);
       }

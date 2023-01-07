@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../managers/ble_man.dart';
+import 'constants.dart';
 
 /// A class that represents a mac address.
 ///
@@ -22,7 +22,7 @@ class MacAddress {
     // _nic = mac.sublist(3, 6);
 
     bool ok = false;
-    for (Uint8List oui in BTConst().allowedOUIs) {
+    for (Uint8List oui in BTConst.allowedOUIs) {
       if (listEquals(_oui, oui)) {
         ok = true;
         break;

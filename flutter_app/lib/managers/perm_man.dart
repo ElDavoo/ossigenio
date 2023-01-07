@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/utils/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/log.dart';
@@ -18,12 +19,7 @@ class PermissionManager {
 
   bool _hasPermission = false;
 
-  // List of permissions to get
-  static const List<Permission> permissions = [
-    Permission.bluetoothScan,
-    Permission.bluetoothConnect,
-    Permission.location,
-  ];
+
   static const snackBarOk = SnackBar(content: Text('Permessi OK!'));
   static const snackBarFail =
       SnackBar(content: Text('Please grant permissions'));
@@ -31,7 +27,7 @@ class PermissionManager {
 // Check if the app has the required permissions
   Future<bool> checkPermissions() async {
     // Check if the app has the required permissions
-    Map<Permission, PermissionStatus> statuses = await permissions.request();
+    Map<Permission, PermissionStatus> statuses = await PermConstants.permissions.request();
     // Check if the app has the required permissions
     _hasPermission = statuses.values.every((status) => status.isGranted);
     // Show SnackBar

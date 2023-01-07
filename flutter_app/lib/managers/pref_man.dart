@@ -4,18 +4,10 @@ Preferences manager that uses the secure storage to store the preferences
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../utils/constants.dart';
 import '../utils/log.dart';
 
-class PrefConstants {
-  static const String deviceMac = "deviceMac";
-  static const String email = "email";
-  static const String username = "username";
-  static const String dataVersion = "dataVersion";
-  static const String mqttUsername = "mqttUsername";
-  static const String mqttPassword = "mqttPassword";
-  static const String cookie = "cookie";
-  static int dataVersionValue = 0;
-}
+
 
 class PrefManager {
   static final PrefManager _instance = PrefManager._internal();

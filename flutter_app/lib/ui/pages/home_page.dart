@@ -8,6 +8,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import '../../../managers/ble_man.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../utils/constants.dart';
 import 'new_home_page.dart';
 import '../../Messages/feedback_message.dart';
 import '../../Messages/message.dart';

@@ -13,25 +13,11 @@ import 'package:mqtt5_client/mqtt5_client.dart';
 import '../Messages/debug_message.dart';
 import '../Messages/message.dart';
 import '../Messages/co2_message.dart';
+import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
 
-class MqttConsts {
-  static const String server = 'modena.davidepalma.it';
-  static const int mqttsPort = 8080;
-  static const String rootTopic = 'sensors/';
 
-  static const String co2Topic = 'co2';
-  static const String humidityTopic = 'humidity';
-  static const String temperatureTopic = 'temperature';
-  static const String debugTopic = 'rawData';
-  static const String feedbackTopic = 'feedback';
-  static const String modelTopic = 'model';
-  static const String versionTopic = 'version';
-  static const String batteryTopic = 'battery';
-  static const String combinedTopic = 'combined';
-  static const int mqttPort = 1883;
-}
 
 class MqttManager {
   static final MqttManager instance = MqttManager._internal();

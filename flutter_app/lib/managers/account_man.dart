@@ -11,25 +11,11 @@ import 'package:flutter_app/ui/pages/place_page.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:crypto/crypto.dart';
 
+import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
 
-class AccConsts {
-  static const String server = 'modena.davidepalma.it';
-  static const String httpPort = '80';
-  static const String httpsPort = '443';
-  static const String urlLogin = '/login';
-  static const String urlRegister = '/signup';
-  static const String urlCheckMac = '/checkMac';
-  static const String urlGetPlaces = '/nearby';
-  static const String urlUserInfo = '/user';
-  static const String urlPlace = '/place/';
-  static const String urlPlaces = '/places';
-  static const String urlPredictions = '/predictions/';
-  static const int apiVersion = 1;
-  static const int shaIterations = 1000;
 
-}
 
 class AccountManager {
   static final AccountManager _instance = AccountManager._internal();
