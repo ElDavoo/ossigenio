@@ -37,60 +37,6 @@ def login_post():
     return redirect(url_for('main.profile'))
 
 
-@auth.route('/signup')
-def signup():
-    return render_template('signup.html')
-
-
-@auth.route('/signup', methods=['POST'])
-def signup_post():
-    email = request.form.get('email')
-    name = request.form.get('name')
-    password = request.form.get('password')
-    serialNum = request.form.get('serialNum')
-
-    if serialNum:
-        device = Device.query.filter_by(id=serialNum).first()
-    else:
-        flash('Please check data inserted') # if serialNum form is empty
-        return redirect(url_for('auth.signup'))
-
-    user = Utente.query.filter_by(email=email).first()  # if this returns a user, then the email already exists in database
-    if user:  # if a user is found, we want to redirect back to signup page so user can try again
-        flash('Email address already exists')
-        return redirect(url_for('auth.signup'))
-
-    #if device.owner != NULL:
-    #    flash('This serial number is already used')
-    #    return redirect(url_for('auth.signup'))
-    #serial_exists = Device.query.filter_by(id=serialNum).first() # check if serial exists
-
-    new_user = Utente(email=email, name=name, password=generate_password_hash(password, method='sha256'),
-                          admin=False)
-
-    # add the new user to the database
-    db.session.add(new_user)
-    db.session.commit()
-    user = Utente.query.filter_by(email=email).first()
-    db.session.query(Device).filter(Device.id == serialNum).update({'owner': user.id})
-    db.session.commit()
-    return redirect(url_for('auth.login'))
-    
-    if serial_exists.owner != NULL:
-        new_user = Utente(email=email, name=name, password=generate_password_hash(password, method='sha256'),
-                          admin=False)
-
-        # add the new user to the database
-        # db.session.execute('PRAGMA foreign_keys = ON;')
-        db.session.add(new_user)
-        db.session.commit()
-        # return render_template('signup.html')
-        return redirect(url_for('auth.login'))
-    else:
-        flash('This serial number doesn\'t exist')
-        return redirect(url_for('auth.signup'))
-
-
 @auth.route('/logout')
 @login_required
 def logout():

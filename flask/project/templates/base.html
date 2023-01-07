@@ -40,9 +40,6 @@
                             <a href="{{ url_for('auth.login') }}" class="navbar-item">
                                 Login
                             </a>
-                            <a href="{{ url_for('auth.signup') }}" class="navbar-item">
-                                Sign Up
-                            </a>
                             {% endif %}
                             {% if current_user.admin == True %}
                             <a href="{{ url_for('main.devices') }}" class="navbar-item">
