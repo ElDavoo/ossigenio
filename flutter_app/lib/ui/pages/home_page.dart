@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
   void _init() {
     // Read the device mac address from shared preferences
-    PrefManager().read(PrefConstants.deviceMac).then((value) {
+    PrefManager().read(C.pref.deviceMac).then((value) {
       /*if (value != null) {
         // Attempt to connect to the device
         bleManager.connectToDevice(value);

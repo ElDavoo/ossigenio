@@ -27,7 +27,7 @@ class AccountManager {
   AccountManager._internal() {
     Log.l('AccountManager initializing...');
     dio.options.baseUrl =
-    'https://${AccConsts.server}:${AccConsts.httpsPort}/api/v${AccConsts.apiVersion}';
+    'https://${C.acc.server}:${C.acc.httpsPort}/api/v${C.acc.apiVersion}';
     Log.l('AccountManager initialized');
 
   }
@@ -44,10 +44,10 @@ class AccountManager {
     Log.l('Logging in with cookie...');
     // First try to get user api with cookie
     try {
-      Response response = await dio.get(AccConsts.urlUserInfo,
+      Response response = await dio.get(C.acc.urlUserInfo,
           options: Options(
               headers: {
-                'Cookie': await prefManager.read(PrefConstants.cookie) as String
+                'Cookie': await prefManager.read(C.pref.cookie) as String
               }
           )
       );
@@ -73,7 +73,7 @@ class AccountManager {
   }
 
   Future<bool> areDataSaved() async {
-    if (await prefManager.read(PrefConstants.cookie) != null) {
+    if (await prefManager.read(C.pref.cookie) != null) {
       return true;
     }
     return false;
@@ -83,7 +83,7 @@ class AccountManager {
     // crypt the password with sha256 1 milion times
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
-    for (int i = 0; i < AccConsts.shaIterations; i++) {
+    for (int i = 0; i < C.acc.shaIterations; i++) {
       digest = sha256.convert(digest.bytes);
     }
 
@@ -97,7 +97,7 @@ class AccountManager {
     // send the request
     Response? response;
     try {
-      response = await dio.post(AccConsts.urlLogin, data: body);
+      response = await dio.post(C.acc.urlLogin, data: body);
       if (response.statusCode == 200) {
         // login successful, query user api
 
@@ -105,10 +105,10 @@ class AccountManager {
         String cookie = response.headers['set-cookie']![0];
         // Save the cookie in the secure storage
         prefManager.write("cookie", cookie);
-        response = await dio.get(AccConsts.urlUserInfo,
+        response = await dio.get(C.acc.urlUserInfo,
             options: Options(
                 headers: {
-                  'Cookie': await prefManager.read(PrefConstants.cookie) as String
+                  'Cookie': await prefManager.read(C.pref.cookie) as String
                 }
             )
         );
@@ -141,7 +141,7 @@ class AccountManager {
     // crypt the password with sha256 1 milion times
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
-    for (int i = 0; i < AccConsts.shaIterations; i++) {
+    for (int i = 0; i < C.acc.shaIterations; i++) {
       digest = sha256.convert(digest.bytes);
     }
     var body = jsonEncode({
@@ -152,7 +152,7 @@ class AccountManager {
     Response? response;
     // send the request
     try {
-      response = await dio.post(AccConsts.urlRegister, data: body);
+      response = await dio.post(C.acc.urlRegister, data: body);
     } catch (e) {
       Log.v(e.toString());
       return false;
@@ -185,7 +185,7 @@ class AccountManager {
       });
       // send the request
       Response response =
-          await dio.post(AccConsts.urlCheckMac, data: body);
+          await dio.post(C.acc.urlCheckMac, data: body);
       Log.v(response.data);
       // check the response
       if (response.statusCode == 200) {
@@ -238,7 +238,7 @@ class AccountManager {
     // send the request
     Response? response;
     try {
-      response = await dio.post(AccConsts.urlGetPlaces,
+      response = await dio.post(C.acc.urlGetPlaces,
           data: body, options: Options(headers: {'cookie': cookie}));
     } catch (e) {
       Log.v(e.toString());
@@ -275,7 +275,7 @@ class AccountManager {
     // send the request
     Response? response;
     try {
-      response = await dio.post(AccConsts.urlPlaces,
+      response = await dio.post(C.acc.urlPlaces,
           data: body, options: Options(headers: {'cookie': cookie}));
     } catch (e) {
       Log.v(e.toString());
@@ -304,7 +304,7 @@ class AccountManager {
     // send the request
     Response? response;
     try {
-      response = await dio.get(AccConsts.urlPlace + placeId.toString(),
+      response = await dio.get(C.acc.urlPlace + placeId.toString(),
           options: Options(headers: {'cookie': cookie}));
     } catch (e) {
       Log.v(e.toString());
@@ -324,15 +324,15 @@ class AccountManager {
     // Read authentication cookie
     // String cookie = PrefManager().read("cookie") as String;
     // send the request
-    // dio.post(AccConsts.urlLogout, options: Options(headers: {'cookie': cookie}));
+    // dio.post(C.acc.urlLogout, options: Options(headers: {'cookie': cookie}));
     // delete cookie
-    await PrefManager().delete(PrefConstants.cookie);
+    await PrefManager().delete(C.pref.cookie);
     // delete account data
-    await PrefManager().delete(PrefConstants.username);
-    await PrefManager().delete(PrefConstants.email);
+    await PrefManager().delete(C.pref.username);
+    await PrefManager().delete(C.pref.email);
     // delete mqtt data
-    await PrefManager().delete(PrefConstants.mqttUsername);
-    await PrefManager().delete(PrefConstants.mqttPassword);
+    await PrefManager().delete(C.pref.mqttUsername);
+    await PrefManager().delete(C.pref.mqttPassword);
 
   }
 
@@ -341,7 +341,7 @@ class AccountManager {
     String cookie = await PrefManager().read("cookie") as String;
     // send the request
     return dio
-        .get(AccConsts.urlPredictions + id.toString(),
+        .get(C.acc.urlPredictions + id.toString(),
             options: Options(headers: {'cookie': cookie}))
         .then((response) {
       // check the response

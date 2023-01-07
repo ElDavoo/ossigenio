@@ -27,7 +27,7 @@ class PermissionManager {
 // Check if the app has the required permissions
   Future<bool> checkPermissions() async {
     // Check if the app has the required permissions
-    Map<Permission, PermissionStatus> statuses = await PermConstants.permissions.request();
+    Map<Permission, PermissionStatus> statuses = await C.perm.permissions.request();
     // Check if the app has the required permissions
     _hasPermission = statuses.values.every((status) => status.isGranted);
     // Show SnackBar

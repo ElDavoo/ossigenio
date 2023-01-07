@@ -43,14 +43,14 @@ class MqttManager {
     Log.l('Logging in from secure storage...');
     if (await PrefManager().areMqttDataSaved()) {
       Log.l('Data saved');
-      String username = await PrefManager().read(PrefConstants.mqttUsername) as String;
-      String password = await PrefManager().read(PrefConstants.mqttPassword) as String;
+      String username = await PrefManager().read(C.pref.mqttUsername) as String;
+      String password = await PrefManager().read(C.pref.mqttPassword) as String;
       try {
         return await connect(username, password);
       } catch (e) {
         // delete saved data
-        await PrefManager().delete(PrefConstants.mqttUsername);
-        await PrefManager().delete(PrefConstants.mqttPassword);
+        await PrefManager().delete(C.pref.mqttUsername);
+        await PrefManager().delete(C.pref.mqttPassword);
         return Future.error(e);
       }
     } else {
@@ -68,15 +68,15 @@ class MqttManager {
       // Get new credentials from server
       Map<String,String> creds = await AccountManager().getMqttCredentials();
       // Save credentials
-      PrefManager().write(PrefConstants.mqttUsername, creds['username']!);
-      PrefManager().write(PrefConstants.mqttPassword, creds['password']!);
+      PrefManager().write(C.pref.mqttUsername, creds['username']!);
+      PrefManager().write(C.pref.mqttPassword, creds['password']!);
       // Try to login again
       return await loginFromSecureStorage();
     }
   }
 
   // fake client, while we wait for the real one to be ready
-  MqttServerClient client = MqttServerClient(MqttConsts.server, '');
+  MqttServerClient client = MqttServerClient(C.mqtt.server, '');
 
   // method to connect to the mqtt server
   Future<MqttServerClient> connect(String username, String password) async {
@@ -85,7 +85,7 @@ class MqttManager {
     Log.l('Connecting to mqtt server...');
 
     client = MqttServerClient.withPort(
-        MqttConsts.server, username, MqttConsts.mqttPort);
+        C.mqtt.server, username, C.mqtt.mqttPort);
     //client.secure = true;
     // set the port
     client.logging(on: false);
@@ -150,10 +150,10 @@ class MqttManager {
     // publish the message
     int deviceId = mac.toInt();
 
-    String topic = '${MqttConsts.rootTopic}$deviceId/';
-    sendInt('$topic${MqttConsts.co2Topic}', message.co2);
-    sendInt('$topic${MqttConsts.humidityTopic}', message.humidity);
-    sendInt('$topic${MqttConsts.temperatureTopic}', message.temperature);
+    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    sendInt('$topic${C.mqtt.co2Topic}', message.co2);
+    sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
+    sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
     // Build the combined payload
     Map <String, dynamic> payload = message.toDict();
     // Get the selected place
@@ -162,41 +162,41 @@ class MqttManager {
 
     }
 
-    sendDict('$topic${MqttConsts.combinedTopic}', payload);
+    sendDict('$topic${C.mqtt.combinedTopic}', payload);
   }
 
   void publishDebug(DebugMessage message) {
     // publish the message
     int deviceId = mac.toInt();
-    String topic = '${MqttConsts.rootTopic}$deviceId/';
-    sendInt('$topic${MqttConsts.debugTopic}', message.rawData);
-    sendInt('$topic${MqttConsts.humidityTopic}', message.humidity);
-    sendInt('$topic${MqttConsts.temperatureTopic}', message.temperature);
+    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    sendInt('$topic${C.mqtt.debugTopic}', message.rawData);
+    sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
+    sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
     // Build the combined payload as json string
-    sendDict('$topic${MqttConsts.combinedTopic}', message.toDict());
+    sendDict('$topic${C.mqtt.combinedTopic}', message.toDict());
   }
 
   void publishFeedback(FeedbackMessage message) {
     // publish the message
     int deviceId = mac.toInt();
-    String topic = '${MqttConsts.rootTopic}$deviceId/';
-    sendInt('$topic${MqttConsts.co2Topic}', message.co2);
-    sendInt('$topic${MqttConsts.humidityTopic}',message.humidity);
-    sendInt('$topic${MqttConsts.temperatureTopic}', message.temperature);
-    sendInt('$topic${MqttConsts.feedbackTopic}', message.feedback.index);
+    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    sendInt('$topic${C.mqtt.co2Topic}', message.co2);
+    sendInt('$topic${C.mqtt.humidityTopic}',message.humidity);
+    sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
+    sendInt('$topic${C.mqtt.feedbackTopic}', message.feedback.index);
     // Build the combined payload
-    sendDict('$topic${MqttConsts.combinedTopic}', message.toDict());
+    sendDict('$topic${C.mqtt.combinedTopic}', message.toDict());
   }
 
   void publishStartup(StartupMessage message) {
     // publish the message
     int deviceId = mac.toInt();
-    String topic = '${MqttConsts.rootTopic}$deviceId/';
-    sendInt('$topic${MqttConsts.modelTopic}',message.model);
-    sendInt('$topic${MqttConsts.versionTopic}', message.version);
-    sendInt('$topic${MqttConsts.batteryTopic}', message.battery);
+    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    sendInt('$topic${C.mqtt.modelTopic}',message.model);
+    sendInt('$topic${C.mqtt.versionTopic}', message.version);
+    sendInt('$topic${C.mqtt.batteryTopic}', message.battery);
     // Build the combined payload
-    sendDict('$topic${MqttConsts.combinedTopic}', message.toDict());
+    sendDict('$topic${C.mqtt.combinedTopic}', message.toDict());
   }
 
   void sendInt(String topic, int value) {

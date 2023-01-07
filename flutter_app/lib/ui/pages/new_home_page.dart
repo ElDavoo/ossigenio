@@ -85,7 +85,7 @@ class NewHomePageState extends State<NewHomePage>
     // Get the name of the user from the preferences
     // and display it in the greeting text
 
-    PrefManager().read(PrefConstants.username).then((value) {
+    PrefManager().read(C.pref.username).then((value) {
       if (value != null) {
         setState(() {
           name = value;

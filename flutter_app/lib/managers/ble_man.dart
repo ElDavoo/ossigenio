@@ -98,7 +98,7 @@ class BLEManager extends ChangeNotifier {
                   r.device.type != BluetoothDeviceType.dual) {
                 continue;
               }
-              if (!BTConst.allowedNames.contains(r.device.name)) {
+              if (!C.bt.allowedNames.contains(r.device.name)) {
                 continue;
               }
               MacAddress? mac = processAdv(r.advertisementData);
@@ -172,14 +172,14 @@ class BLEManager extends ChangeNotifier {
         try {
           List<BluetoothCharacteristic> uartCharacteristics = value
               .firstWhere(
-                  (service) => service.uuid.toString() == BTConst.nordicUARTID)
+                  (service) => service.uuid.toString() == C.bt.nordicUARTID)
               .characteristics;
           BluetoothCharacteristic rxCharacteristic =
               uartCharacteristics.firstWhere((characteristic) =>
-                  characteristic.uuid.toString() == BTConst.nordicUARTRXID);
+                  characteristic.uuid.toString() == C.bt.nordicUARTRXID);
           BluetoothCharacteristic txCharacteristic =
               uartCharacteristics.firstWhere((characteristic) =>
-                  characteristic.uuid.toString() == BTConst.nordicUARTTXID);
+                  characteristic.uuid.toString() == C.bt.nordicUARTTXID);
 
           uart = BTUart(rxCharacteristic, txCharacteristic);
           txCharacteristic.setNotifyValue(true);
@@ -233,19 +233,19 @@ class BLEManager extends ChangeNotifier {
     }
     // Check if manufacturer ID is 0xF075 ( the key of the map)
     if (!advertisementData.manufacturerData
-        .containsKey(BTConst.manufacturerId)) {
+        .containsKey(C.bt.manufacturerId)) {
       return null;
     }
     // The manufacturer data is the mac address of length 6
-    if (advertisementData.manufacturerData[BTConst.manufacturerId]!.length !=
+    if (advertisementData.manufacturerData[C.bt.manufacturerId]!.length !=
         6) {
       return null;
     }
     Uint8List mac = Uint8List.fromList(
-        advertisementData.manufacturerData[BTConst.manufacturerId]!);
+        advertisementData.manufacturerData[C.bt.manufacturerId]!);
     Uint8List oui = mac.sublist(0, 3);
     // Check if mac is of allowed vendors
-    for (Uint8List allowedOui in BTConst.allowedOUIs) {
+    for (Uint8List allowedOui in C.bt.allowedOUIs) {
       if (listEquals(oui, allowedOui)) {
         return MacAddress(mac);
       }

@@ -47,21 +47,21 @@ class PrefManager {
   }
 
   void saveAccountData(String username, String email) {
-    write(PrefConstants.username, username);
+    write(C.pref.username, username);
     // no need to encrypt the password, we are in encrypted storage
     // TODO save token instead of password
-    write(PrefConstants.email, email);
+    write(C.pref.email, email);
   }
 
   void saveMqttData(String username, String password) {
-    write(PrefConstants.mqttUsername, username);
+    write(C.pref.mqttUsername, username);
     // no need to encrypt the password, we are in encrypted storage
-    write(PrefConstants.mqttPassword, password);
+    write(C.pref.mqttPassword, password);
   }
 
   Future<bool> areMqttDataSaved() async {
-    if (await read(PrefConstants.mqttUsername) != null &&
-        await read(PrefConstants.mqttPassword) != null) {
+    if (await read(C.pref.mqttUsername) != null &&
+        await read(C.pref.mqttPassword) != null) {
       return true;
     }
     return false;
@@ -70,7 +70,7 @@ class PrefManager {
   // Migrates the preferences from the old storage to the new one.
   Future<void> migrate() async {
     // Read the old  storage version
-    String ?oldVersions = await read(PrefConstants.dataVersion);
+    String ?oldVersions = await read(C.pref.dataVersion);
     if (oldVersions == null) {
       // No old version, nothing to migrate
       return;

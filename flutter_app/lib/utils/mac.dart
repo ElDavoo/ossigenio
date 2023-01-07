@@ -22,7 +22,7 @@ class MacAddress {
     // _nic = mac.sublist(3, 6);
 
     bool ok = false;
-    for (Uint8List oui in BTConst.allowedOUIs) {
+    for (Uint8List oui in C.bt.allowedOUIs) {
       if (listEquals(_oui, oui)) {
         ok = true;
         break;
