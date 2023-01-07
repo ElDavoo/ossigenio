@@ -12,34 +12,42 @@ import 'btuart.dart';
 import 'log.dart';
 import 'mac.dart';
 
-/// A class that represents a device, e.g. an air quality sensor.
+/// Una classe che rappresenta un sensore
 class Device extends ChangeNotifier {
+  /// La seriale per scambiare messaggi con il sensore
   late BTUart btUart;
 
+  /// Il dispositivo dal punto di vista di flutter_blue_plus
   late BluetoothDevice device;
 
-  // Get the device state
-  late Stream<BluetoothDeviceState> _stateStream;
+  /// Lo stato del dispositivo
+  /// TODO serve davvero?
   BluetoothDeviceState state = BluetoothDeviceState.connected;
 
-  List<MessageWithDirection> messages = [];
-
+  /// La lista dei messaggi scambiati col dispositivo
+  final List<MessageWithDirection> messages = [];
   late Stream<MessageWithDirection> messagesStream;
 
+  /// Il numero seriale del sensore
   late MacAddress serialNumber;
 
+  /// Indica se il sensore si sta riscaldando
   late bool isHeating = true;
 
+  /// Timer usato per richiedere messaggi periodicamente
   late Timer timer;
 
-  //constructor that take blemanager and device and initializes a mqttmanager
   Device(ScanResult result, this.btUart) {
+    Log.d("Inizializzazione di ${device.name} - ${device.id}");
+    // Rifa il calcolo del numero seriale
     serialNumber = BLEManager.processAdv(result.advertisementData)!;
+
     device = result.device;
-    Log.v("Initializing Device: ${device.name} - ${device.id}");
+
     messagesStream = btUart.txCharacteristic.value
         .map((value) {
-          Message? message = SerialComm.receive(value);
+          // Crea un messaggio da un valore
+          final Message? message = SerialComm.receive(value);
           if (message != null) {
             return MessageWithDirection(
                 MessageDirection.received, DateTime.now(), message);
@@ -49,60 +57,71 @@ class Device extends ChangeNotifier {
         .where((message) => message != null)
         .cast<MessageWithDirection>()
         .asBroadcastStream();
+
     messagesStream.listen((message) {
+      // Salva i messaggi scambiati
       messages.add(message);
       notifyListeners();
     });
-    // listen to the stream and publish the messages
+
     messagesStream.listen((message) {
       Log.v("Message received");
+      // Manda i messaggi ricevuti su MQTT
       if (message.direction == MessageDirection.received) {
         MqttManager(mac: serialNumber).publish(message.message);
       }
     });
-    // make state a broadcast stream
-    _stateStream = device.state.asBroadcastStream();
-    // listen to the state stream and update the state
-    _stateStream.listen((event) {
+
+    // Riflette lo stato del dispositivo
+    device.state.listen((event) {
       state = event;
-      // If we are disconnected, tell BLEManager
+      // Diciamolo al manager
       if (state == BluetoothDeviceState.disconnected) {
         device.disconnect();
         timer.cancel();
         BLEManager().disconnect(this);
       }
     });
+
     messagesStream
-        .where((event) => event.direction == MessageDirection.received)
-        .where((event) => event.message is DebugMessage)
-        .map((event) => event.message)
+        .where((msg) => msg.direction == MessageDirection.received)
+        .map((msg) => msg.message)
+        .where((message) => message is DebugMessage)
         .cast<DebugMessage>()
-        .listen((event) {
+        .listen((msg) {
+          // Quando riceviamo un messaggio di debug,
+          // controlliamo se il sensore si sta riscaldando.
       if (isHeating) {
-        isHeating = (event.rawData - event.temperature).abs() <= 3;
+        // Il sensore è pronto se la differenza tra la temperatura
+        // del sensore vicino e quella del sensore lontano è maggiore di 3
+        isHeating = (msg.rawData - msg.temperature).abs() <= 3;
         if (!isHeating) {
+          // Riprogrammiamo il timer per chiedere messaggi
+          // meno frequentemente
           timer.cancel();
           timer = Timer.periodic(
               const Duration(seconds: 60), (_) => periodicallyRequest);
         }
       }
-      Log.l("Diff: ${(event.rawData - event.temperature).abs()}");
+      Log.l("Diff: ${(msg.rawData - msg.temperature).abs()}");
     });
-    // Send a startup message request
-    BLEManager.sendMsg(this, MessageTypes.msgRequest0);
-    Future.delayed(const Duration(milliseconds: 100))
-        .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest1));
+
+    // Messaggi da mandare alla connessione
     Future.delayed(const Duration(milliseconds: 300))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest3));
-    Future.delayed(const Duration(milliseconds: 3600))
+    Future.delayed(const Duration(milliseconds: 600))
+        .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest1));
+    Future.delayed(const Duration(milliseconds: 900))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest0));
 
+    // Chiede un messaggio di debug ogni 30 secondi
     timer = Timer.periodic(
         const Duration(seconds: 30), (_) => periodicallyRequest());
   }
 
+  /// Richiede periodicamente messaggi al sensore
   void periodicallyRequest() {
-    Log.l("Asking for data");
+    Log.d("Chiedo dati al sensore");
     BLEManager.sendMsg(this, MessageTypes.msgRequest0);
     Future.delayed(const Duration(milliseconds: 500))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest3));

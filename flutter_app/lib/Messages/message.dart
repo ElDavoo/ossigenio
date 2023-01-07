@@ -59,7 +59,7 @@ class MessageWithDirection {
   /// Il messaggio
   final Message message;
 
-  MessageWithDirection(this.direction, this.timestamp, this.message);
+  const MessageWithDirection(this.direction, this.timestamp, this.message);
 
   @override
   String toString() {

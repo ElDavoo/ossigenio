@@ -38,7 +38,7 @@ class GpsManager {
     // Quando viene ricevuta una posizione affidabile,
     // la memorizziamo e la notifichiamo
     _poStream.where((event) => _filterEvent(event)).listen((event) {
-      Log.d('Posizione aggiornata: $event');
+      Log.d('Posizione aggiornata');
       position = event;
       // Ottiene la lista dei luoghi vicini e la aggiunge
       AccountManager()

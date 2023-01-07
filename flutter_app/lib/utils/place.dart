@@ -2,9 +2,13 @@ import 'package:latlong2/latlong.dart';
 
 /// Questa classe rappresenta un luogo
 class Place {
+  /// L'id del luogo
   late final int id;
+  /// Il nome del luogo
   late final String name;
+  /// La concentrazione attuale di CO2 in ppm nel luogo
   late final int co2Level;
+  /// La posizione del luogo
   late final LatLng location;
 
   Place(this.id, this.name, this.co2Level, this.location);
