@@ -14,47 +14,52 @@ class Log {
   Log._internal();
 
   /// Stream di stringhe a cui vengono aggiunti i messaggi di log.
-  static final StreamController<String> snackStream =
+  static final StreamController<String> _snackStream =
       StreamController<String>.broadcast();
 
   /// Trova il nome della funzione chiamante e la prepende al messaggio.
-  static String formatMsg(String stacktrace, String msg) {
-    // get the line of the log
-    String lol = stacktrace.split("\n")[1];
-    List<String> lol2 = lol.split(" ");
-    //Delete first element
-    lol2.removeAt(0);
-    // The second non empty string is the name of the calling function
-    for (String s in lol2) {
-      if (s.isNotEmpty) {
-        stacktrace = s;
-        break;
-      }
-    }
-    return "$stacktrace: $msg";
+  static String _formatMsg(String msg) {
+    final String stacktrace = StackTrace.current.toString();
+    final String funLine = stacktrace.split("\n")[2];
+    final List<String> tokens = funLine.split(" ");
+    // Il primo elemento è la profondità della chiamata
+    tokens.removeAt(0);
+    // Il secondo elemento non vuoto è il nome della funzione
+    final String funName =
+        tokens.firstWhere((element) => element.isNotEmpty && element != "new");
+    return "$funName: $msg";
   }
 
-  // Make warnings shut up
-  static void v(String message) {
+  /// Stampa un messaggio solo in snack e solo in modalità debug.
+  static void d(String msg) {
     if (kDebugMode) {
-      // Get the name of the calling function
-      String caller = StackTrace.current.toString();
-      print(formatMsg(caller, message));
-      snackStream.add(formatMsg(caller, message));
+      debugPrint(_formatMsg(msg));
     }
   }
 
+  /// Stampa un messaggio sia in console sia in snack, se in modalità debug.
+  static void v(String msg) {
+    if (kDebugMode) {
+      debugPrint(_formatMsg(msg));
+      _snackStream.add(_formatMsg(msg));
+    }
+  }
+
+  /// Stampa un messaggio in snack, e se in modalità debug anche in console.
   static void l(String message) {
-    // Get the name of the calling function
-    String caller = StackTrace.current.toString();
     if (kDebugMode) {
-      print(formatMsg(caller, message));
+      debugPrint(_formatMsg(message));
     }
-    snackStream.add(formatMsg(caller, message));
+    _snackStream.add(_formatMsg(message));
   }
 
+  /// Aggiunge il listener al stream di snack.
+  ///
+  /// Quando una pagina viene inizializzata, aggiunge
+  /// il listener al stream di snack, e quando viene
+  /// distrutta rimuove il listener.
   static StreamSubscription<String> addListener(BuildContext context) {
-    return Log.snackStream.stream.listen((event) {
+    return Log._snackStream.stream.listen((event) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(duration: const Duration(seconds: 1), content: Text(event)));
