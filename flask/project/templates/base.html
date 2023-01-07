@@ -8,6 +8,7 @@
     <title>AirQualityMonitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <!-- hash_pass used to hash password directly on client into login.html page -->
     <script>
         function hash_pass() {
             var digest = CryptoJS.SHA256(document.getElementById('password').value);
@@ -70,11 +71,4 @@
         </div>
     </section>
 </body>
-<!--<footer class="footer">
-    <div>
-      <p>
-        <strong>AirQualityMonitor</strong> by AlfaSierra92 & ElDavoo.</br> &copy; All Rights Reserved 2023.
-      </p>
-    </div>
-  </footer>-->
 </html>
