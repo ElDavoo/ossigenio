@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script>
+    function hash_pass() {
+        //alert('Validating form...');
+        var bytes = utf8.encode(document.getElementById('password').value);
+        var digest = sha256.convert(bytes);
+        for (var i = 0; i < 1000; i++) {
+            digest = sha256.convert(digest.bytes);
+        }
+        //return digest.toString();
+        return true;
+    }
+</script>
 <div class="column is-4 is-offset-4">
     <h3 class="title">Login</h3>
     <div class="box">
@@ -11,7 +23,7 @@
     		</div>
 		{% endif %}
 	    {% endwith %}
-        <form method="POST" action="/login">
+        <form method="POST" action="/login" onsubmit="return hash_pass();">
             <div class="field">
                 <div class="control">
                     <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
