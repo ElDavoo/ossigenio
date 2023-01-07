@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+<!-- login page; used for user login -->
 {% block content %}
 <div class="column is-4 is-offset-4">
     <h3 class="title">Login</h3>
@@ -21,6 +22,7 @@
             <div class="field">
                 <div class="control">
                     <input class="input is-large" id="password" type="password" name="password" placeholder="Your Password">
+                    <!-- this hidden input form is used like workaround to send password already hashed -->
                     <input class="input is-large" id="password_hidden" type="hidden" name="password_hidden" placeholder="Your Password">
                 </div>
             </div>
@@ -34,7 +36,7 @@
         </form>
     </div>
     <p>
-        <strong>AirQualityMonitor</strong> by AlfaSierra92 & ElDavoo.</br> &copy; All Rights Reserved 2023.
+        <strong>Ossigenio</strong> by AlfaSierra92 & ElDavoo.</br> &copy; All Rights Reserved 2023.
       </p>
 </div>
 {% endblock %}

@@ -13,6 +13,7 @@ def login():
     return render_template('login.html')
 
 
+# login method
 @auth.route('/login', methods=['POST'])
 def login_post():
     # login code goes here
@@ -30,6 +31,7 @@ def login_post():
     return redirect(url_for('main.profile'))
 
 
+# logout method
 @auth.route('/logout')
 @login_required
 def logout():

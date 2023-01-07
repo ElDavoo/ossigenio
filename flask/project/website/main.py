@@ -8,12 +8,12 @@ import project.utils.mqtt_bridge
 
 main = Blueprint('main', __name__)
 
-
+# root route
 @main.route('/')
 def index():
     return render_template('index.html')
 
-
+# shows profile page
 @main.route('/profile')
 @login_required
 def profile():
@@ -27,6 +27,7 @@ def profile():
     #    return render_template('profile_admin.html', name=current_user.name, users=users)
 
 
+# shows admin page with a list of user registered
 @main.route('/administrator')
 @login_required
 def profile_admin():
@@ -38,6 +39,7 @@ def profile_admin():
         return render_template('profile.html', name=current_user.name)
 
 
+# method used to delete user
 @main.route('/delete', methods=['GET'])
 @login_required
 def delete():
@@ -59,6 +61,7 @@ def delete():
         return render_template('profile.html', name=current_user.name)
 
 
+# method used to grant/revoke admin rights on user
 @main.route('/toggle', methods=['GET'])
 @login_required
 def toggle():
@@ -74,6 +77,7 @@ def toggle():
         return render_template('profile.html', name=current_user.name)
 
 
+# shows divecs page with a list of devices registered
 @main.route('/devices')
 @login_required
 def devices():
@@ -84,6 +88,7 @@ def devices():
         return render_template('profile.html', name=current_user.name)
 
 
+# method used to delete device
 @main.route('/devices_delete', methods=['GET'])
 @login_required
 def devices_delete():
@@ -107,6 +112,7 @@ def devices_delete():
         return render_template('profile.html', name=current_user.name)
 
 
+# method used to add device
 @main.route('/add_devices', methods=['POST'])
 @login_required
 def add_devices():
