@@ -1,54 +1,36 @@
-/*
-An implementation of the abstract class Message, that defines a CO2 message.
- */
 import 'dart:typed_data';
 
 import 'package:flutter_app/Messages/message.dart';
 
-import '../utils/serial.dart';
-
 class DebugMessage extends Message {
+  /// Valore grezzo del sensore
   late final int rawData;
+  /// Temperatura in gradi Celsius
   late final int temperature;
+  /// Umidità in percentuale
   late final int humidity;
 
   @override
   int get type => MessageTypes.debugMessage;
 
-  @override
-  late final Uint8List data;
-
-  // Debug constructor
-  DebugMessage.dbgconstr(this.data) {
-    rawData = 0;
-    temperature = 0;
-    humidity = 0;
-  }
-
-  // Proper constructor
-  DebugMessage(this.rawData, this.temperature, this.humidity) {
-    data = Uint8List(0);
-  }
-
   // toString
   @override
   String toString() {
-    if (data.isEmpty) {
-      return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity";
-    } else {
-      return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity, data: $data";
-    }
+    return "DebugMessage: rawData: $rawData, temperature: $temperature, humidity: $humidity";
   }
 
   // fromBytes
-  DebugMessage.fromBytes(this.data) {
+  DebugMessage.fromBytes(Uint8List data) {
+    if (data.length != 4) {
+      throw Exception("Lunghezza del messaggio non corretta");
+    }
     temperature = data[0];
     humidity = data[1];
-    //co2 instead is a 16 bit number
+    // La concentrazione di CO2 è un numero a 16 bit
     rawData = data[3] + (data[2] << 8);
   }
 
-  Map<String, dynamic> toDict() {
+  Map<String, int> toDict() {
     return {
       "rawData": rawData,
       "temperature": temperature,
@@ -60,7 +42,4 @@ class DebugMessage extends Message {
 class DebugMessageRequest extends Message {
   @override
   int get type => MessageTypes.msgRequest0;
-
-  @override
-  Uint8List get data => SerialComm.buildMsg(MessageTypes.msgRequest0);
 }

@@ -139,70 +139,104 @@ class MqttManager {
 
   /// Pubblica un messaggio di CO2.
   void _publishCo2(CO2Message message) {
-    // publish the message
-    int deviceId = mac.toInt();
+    final int deviceId = mac.toInt();
 
-    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    final String topic = '${C.mqtt.rootTopic}$deviceId/';
+
     _sendInt('$topic${C.mqtt.co2Topic}', message.co2);
     _sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     _sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
-    // Build the combined payload
+
+    // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
-    // Get the selected place
+    // Aggiunge il posto selezionato, se presente
     if (place != null) {
       payload['place'] = place?.id;
     }
 
+    // Invia il payload combinato
     _sendDict('$topic${C.mqtt.combinedTopic}', payload);
+
   }
 
+  /// Pubblica un messaggio di debug.
   void _publishDebug(DebugMessage message) {
-    // publish the message
-    int deviceId = mac.toInt();
-    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    final int deviceId = mac.toInt();
+
+    final String topic = '${C.mqtt.rootTopic}$deviceId/';
+
     _sendInt('$topic${C.mqtt.debugTopic}', message.rawData);
     _sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     _sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
-    // Build the combined payload as json string
-    _sendDict('$topic${C.mqtt.combinedTopic}', message.toDict());
+
+    // Costruisce il messaggio combinato
+    Map<String, dynamic> payload = message.toDict();
+    // Aggiunge il posto selezionato, se presente
+    if (place != null) {
+      payload['place'] = place?.id;
+    }
+
+    // Invia il payload combinato
+    _sendDict('$topic${C.mqtt.combinedTopic}', payload);
+
   }
 
+  /// Pubblica un messaggio di feedback.
   void _publishFeedback(FeedbackMessage message) {
-    // publish the message
-    int deviceId = mac.toInt();
-    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    final int deviceId = mac.toInt();
+    final String topic = '${C.mqtt.rootTopic}$deviceId/';
+
     _sendInt('$topic${C.mqtt.co2Topic}', message.co2);
     _sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     _sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
     _sendInt('$topic${C.mqtt.feedbackTopic}', message.feedback.index);
-    // Build the combined payload
-    _sendDict('$topic${C.mqtt.combinedTopic}', message.toDict());
+
+    // Costruisce il messaggio combinato
+    Map<String, dynamic> payload = message.toDict();
+    // Aggiunge il posto selezionato, se presente
+    if (place != null) {
+      payload['place'] = place?.id;
+    }
+
+    // Invia il payload combinato
+    _sendDict('$topic${C.mqtt.combinedTopic}', payload);
   }
 
+  /// Pubblica un messaggio di startup.
   void _publishStartup(StartupMessage message) {
-    // publish the message
-    int deviceId = mac.toInt();
-    String topic = '${C.mqtt.rootTopic}$deviceId/';
+    final int deviceId = mac.toInt();
+    final String topic = '${C.mqtt.rootTopic}$deviceId/';
+
     _sendInt('$topic${C.mqtt.modelTopic}', message.model);
     _sendInt('$topic${C.mqtt.versionTopic}', message.version);
     _sendInt('$topic${C.mqtt.batteryTopic}', message.battery);
-    // Build the combined payload
-    _sendDict('$topic${C.mqtt.combinedTopic}', message.toDict());
+
+    // Costruisce il messaggio combinato
+    Map<String, dynamic> payload = message.toDict();
+    // Aggiunge il posto selezionato, se presente
+    if (place != null) {
+      payload['place'] = place?.id;
+    }
+    // Invia il payload combinato
+    _sendDict('$topic${C.mqtt.combinedTopic}', payload);
   }
 
+  /// Invia un messaggio di tipo intero
   void _sendInt(String topic, int value) {
     client.publishMessage(
         topic, MqttQos.atMostOnce, _stringToBuffer(value.toString()));
   }
 
+  /// Invia un messaggio su MQTT in formato JSON
   void _sendDict(String topic, Map<String, dynamic> dict) {
     client.publishMessage(
         topic, MqttQos.atMostOnce, _stringToBuffer(jsonEncode(dict)));
   }
 
+  /// Converte una stringa in un buffer di byte
   static Uint8Buffer _stringToBuffer(String s) {
-    var result = Uint8Buffer(s.length);
-    // convert the string to a list of bytes
+    final Uint8Buffer result = Uint8Buffer(s.length);
+    // Converte la stringa in byte
     for (int i = 0; i < s.length; i++) {
       result[i] = s.codeUnitAt(i);
     }

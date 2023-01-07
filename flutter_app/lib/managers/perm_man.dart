@@ -1,13 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../utils/log.dart';
 
-/*
-Class to manage and ask for permissions.
-TODO: Better handle failed permissions
- */
+/// Classe per chiedere i permessi.
+/// TODO: Better handle failed permissions
 class PermissionManager {
   static final PermissionManager _instance = PermissionManager._internal();
 
@@ -17,23 +14,21 @@ class PermissionManager {
 
   PermissionManager._internal();
 
-  bool _hasPermission = false;
+  static bool _hasPermission = false;
 
-  static const snackBarOk = SnackBar(content: Text('Permessi OK!'));
-  static const snackBarFail =
-      SnackBar(content: Text('Please grant permissions'));
-
-// Check if the app has the required permissions
+  /// Controlla se l'app ha i permessi necessari
   Future<bool> checkPermissions() async {
-    // Check if the app has the required permissions
     Map<Permission, PermissionStatus> statuses =
         await C.perm.permissions.request();
-    // Check if the app has the required permissions
-    _hasPermission = statuses.values.every((status) => status.isGranted);
-    // Show SnackBar
-    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
-    Log.v("Permission status: $_hasPermission");
+    _hasPermission = statuses.values.every((status) => status.isGranted);
+
+    Log.d("Permission status: $_hasPermission");
+
+    if (!_hasPermission) {
+      Log.l("Permessi non concessi, concedili manualmente");
+      return false;
+    }
 
     return _hasPermission;
   }

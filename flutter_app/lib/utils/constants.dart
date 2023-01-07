@@ -57,6 +57,7 @@ class BTConsts {
         'Adafruit Bluefruit LE',
         'AirQualityMonitor',
         'AirQualityMonitorEBV',
+        'Ossigenio',
       ];
 
   /// L'UUID del servizio di comunicazione usato nel BLE.
