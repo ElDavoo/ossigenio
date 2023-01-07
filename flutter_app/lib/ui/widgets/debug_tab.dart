@@ -4,6 +4,7 @@ It shows data in a cool way, with radiants
  */
 
 import 'package:flutter/material.dart';
+
 import '../../Messages/message.dart';
 import '../../managers/ble_man.dart';
 import '../../utils/device.dart';
@@ -68,13 +69,14 @@ class DebugTabState extends State<DebugTab> {
                   StreamBuilder<MessageWithDirection>(
                       stream: widget.device.messagesStream,
                       builder: (context, snapshot) {
-                          return ListView.builder(
-                            itemCount: widget.device.messages.length,
-                            itemBuilder: (context, index) {
-                              return Text(widget.device.messages[index].toString(),
-                                  style: const TextStyle(fontSize: 13));
-                            },
-                          );
+                        return ListView.builder(
+                          itemCount: widget.device.messages.length,
+                          itemBuilder: (context, index) {
+                            return Text(
+                                widget.device.messages[index].toString(),
+                                style: const TextStyle(fontSize: 13));
+                          },
+                        );
                       }),
             ),
           ],

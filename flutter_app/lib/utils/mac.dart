@@ -8,6 +8,7 @@ import 'constants.dart';
 class MacAddress {
   final Uint8List mac;
   late final Uint8List _oui;
+
   // Currently unused
   // late final Uint8List _nic;
 
@@ -32,7 +33,6 @@ class MacAddress {
     if (!ok) {
       throw ArgumentError('Mac address is not of allowed vendors');
     }
-
   }
 
   /// Returns the mac address as a string, without symbols

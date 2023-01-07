@@ -1,21 +1,16 @@
-/*
-Class to manage accounts registered in the http server
- */
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/place_page.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:crypto/crypto.dart';
 
 import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
-
-
 
 class AccountManager {
   static final AccountManager _instance = AccountManager._internal();
@@ -27,30 +22,27 @@ class AccountManager {
   AccountManager._internal() {
     Log.l('AccountManager initializing...');
     dio.options.baseUrl =
-    'https://${C.acc.server}:${C.acc.httpsPort}/api/v${C.acc.apiVersion}';
+        'https://${C.acc.server}:${C.acc.httpsPort}/api/v${C.acc.apiVersion}';
     Log.l('AccountManager initialized');
-
   }
 
   final Dio dio = Dio();
   final PrefManager prefManager = PrefManager();
 
   // a stream to notify the app when the login status changes
-  final StreamController<bool> _loginStatusController = StreamController<bool>.broadcast();
-  Stream<bool> get loginStatus => _loginStatusController.stream;
+  final StreamController<bool> _loginStatusController =
+      StreamController<bool>.broadcast();
 
+  Stream<bool> get loginStatus => _loginStatusController.stream;
 
   Future<bool> login() async {
     Log.l('Logging in with cookie...');
     // First try to get user api with cookie
     try {
       Response response = await dio.get(C.acc.urlUserInfo,
-          options: Options(
-              headers: {
-                'Cookie': await prefManager.read(C.pref.cookie) as String
-              }
-          )
-      );
+          options: Options(headers: {
+            'Cookie': await prefManager.read(C.pref.cookie) as String
+          }));
       if (response.statusCode == 200) {
         Log.v('Logged in with cookie');
         String username = response.data['name'];
@@ -106,12 +98,9 @@ class AccountManager {
         // Save the cookie in the secure storage
         prefManager.write("cookie", cookie);
         response = await dio.get(C.acc.urlUserInfo,
-            options: Options(
-                headers: {
-                  'Cookie': await prefManager.read(C.pref.cookie) as String
-                }
-            )
-        );
+            options: Options(headers: {
+              'Cookie': await prefManager.read(C.pref.cookie) as String
+            }));
         if (response.statusCode == 200) {
           String username = response.data['name'];
           String email = response.data['email'];
@@ -133,11 +122,9 @@ class AccountManager {
       return false;
     }
     // check the response
-
   }
 
-  Future<bool> register(
-      String email, String username, String password) async {
+  Future<bool> register(String email, String username, String password) async {
     // crypt the password with sha256 1 milion times
     var bytes = utf8.encode(password);
     var digest = sha256.convert(bytes);
@@ -184,8 +171,7 @@ class AccountManager {
         'macAddress': mac.toString(),
       });
       // send the request
-      Response response =
-          await dio.post(C.acc.urlCheckMac, data: body);
+      Response response = await dio.post(C.acc.urlCheckMac, data: body);
       Log.v(response.data);
       // check the response
       if (response.statusCode == 200) {
@@ -198,14 +184,12 @@ class AccountManager {
     } else {
       return false;
     }
-
   }
 
   void refreshMqtt() {
     getMqttCredentials().then((mqttCredentials) {
       prefManager.saveMqttData(
-          mqttCredentials['username']! ,
-          mqttCredentials['password']!);
+          mqttCredentials['username']!, mqttCredentials['password']!);
       MqttManager.instance.tryLogin();
     });
   }
@@ -295,7 +279,6 @@ class AccountManager {
     }
   }
 
-
   Future<Place> getPlace(int placeId) async {
     Log.l("Getting place with id $placeId");
     //call the place api to get details
@@ -319,6 +302,7 @@ class AccountManager {
       return Future.error('Error getting place');
     }
   }
+
   Future<void> logout() async {
     // Call the logout api
     // Read authentication cookie
@@ -333,7 +317,6 @@ class AccountManager {
     // delete mqtt data
     await PrefManager().delete(C.pref.mqttUsername);
     await PrefManager().delete(C.pref.mqttPassword);
-
   }
 
   Future<List<Prediction>> getPredictions(int id) async {
@@ -361,6 +344,7 @@ class AccountManager {
 
 class Place {
   late int id;
+
   // Defines a place
   late String name;
   late int co2Level;
@@ -373,7 +357,7 @@ class Place {
     id = json['id'];
     name = json['name'];
     try {
-    co2Level = json['co2'];
+      co2Level = json['co2'];
     } catch (e) {
       co2Level = 400;
     }
@@ -392,6 +376,4 @@ class Place {
 
   @override
   int get hashCode => id.hashCode ^ name.hashCode ^ location.hashCode;
-
-
 }

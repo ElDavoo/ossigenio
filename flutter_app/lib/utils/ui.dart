@@ -2,40 +2,40 @@
 Various widgets
  */
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
-import 'package:syncfusion_flutter_core/theme.dart';
 
 class UIWidgets {
   static Widget verticalSlider(int value) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(70, 0, 0, 0),
-      child: SfSliderTheme(
-        data: SfSliderThemeData(
-          activeTrackHeight: 7,
-          inactiveTrackHeight: 7,
-        ),
-        child: SfSlider.vertical(
-          min: 400.0,
-          max: value + 300,
-          value: value,
-          interval: 2,
-          showTicks: false,
-          showLabels: false,
-          enableTooltip: true,
-          shouldAlwaysShowTooltip: true,
-          minorTicksPerInterval: 1,
-          isInversed: true,
-          onChanged: (dynamic newvalue) {
-            newvalue = value;
-          },
-          inactiveColor: Colors.blue,
-          activeColor: Colors.red,
-          tooltipTextFormatterCallback: (actualValue, formattedText) {
-            //add the unit to the value
-            return "${actualValue.toInt()} ppm";
-          },
-        )));
+        child: SfSliderTheme(
+            data: SfSliderThemeData(
+              activeTrackHeight: 7,
+              inactiveTrackHeight: 7,
+            ),
+            child: SfSlider.vertical(
+              min: 400.0,
+              max: value + 300,
+              value: value,
+              interval: 2,
+              showTicks: false,
+              showLabels: false,
+              enableTooltip: true,
+              shouldAlwaysShowTooltip: true,
+              minorTicksPerInterval: 1,
+              isInversed: true,
+              onChanged: (dynamic newvalue) {
+                newvalue = value;
+              },
+              inactiveColor: Colors.blue,
+              activeColor: Colors.red,
+              tooltipTextFormatterCallback: (actualValue, formattedText) {
+                //add the unit to the value
+                return "${actualValue.toInt()} ppm";
+              },
+            )));
   }
 
 //Build a gauge with minimum, maximum and current value

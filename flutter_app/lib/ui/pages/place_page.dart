@@ -111,7 +111,8 @@ class PredictionPlaceState extends State<PredictionPlace> {
                         } else if (snapshot.hasError) {
                           return Text("${snapshot.error}");
                         }
-                        return UIWidgets.spinText("Sto predicendo il futuro...");
+                        return UIWidgets.spinText(
+                            "Sto predicendo il futuro...");
                       }),
                 ),
               ),

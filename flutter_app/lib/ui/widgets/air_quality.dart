@@ -5,11 +5,17 @@ import 'package:flutter_app/utils/ui.dart';
 // from a BLE device and displays them
 class AirQuality extends StatefulWidget {
   final int co2;
-  final int ?temperature;
-  final int ?humidity;
-  final bool ?isHeating;
+  final int? temperature;
+  final int? humidity;
+  final bool? isHeating;
 
-  const AirQuality({Key? key, required this.co2, this.temperature, this.humidity, this.isHeating}) : super(key: key);
+  const AirQuality(
+      {Key? key,
+      required this.co2,
+      this.temperature,
+      this.humidity,
+      this.isHeating})
+      : super(key: key);
 
   @override
   AirQualityState createState() => AirQualityState();
@@ -23,7 +29,6 @@ class AirQualityState extends State<AirQuality> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (widget.isHeating != null && widget.isHeating!)
-
           Container(
             decoration: BoxDecoration(
               color: Colors.yellow.shade200,
@@ -32,7 +37,10 @@ class AirQualityState extends State<AirQuality> {
             child: Center(
               child: Row(
                 children: const [
-                  Text( '⚠️ ', style: TextStyle(fontSize: 40),),
+                  Text(
+                    '⚠️ ',
+                    style: TextStyle(fontSize: 40),
+                  ),
                   Center(
                     child: Text(
                       textAlign: TextAlign.center,
@@ -57,66 +65,65 @@ class AirQualityState extends State<AirQuality> {
 
         //Padding to separate the text from the dropdown
         //const Padding(padding: EdgeInsets.all(10.0)),
-         SizedBox(
-                  height: 390,
-                  child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                              child: Column(
-                            children: [
-                              AirQualityText(co2: widget.co2),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                child: Text(
-                                    // Insert temperature
-                                    buildExplanationText(widget.co2,
-                                        widget.temperature, widget.humidity),
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                              ),
-                            ],
-                          )),
-
-                          UIWidgets.verticalSlider(widget.co2),
-                        ]
-                  ),
-                ),
+        SizedBox(
+          height: 390,
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                    child: Column(
+                  children: [
+                    AirQualityText(co2: widget.co2),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      child: Text(
+                        // Insert temperature
+                        buildExplanationText(
+                            widget.co2, widget.temperature, widget.humidity),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                )),
+                UIWidgets.verticalSlider(widget.co2),
+              ]),
+        ),
       ],
     );
   }
 
-  static String buildExplanationText(int co2, [int ?temperature, int ?humidity]) {
+  static String buildExplanationText(int co2,
+      [int? temperature, int? humidity]) {
     String text = "";
-    if (temperature != null&& humidity != null) {
+    if (temperature != null && humidity != null) {
       text = "Temperatura: $temperature°C\nUmidità: $humidity%";
-}
-      text += "\nMisurare la concentrazione di anidride carbonica nell'aria è "
-          "importante per assicurare un ambiente sano e confortevole. "
-          "Un livello di CO2 troppo alto può causare sonnolenza, "
-          "mal di testa, perdita di concentrazione e altri sintomi. "
-          "La CO2 viene misurata in PPM (parti per milione).";
+    }
+    text += "\nMisurare la concentrazione di anidride carbonica nell'aria è "
+        "importante per assicurare un ambiente sano e confortevole. "
+        "Un livello di CO2 troppo alto può causare sonnolenza, "
+        "mal di testa, perdita di concentrazione e altri sintomi. "
+        "La CO2 viene misurata in PPM (parti per milione).";
 
-      if (co2 < 500) {
-        text += "\nLa concentrazione di CO2 è ottima, "
-            "non è necessario intervenire.";
-      } else if (co2 < 600) {
-        text += "\nLa concentrazione di CO2 è buona, "
-            "non è necessario intervenire.";
-      } else if (co2 < 700) {
-        text += "\nLa concentrazione di CO2 è accettabile, "
-            "non è necessario intervenire.";
-      } else if (co2 < 800) {
-        text += "\nLa concentrazione di CO2 è scarsa, "
-            "è necessario intervenire.";
-      } else if (co2 < 900) {
-        text += "\nLa concentrazione di CO2 è pessima, "
-            "è necessario intervenire.";
-      } else {
-        text += "\nLa concentrazione di CO2 è pericolosa, "
-            "è necessario intervenire.";
-      }
+    if (co2 < 500) {
+      text += "\nLa concentrazione di CO2 è ottima, "
+          "non è necessario intervenire.";
+    } else if (co2 < 600) {
+      text += "\nLa concentrazione di CO2 è buona, "
+          "non è necessario intervenire.";
+    } else if (co2 < 700) {
+      text += "\nLa concentrazione di CO2 è accettabile, "
+          "non è necessario intervenire.";
+    } else if (co2 < 800) {
+      text += "\nLa concentrazione di CO2 è scarsa, "
+          "è necessario intervenire.";
+    } else if (co2 < 900) {
+      text += "\nLa concentrazione di CO2 è pessima, "
+          "è necessario intervenire.";
+    } else {
+      text += "\nLa concentrazione di CO2 è pericolosa, "
+          "è necessario intervenire.";
+    }
 
     return text;
   }

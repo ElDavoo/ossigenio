@@ -19,7 +19,6 @@ class SerialComm {
   /// Checksum calculator that returns a single byte
   // FIXME
   static int checksum(Uint8List data) {
-
     const int currCrc = 0x0000;
     int sum1 = currCrc;
     int sum2 = (currCrc >> 8);
@@ -49,7 +48,6 @@ class SerialComm {
       Log.d("data.length < 2");
       return null;
     }
-
 
     if (data[0] != startOfMessage) {
       Log.d(

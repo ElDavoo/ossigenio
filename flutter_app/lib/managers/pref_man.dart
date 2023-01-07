@@ -7,8 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../utils/constants.dart';
 import '../utils/log.dart';
 
-
-
 class PrefManager {
   static final PrefManager _instance = PrefManager._internal();
   static const FlutterSecureStorage _storage = FlutterSecureStorage(
@@ -19,7 +17,7 @@ class PrefManager {
     return _instance;
   }
 
-  PrefManager._internal(){
+  PrefManager._internal() {
     migrate();
   }
 
@@ -70,7 +68,7 @@ class PrefManager {
   // Migrates the preferences from the old storage to the new one.
   Future<void> migrate() async {
     // Read the old  storage version
-    String ?oldVersions = await read(C.pref.dataVersion);
+    String? oldVersions = await read(C.pref.dataVersion);
     if (oldVersions == null) {
       // No old version, nothing to migrate
       return;
@@ -78,7 +76,7 @@ class PrefManager {
     int currentVersion = int.parse(oldVersions);
     switch (currentVersion) {
       case 0:
-        // example: rename a key
+      // example: rename a key
       default:
         Log.v("Migrate: unknown version $currentVersion");
     }

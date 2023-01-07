@@ -11,8 +11,6 @@ import '../utils/device.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
 
-
-
 class BTUart {
   late BluetoothCharacteristic rxCharacteristic;
   late BluetoothCharacteristic txCharacteristic;
@@ -232,13 +230,11 @@ class BLEManager extends ChangeNotifier {
       return null;
     }
     // Check if manufacturer ID is 0xF075 ( the key of the map)
-    if (!advertisementData.manufacturerData
-        .containsKey(C.bt.manufacturerId)) {
+    if (!advertisementData.manufacturerData.containsKey(C.bt.manufacturerId)) {
       return null;
     }
     // The manufacturer data is the mac address of length 6
-    if (advertisementData.manufacturerData[C.bt.manufacturerId]!.length !=
-        6) {
+    if (advertisementData.manufacturerData[C.bt.manufacturerId]!.length != 6) {
       return null;
     }
     Uint8List mac = Uint8List.fromList(

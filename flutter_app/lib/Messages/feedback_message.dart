@@ -47,7 +47,7 @@ class FeedbackMessage extends Message {
     feedback = FeedbackValues.values[data[4]];
   }
 
-  Map <String, dynamic> toDict() {
+  Map<String, dynamic> toDict() {
     return {
       "temperature": temperature,
       "humidity": humidity,

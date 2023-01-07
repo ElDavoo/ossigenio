@@ -37,11 +37,14 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void onPressed() {
-    AccountManager().register(emailinputController.text, usernameinputController.text, passwordinputController.text)
+    AccountManager()
+        .register(emailinputController.text, usernameinputController.text,
+            passwordinputController.text)
         .then((value) => {
               if (value)
                 {
-                  Navigator.pushReplacement(context,
+                  Navigator.pushReplacement(
+                    context,
                     MaterialPageRoute(builder: (context) => const MyHomePage()),
                   )
                 }
@@ -126,8 +129,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     )),
               ],
             ),
-          )
-      ),
+          )),
     );
   }
 }

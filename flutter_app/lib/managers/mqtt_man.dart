@@ -7,17 +7,16 @@ import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
+import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:mqtt5_client/mqtt5_server_client.dart';
 import 'package:typed_data/typed_buffers.dart';
-import 'package:mqtt5_client/mqtt5_client.dart';
+
+import '../Messages/co2_message.dart';
 import '../Messages/debug_message.dart';
 import '../Messages/message.dart';
-import '../Messages/co2_message.dart';
 import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
-
-
 
 class MqttManager {
   static final MqttManager instance = MqttManager._internal();
@@ -36,7 +35,7 @@ class MqttManager {
   }
 
   void tryLogin() {
-    login().then((value) => client );
+    login().then((value) => client);
   }
 
   Future<MqttServerClient> loginFromSecureStorage() async {
@@ -66,7 +65,7 @@ class MqttManager {
       return await loginFromSecureStorage();
     } catch (e) {
       // Get new credentials from server
-      Map<String,String> creds = await AccountManager().getMqttCredentials();
+      Map<String, String> creds = await AccountManager().getMqttCredentials();
       // Save credentials
       PrefManager().write(C.pref.mqttUsername, creds['username']!);
       PrefManager().write(C.pref.mqttPassword, creds['password']!);
@@ -84,21 +83,20 @@ class MqttManager {
     // The client ID is the username
     Log.l('Connecting to mqtt server...');
 
-    client = MqttServerClient.withPort(
-        C.mqtt.server, username, C.mqtt.mqttPort);
+    client =
+        MqttServerClient.withPort(C.mqtt.server, username, C.mqtt.mqttPort);
     //client.secure = true;
     // set the port
     client.logging(on: false);
     // TODO set the username and password
     try {
       Log.l('Trying to connect...');
-      MqttConnectionStatus? status = await client
-          .connect(username, password);
+      MqttConnectionStatus? status = await client.connect(username, password);
       while (status?.state == MqttConnectionState.connecting) {
         Log.l('Connecting...');
         await Future.delayed(const Duration(seconds: 1));
       }
-      if (status?.state ==  MqttConnectionState.connected) {
+      if (status?.state == MqttConnectionState.connected) {
         Log.v('Connected to the mqtt server');
         return client;
       } else {
@@ -155,11 +153,10 @@ class MqttManager {
     sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
     // Build the combined payload
-    Map <String, dynamic> payload = message.toDict();
+    Map<String, dynamic> payload = message.toDict();
     // Get the selected place
     if (place != null) {
       payload['place'] = place?.id;
-
     }
 
     sendDict('$topic${C.mqtt.combinedTopic}', payload);
@@ -181,7 +178,7 @@ class MqttManager {
     int deviceId = mac.toInt();
     String topic = '${C.mqtt.rootTopic}$deviceId/';
     sendInt('$topic${C.mqtt.co2Topic}', message.co2);
-    sendInt('$topic${C.mqtt.humidityTopic}',message.humidity);
+    sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
     sendInt('$topic${C.mqtt.feedbackTopic}', message.feedback.index);
     // Build the combined payload
@@ -192,7 +189,7 @@ class MqttManager {
     // publish the message
     int deviceId = mac.toInt();
     String topic = '${C.mqtt.rootTopic}$deviceId/';
-    sendInt('$topic${C.mqtt.modelTopic}',message.model);
+    sendInt('$topic${C.mqtt.modelTopic}', message.model);
     sendInt('$topic${C.mqtt.versionTopic}', message.version);
     sendInt('$topic${C.mqtt.batteryTopic}', message.battery);
     // Build the combined payload
@@ -200,11 +197,13 @@ class MqttManager {
   }
 
   void sendInt(String topic, int value) {
-    client.publishMessage(topic, MqttQos.atMostOnce, stringToBuffer(value.toString()));
+    client.publishMessage(
+        topic, MqttQos.atMostOnce, stringToBuffer(value.toString()));
   }
 
   void sendDict(String topic, Map<String, dynamic> dict) {
-    client.publishMessage(topic, MqttQos.atMostOnce, stringToBuffer(jsonEncode(dict)));
+    client.publishMessage(
+        topic, MqttQos.atMostOnce, stringToBuffer(jsonEncode(dict)));
   }
 
   static Uint8Buffer intToBuffer(int i) {
@@ -221,6 +220,4 @@ class MqttManager {
     }
     return result;
   }
-
-
 }

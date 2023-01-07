@@ -2,6 +2,7 @@
 // Asks the api for the place data and displays it
 
 import 'package:flutter/material.dart';
+
 import '../../managers/account_man.dart';
 import 'air_quality.dart';
 
@@ -30,9 +31,8 @@ class AirQualityPlaceState extends State<AirQualityPlace> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return AirQuality(
-              co2: snapshot.data!.co2Level > 400
-                  ? snapshot.data!.co2Level
-                  : 400,
+              co2:
+                  snapshot.data!.co2Level > 400 ? snapshot.data!.co2Level : 400,
             );
           }
           return const Text('No data');

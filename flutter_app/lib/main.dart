@@ -5,11 +5,11 @@ import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/login_page.dart';
-import '../managers/ble_man.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'ui/pages/home_page.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+import '../managers/ble_man.dart';
+import 'ui/pages/home_page.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -17,14 +17,14 @@ void main() {
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-        /* Start to initialize the various app subsystems
+    /* Start to initialize the various app subsystems
           * (e.g. BLE, DB, etc.) */
-        PrefManager();
-        BLEManager();
-        PermissionManager().checkPermissions();
-        if (kDebugMode) {
-          //debugPaintSizeEnabled=true;
-        }
+    PrefManager();
+    BLEManager();
+    PermissionManager().checkPermissions();
+    if (kDebugMode) {
+      //debugPaintSizeEnabled=true;
+    }
 
     runApp(
         /*MultiProvider(providers: [
@@ -39,7 +39,6 @@ void main() {
   Bisogna mettere qui i ChangeNotifierProvider.
   In questo modo, saranno disponibili globalmente.
    */
-
 }
 
 class MyApp extends StatefulWidget {
@@ -75,8 +74,7 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateTitle: (context) =>
-      AppLocalizations.of(context)!.title,
+      onGenerateTitle: (context) => AppLocalizations.of(context)!.title,
       theme: ThemeData(
         // This is the theme of your application.
         primarySwatch: Colors.blue,
@@ -85,7 +83,3 @@ class MyAppState extends State<MyApp> {
     );
   }
 }
-
-
-
-

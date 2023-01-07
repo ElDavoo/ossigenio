@@ -48,7 +48,7 @@ class CO2Message extends Message {
     co2 = data[3] + (data[2] << 8);
   }
 
-  Map <String, dynamic> toDict() {
+  Map<String, dynamic> toDict() {
     return {
       "temperature": temperature,
       "humidity": humidity,

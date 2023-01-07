@@ -4,19 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
-import '../../../managers/ble_man.dart';
-
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../utils/constants.dart';
-import 'new_home_page.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
+
+import '../../../managers/ble_man.dart';
 import '../../Messages/feedback_message.dart';
 import '../../Messages/message.dart';
-import '../widgets/debug_tab.dart';
+import '../../utils/constants.dart';
 import '../../utils/log.dart';
+import '../widgets/debug_tab.dart';
 import 'login_page.dart';
 import 'map_page.dart';
-import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
+import 'new_home_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -33,7 +33,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
   //BLEManager bleManager = BLEManager();
   // get BLEManager from ChangeNotifierProvider
 
@@ -50,24 +51,25 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     _log = Log.addListener(context);
     // Add a disconnection event
     BLEManager().devicestream.stream.listen((event) {
-      if (BLEManager().dvc !=  null) {
-        BLEManager().dvc!.messagesStream.where((event)
-        {
-          if (event.direction == MessageDirection.received) {
-            if (event.message is FeedbackMessage) {
-              return true;
-            }
-          }
-          return false;
-        })
-        .map((msg) => msg.message)
-        .cast<FeedbackMessage>()
+      if (BLEManager().dvc != null) {
+        BLEManager()
+            .dvc!
+            .messagesStream
+            .where((event) {
+              if (event.direction == MessageDirection.received) {
+                if (event.message is FeedbackMessage) {
+                  return true;
+                }
+              }
+              return false;
+            })
+            .map((msg) => msg.message)
+            .cast<FeedbackMessage>()
             .listen((event) {
-          _showOverlay(context, fbvalue: event.feedback);
-        });
-        }
+              _showOverlay(context, fbvalue: event.feedback);
+            });
       }
-    );
+    });
     BLEManager().disconnectstream.add(null);
 
     FlutterNativeSplash.remove();
@@ -76,8 +78,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    animationController =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 250));
+    animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 250));
     animation =
         CurveTween(curve: Curves.fastOutSlowIn).animate(animationController!);
     _init();
@@ -88,14 +90,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   int _selectedIndex = 0;
   AnimationController? animationController;
   Animation<double>? animation;
+
   @override
   void dispose() {
     BLEManager().stopBLEScan();
     _log?.cancel();
     super.dispose();
   }
-
-
 
   final List<Widget> _pages = <Widget>[
     const NewHomePage(),
@@ -144,12 +145,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           "AppLocalizations.of(context)!.logoutConfirmMessage"),
                       actions: [
                         TextButton(
-                            child: const Text("AppLocalizations.of(context)!.cancel"),
+                            child: const Text(
+                                "AppLocalizations.of(context)!.cancel"),
                             onPressed: () {
                               Navigator.of(context).pop();
                             }),
                         TextButton(
-                          child: const Text("AppLocalizations.of(context)!.logout"),
+                          child: const Text(
+                              "AppLocalizations.of(context)!.logout"),
                           onPressed: () {
                             // Logout
                             AccountManager().logout().then((value) {
@@ -209,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
         selectedItemColor: Colors.blue,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        backgroundColor: const Color.fromRGBO(255,255,255, 0.2),
+        backgroundColor: const Color.fromRGBO(255, 255, 255, 0.2),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -245,6 +248,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       child: const Icon(Icons.bluetooth),
     );
   }
+
   Widget bluetoothRSSI() {
     return StreamBuilder(
         stream: BLEManager().disconnectstream.stream,
@@ -277,11 +281,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 } else {
                   return Container();
                 }
-              },);
-
+              },
+            );
           }
         });
-
   }
 
   Widget bluetoothBatt() {
@@ -296,8 +299,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               builder: (context, snapshot) {
                 if (BLEManager().dvc != null) {
                   return StreamBuilder<int>(
-                      stream: BLEManager().dvc!.messagesStream
-                      .where((element) => element.direction == MessageDirection.received)
+                      stream: BLEManager()
+                          .dvc!
+                          .messagesStream
+                          .where((element) =>
+                              element.direction == MessageDirection.received)
                           .where((element) => element.message is StartupMessage)
                           .map((event) => event.message as StartupMessage)
                           .map((event) => event.battery),
@@ -323,7 +329,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                           } else {
                             return const Icon(Icons.battery_alert);
                           }
-
                         } else {
                           return Container();
                         }
@@ -331,14 +336,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 } else {
                   return Container();
                 }
-              },);
-
+              },
+            );
           }
         });
-
   }
 
-  void _showOverlay(BuildContext context, {required FeedbackValues fbvalue}) async {
+  void _showOverlay(BuildContext context,
+      {required FeedbackValues fbvalue}) async {
     // Convert the fbvalue to an emoji with a dict
     final Map<FeedbackValues, String> emojiDict = {
       FeedbackValues.negative: "🙁",
@@ -350,29 +355,27 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     OverlayState? overlayState = Overlay.of(context);
     OverlayEntry overlayEntry;
     overlayEntry = OverlayEntry(builder: (context) {
-      return               FadeTransition(
-      opacity: animation!,
+      return FadeTransition(
+        opacity: animation!,
         child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              Color.fromRGBO(227, 252, 230, 0.9),
-              Color.fromRGBO(111, 206, 250, 0.6)
-            ],
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Color.fromRGBO(227, 252, 230, 0.9),
+                Color.fromRGBO(111, 206, 250, 0.6)
+              ],
+            ),
           ),
-        ),
-        child: Center(
-          child: Material(
-
-                child: Text(
-                    emoji,
-                    style: const TextStyle(fontSize: 80),
-                  ),
+          child: Center(
+            child: Material(
+              child: Text(
+                emoji,
+                style: const TextStyle(fontSize: 80),
               ),
             ),
-
+          ),
         ),
       );
     });
@@ -384,8 +387,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     animationController!.forward();
     await Future.delayed(const Duration(seconds: 1))
         .whenComplete(() => animationController!.reverse())
-    // removing overlay entry after stipulated time.
+        // removing overlay entry after stipulated time.
         .whenComplete(() => overlayEntry.remove());
   }
-
 }

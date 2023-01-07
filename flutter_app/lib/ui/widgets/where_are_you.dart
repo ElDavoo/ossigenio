@@ -11,8 +11,8 @@ class WhereAreYou extends StatefulWidget {
   // A function which is called when the user selects a place
   final Function(Place? place) onPlaceSelected;
 
-
-  const WhereAreYou({Key? key, required this.onPlaceSelected}) : super(key: key);
+  const WhereAreYou({Key? key, required this.onPlaceSelected})
+      : super(key: key);
 
   @override
   WhereAreYouState createState() => WhereAreYouState();
@@ -20,11 +20,11 @@ class WhereAreYou extends StatefulWidget {
 
 class WhereAreYouState extends State<WhereAreYou> {
   Place? selectedPlace;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
       children: [
         const Text("Dove ti trovi?", style: TextStyle(fontSize: 22)),
         //Padding to separate the text from the dropdown
@@ -33,7 +33,8 @@ class WhereAreYouState extends State<WhereAreYou> {
           stream: GpsManager().placeStream.stream,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              List<DropdownMenuItem<Place>> items = snapshot.data.map<DropdownMenuItem<Place>>((Place value) {
+              List<DropdownMenuItem<Place>> items =
+                  snapshot.data.map<DropdownMenuItem<Place>>((Place value) {
                 return DropdownMenuItem<Place>(
                   value: value,
                   child: Text(value.name),
@@ -44,19 +45,20 @@ class WhereAreYouState extends State<WhereAreYou> {
                 value: null,
                 child: Text("Nessuno"),
               ));
-            return DropdownButton<Place>(
-              // Check if the value is in the value list
-              value: MqttManager.place,
-              onChanged: (Place? newValue) {
-                widget.onPlaceSelected(newValue);
-                selectedPlace = newValue;
-              },
-              items: items,
-          );
+              return DropdownButton<Place>(
+                // Check if the value is in the value list
+                value: MqttManager.place,
+                onChanged: (Place? newValue) {
+                  widget.onPlaceSelected(newValue);
+                  selectedPlace = newValue;
+                },
+                items: items,
+              );
             } else {
               return const Text("Loading...");
             }
-          },)
+          },
+        )
       ],
     );
   }
