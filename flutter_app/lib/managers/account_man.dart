@@ -8,11 +8,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/place_page.dart';
-import 'package:flutter_app/utils/device.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:crypto/crypto.dart';
 
 import '../utils/log.dart';
+import '../utils/mac.dart';
 
 class AccConsts {
   static const String server = 'modena.davidepalma.it';
@@ -66,7 +66,7 @@ class AccountManager {
           )
       );
       if (response.statusCode == 200) {
-        Log.l('Logged in with cookie');
+        Log.v('Logged in with cookie');
         String username = response.data['name'];
         String email = response.data['email'];
         // save the username and password

@@ -1,7 +1,3 @@
-/*
-Class to communicate with the serial port.
- */
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 
@@ -11,61 +7,72 @@ import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
 import 'log.dart';
 
+/// Questa classe implementa il protocollo di comunicazione seriale.
+///
+/// Il protocollo seriale viene usato per comunicare col sensore.
+/// Nel nostro caso, la seriale viene stabilita su un canale BLE.
+/// I dettagli del protocollo sono in /SerialProtocol.md
 class SerialComm {
-  // The start of a message is 0xAA.
   static const int startOfMessage = 0xAA;
-
-  // The end of a message is 0xFFFF
   static const int endOfMessage = 0xFF;
 
-  // Checksum calculator that returns a single byte
+  /// Checksum calculator that returns a single byte
   // FIXME
   static int checksum(Uint8List data) {
-    int currCrc = 0x0000;
+
+    const int currCrc = 0x0000;
     int sum1 = currCrc;
     int sum2 = (currCrc >> 8);
     int index;
+
     for (index = 0; index < data.length; index = index + 1) {
       sum1 = (sum1 + data[index]) % 255;
       sum2 = (sum2 + sum1) % 255;
     }
+
     if (sum1 < 1) {
       sum1 += 255;
     }
+
+    // TODO ???
     return sum1 - 2;
   }
 
+  /// Parses a message from a byte array
   static Message? receive(List<int> list) {
-    Uint8List data = Uint8List.fromList(list);
+    // Convert the list to a list of bytes
+    final Uint8List data = Uint8List.fromList(list);
+
+    Log.d("Received: $data");
+
     if (data.length < 4) {
-      Log.v("data.length < 2");
+      Log.d("data.length < 2");
       return null;
     }
-    Log.v("Received: $data");
 
-    // Check if the message is valid
+
     if (data[0] != startOfMessage) {
-      Log.v(
+      Log.d(
           "Invalid start byte: ${data[data.length - 2]} is not $startOfMessage");
       return null;
     }
-    // Check if the almost last byte is the end of message
     if (data[data.length - 2] != endOfMessage) {
-      Log.v("Invalid end byte, ${data[data.length - 2]} is not $endOfMessage");
+      Log.d("Invalid end byte, ${data[data.length - 2]} is not $endOfMessage");
       return null;
     }
-    // Check checksum
-    int calculatedChecksum = checksum(data.sublist(1, data.length - 2));
-    int receivedChecksum = data[data.length - 1];
+
+    final int calculatedChecksum = checksum(data.sublist(1, data.length - 2));
+    final int receivedChecksum = data[data.length - 1];
     if (calculatedChecksum != receivedChecksum) {
       Log.v(
           "Checksum should be $calculatedChecksum but it is $receivedChecksum");
-      //TODO calculate better checksum on bluefruit side
+      // TODO Uncomment this when the checksum is fixed
       //return null;
     }
+
     // Check the message type
-    Uint8List payload = data.sublist(2, data.length - 2);
-    Message ?message;
+    final Uint8List payload = data.sublist(2, data.length - 2);
+    final Message? message;
     switch (data[1]) {
       case MessageTypes.debugMessage:
         message = DebugMessage.fromBytes(payload);
@@ -87,26 +94,26 @@ class SerialComm {
         Log.v("Unknown message type ${data[1]}");
         return null;
     }
-    Log.l(message.toString());
+
+    Log.d(message.toString());
+
     return message;
   }
 
+  /// Creates an empty message from its index
   static Uint8List buildMsgg(int msgIndex) {
-    return buildMsg(msgIndex, Uint8List(0));
+    return _buildMsg(msgIndex, Uint8List(0));
   }
 
-  static Uint8List buildMsg(int msgIndex, Uint8List payload) {
-    List<int> message = List.empty(growable: true);
-    // Add the start of message byte
+  static Uint8List _buildMsg(int msgIndex, Uint8List payload) {
+    final List<int> message = List.empty(growable: true);
+
     message.add(startOfMessage);
-    // Add the message type
     message.add(msgIndex);
-    // Add the payload
     message.addAll(payload);
-    // Add the end string
     message.add(endOfMessage);
-    // Add the checksum
     message.add(checksum(Uint8List.fromList(message)));
+
     return Uint8List.fromList(message);
   }
 }

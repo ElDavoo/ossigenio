@@ -8,6 +8,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../../utils/serial.dart';
 import '../utils/device.dart';
 import '../utils/log.dart';
+import '../utils/mac.dart';
 
 /// Classe che contiene le costanti usate nell'ambito del Bluetooth.
 class BTConst {
