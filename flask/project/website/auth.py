@@ -7,7 +7,6 @@ from flask_login import login_user, login_required, logout_user
 
 auth = Blueprint('auth', __name__)
 
-
 @auth.route('/login')
 def login():
     return render_template('login.html')
