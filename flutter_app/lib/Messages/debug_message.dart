@@ -62,5 +62,5 @@ class DebugMessageRequest extends Message {
   int get type => MessageTypes.msgRequest0;
 
   @override
-  Uint8List get data => SerialComm.buildMsgg(MessageTypes.msgRequest0);
+  Uint8List get data => SerialComm.buildMsg(MessageTypes.msgRequest0);
 }

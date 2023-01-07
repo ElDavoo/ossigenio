@@ -62,5 +62,5 @@ class FeedbackMessageRequest extends Message {
   int get type => MessageTypes.msgRequest4;
 
   @override
-  Uint8List get data => SerialComm.buildMsgg(MessageTypes.msgRequest4);
+  Uint8List get data => SerialComm.buildMsg(MessageTypes.msgRequest4);
 }

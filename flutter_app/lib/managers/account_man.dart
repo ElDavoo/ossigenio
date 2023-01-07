@@ -181,6 +181,9 @@ class AccountManager {
     }
   }
 
+  /// Ottiene le credenziali MQTT, le salva e prova a connettersi.
+  ///
+  /// TODO
   void refreshMqtt() {
     getMqttCredentials().then((mqttCredentials) {
       PrefManager().saveMqttData(
@@ -189,11 +192,11 @@ class AccountManager {
     });
   }
 
-  // Method to get mqtt credentials
+  /// Ottiene le credenziali MQTT dal server.
+  ///
+  /// TODO
   Future<Map<String, String>> getMqttCredentials() async {
     if (await ensureLoggedIn()) {
-      // check if there are
-      // TODO
       return {'username': 'test', 'password': 'test2'};
     } else {
       return Future.error('Not logged in');

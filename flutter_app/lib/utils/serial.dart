@@ -16,7 +16,7 @@ class SerialComm {
   static const int startOfMessage = 0xAA;
   static const int endOfMessage = 0xFF;
 
-  /// Checksum calculator that returns a single byte
+  /// Checksum calculator che ritorna un singolo byte
   // FIXME
   static int checksum(Uint8List data) {
     const int currCrc = 0x0000;
@@ -37,7 +37,7 @@ class SerialComm {
     return sum1 - 2;
   }
 
-  /// Parses a message from a byte array
+  /// Costruisce un messaggio a partire da un buffer di byte.
   static Message? receive(List<int> list) {
     // Convert the list to a list of bytes
     final Uint8List data = Uint8List.fromList(list);
@@ -98,8 +98,8 @@ class SerialComm {
     return message;
   }
 
-  /// Creates an empty message from its index
-  static Uint8List buildMsgg(int msgIndex) {
+  /// Crea un messaggio da inviare
+  static Uint8List buildMsg(int msgIndex) {
     return _buildMsg(msgIndex, Uint8List(0));
   }
 

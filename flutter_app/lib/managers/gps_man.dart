@@ -1,6 +1,3 @@
-/*
-Class to handle and retrieve data from the GPS module
- */
 import 'dart:async';
 
 import 'package:flutter_app/managers/account_man.dart';
@@ -10,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import '../utils/log.dart';
 import '../utils/place.dart';
 
+/// Classe che gestisce la posizione
 class GpsManager {
   static final GpsManager _instance = GpsManager._internal();
 
@@ -17,62 +15,54 @@ class GpsManager {
     return _instance;
   }
 
+  /// Impostazioni di localizzazione
+  static const LocationSettings _locationSettings = LocationSettings(
+    // Abbiamo bisogno della precisione massima
+    accuracy: LocationAccuracy.best,
+  );
+
+  /// L'ultima posizione dell'utente
+  /// TODO: Convertire a LatLng
+  static Position? position;
+
+  /// Lo stream di posizioni
+  final Stream<Position> _poStream =
+      Geolocator.getPositionStream(locationSettings: _locationSettings);
+
+  /// Stream di posti vicini all'utente
+  StreamController<List<Place>> placeStream =
+      StreamController<List<Place>>.broadcast();
+
   GpsManager._internal() {
-    Log.l('GpsManager initializing...');
-    poStream.where((event) => filterEvent(event)).listen((event) {
-      Log.l('Position updated: $event');
+    Log.d("Inizializzazione");
+    // Quando viene ricevuta una posizione affidabile,
+    // la memorizziamo e la notifichiamo
+    _poStream.where((event) => filterEvent(event)).listen((event) {
+      Log.d('Posizione aggiornata: $event');
       position = event;
+      // Ottiene la lista dei luoghi vicini e la aggiunge
       AccountManager()
           .getNearbyPlaces(LatLng(event.latitude, event.longitude))
           .then((list) {
         placeStream.add(list);
       });
     });
-    Log.l('GpsManager initialized...');
+    Log.d('Inizializzato');
   }
 
-  static Position? position;
-  Stream<Position> poStream = getPositionStream();
-
-  //Stream controller for group of nearby places
-  StreamController<List<Place>> placeStream =
-      StreamController<List<Place>>.broadcast();
-
-  static const LocationSettings locationSettings = LocationSettings(
-    accuracy: LocationAccuracy.best,
-    distanceFilter: 0,
-  );
-
-  // method to get the current position
-  static Future<Position> getCurrentPosition() async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    Log.v(position.toString());
-    return position;
-  }
-
-  // method to get the current position
-  static Future<Position?> getLastKnownPosition() async {
-    Position? position = await Geolocator.getLastKnownPosition();
-    Log.v(position.toString());
-    return position;
-  }
-
-  // Method that gives a stream of positions
-  static Stream<Position> getPositionStream() {
-    return Geolocator.getPositionStream(locationSettings: locationSettings);
-  }
-
-  /* Filter the events so we only get position updates that are:
-  Not mocked, accurate, the user is not moving.
-   */
+  /// Filtra le posizioni ricevute
+  ///
+  /// Questp metodo filtra le posizioni ricevute in modo da non
+  /// aggiornare la posizione se non è precisa o non è cambiata.
+  /// Tuttavia, la prima posizione sarà ottenuta con criteri
+  /// meno rigidi, per velocizzare l'avvio dell'app.
   static bool filterEvent(Position pos) {
-    // Different criteria if we don't have a position yet
+    // Criteri se la posizione è la prima
     if (position == null) {
       return pos.accuracy < 50 && pos.speed < 10 && !pos.isMocked;
     }
 
-    // Return false if pos is between 50 and 100 meters from the last position
+    // Non considerare posizioni a meno di 30 metri dall'ultima
     if (position != null &&
         Geolocator.distanceBetween(pos.latitude, pos.longitude,
                 position!.latitude, position!.longitude) <
@@ -82,7 +72,7 @@ class GpsManager {
 
     return !pos.isMocked &&
         pos.accuracy < 30 &&
-        pos.speed < 1 &&
-        pos.speedAccuracy < 1;
+        pos.speed < 3 &&
+        pos.speedAccuracy < 2;
   }
 }

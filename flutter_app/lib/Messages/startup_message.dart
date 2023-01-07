@@ -65,5 +65,5 @@ class StartupMessageRequest extends Message {
   int get type => MessageTypes.msgRequest3;
 
   @override
-  Uint8List get data => SerialComm.buildMsgg(MessageTypes.msgRequest3);
+  Uint8List get data => SerialComm.buildMsg(MessageTypes.msgRequest3);
 }

@@ -62,5 +62,5 @@ class CO2MessageRequest extends Message {
   int get type => MessageTypes.msgRequest1;
 
   @override
-  Uint8List get data => SerialComm.buildMsgg(MessageTypes.msgRequest1);
+  Uint8List get data => SerialComm.buildMsg(MessageTypes.msgRequest1);
 }

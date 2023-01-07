@@ -8,6 +8,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../Messages/message.dart';
 import '../managers/ble_man.dart';
 import '../managers/mqtt_man.dart';
+import 'btuart.dart';
 import 'log.dart';
 import 'mac.dart';
 
