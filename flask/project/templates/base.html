@@ -10,12 +10,13 @@
     <script>
         function hash_pass() {
             //alert('Validating form...');
-            var bytes = utf8.encode(document.getElementById('password').value);
-            var digest = sha256.convert(bytes);
+            //var bytes = utf8.encode(document.getElementById('password').value);
+            //var digest = sha256.convert(bytes);
+            var digest = CryptoJS.SHA256(document.getElementById('password').value);
             for (var i = 0; i < 1000; i++) {
-                digest = sha256.convert(digest.bytes);
+                digest = CryptoJS.SHA256(digest);
             }
-            document.getElementById('password').value=digest.toString();
+            document.getElementById('password').value = digest;
             //return digest.toString();
             return true;
         }
