@@ -9,16 +9,17 @@ import '../../managers/gps_man.dart';
 // And saves the selection in its state
 class WhereAreYou extends StatefulWidget {
   // A function which is called when the user selects a place
-  Function(Place? place) onPlaceSelected;
-  Place? selectedPlace;
+  final Function(Place? place) onPlaceSelected;
 
-  WhereAreYou({Key? key, required this.onPlaceSelected}) : super(key: key);
+
+  const WhereAreYou({Key? key, required this.onPlaceSelected}) : super(key: key);
 
   @override
   WhereAreYouState createState() => WhereAreYouState();
 }
 
 class WhereAreYouState extends State<WhereAreYou> {
+  Place? selectedPlace;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -48,7 +49,7 @@ class WhereAreYouState extends State<WhereAreYou> {
               value: MqttManager.place,
               onChanged: (Place? newValue) {
                 widget.onPlaceSelected(newValue);
-                widget.selectedPlace = newValue;
+                selectedPlace = newValue;
               },
               items: items,
           );

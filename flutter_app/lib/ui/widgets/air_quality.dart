@@ -4,12 +4,12 @@ import 'package:flutter_app/utils/ui.dart';
 // A stateful widget which gets the stream of co2 values
 // from a BLE device and displays them
 class AirQuality extends StatefulWidget {
-  int co2;
-  int ?temperature;
-  int ?humidity;
-  bool ?isHeating;
+  final int co2;
+  final int ?temperature;
+  final int ?humidity;
+  final bool ?isHeating;
 
-  AirQuality({Key? key, required this.co2, this.temperature, this.humidity, this.isHeating}) : super(key: key);
+  const AirQuality({Key? key, required this.co2, this.temperature, this.humidity, this.isHeating}) : super(key: key);
 
   @override
   AirQualityState createState() => AirQualityState();

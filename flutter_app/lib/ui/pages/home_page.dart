@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
 
   final List<Widget> _pages = <Widget>[
-    NewHomePage(),
+    const NewHomePage(),
     const MapPage(),
   ];
   PageController pageController = PageController(
@@ -138,17 +138,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text("AppLocalizations.of(context)!.logout"),
-                      content: Text(
+                      title: const Text("AppLocalizations.of(context)!.logout"),
+                      content: const Text(
                           "AppLocalizations.of(context)!.logoutConfirmMessage"),
                       actions: [
                         TextButton(
-                            child: Text("AppLocalizations.of(context)!.cancel"),
+                            child: const Text("AppLocalizations.of(context)!.cancel"),
                             onPressed: () {
                               Navigator.of(context).pop();
                             }),
                         TextButton(
-                          child: Text("AppLocalizations.of(context)!.logout"),
+                          child: const Text("AppLocalizations.of(context)!.logout"),
                           onPressed: () {
                             // Logout
                             AccountManager().logout().then((value) {

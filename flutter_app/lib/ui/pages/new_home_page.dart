@@ -11,8 +11,7 @@ import '../widgets/air_quality_local.dart';
 import '../widgets/air_quality_place.dart';
 
 class NewHomePage extends StatefulWidget {
-  String name = "null";
-  NewHomePage({Key? key}) : super(key: key);
+  const NewHomePage({Key? key}) : super(key: key);
 
   @override
   NewHomePageState createState() => NewHomePageState();
@@ -20,7 +19,7 @@ class NewHomePage extends StatefulWidget {
 
 class NewHomePageState extends State<NewHomePage>
     with AutomaticKeepAliveClientMixin<NewHomePage> {
-  get name => "null";
+  String name = 'null';
 
   @override
   void initState() {
@@ -88,7 +87,7 @@ class NewHomePageState extends State<NewHomePage>
     PrefManager().read(PrefConstants.username).then((value) {
       if (value != null) {
         setState(() {
-          widget.name = value;
+          name = value;
         });
       }
     });
@@ -103,7 +102,7 @@ class NewHomePageState extends State<NewHomePage>
               FittedBox(
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topLeft,
-                child: greetingText(widget.name),
+                child: greetingText(name),
               ),
             ),
             UIWidgets.buildCard(WhereAreYou(

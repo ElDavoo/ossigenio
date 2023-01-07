@@ -6,9 +6,9 @@ import '../../managers/account_man.dart';
 import 'air_quality.dart';
 
 class AirQualityPlace extends StatefulWidget {
-  int placeId;
+  final int placeId;
 
-  AirQualityPlace({Key? key, required this.placeId}) : super(key: key);
+  const AirQualityPlace({Key? key, required this.placeId}) : super(key: key);
 
   @override
   AirQualityPlaceState createState() => AirQualityPlaceState();

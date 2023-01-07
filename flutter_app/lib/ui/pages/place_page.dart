@@ -8,9 +8,9 @@ import '../../managers/account_man.dart';
 // Asks the api for the predictions and displays them
 
 class PredictionPlace extends StatefulWidget {
-  Place place;
+  final Place place;
 
-  PredictionPlace({Key? key, required this.place}) : super(key: key);
+  const PredictionPlace({Key? key, required this.place}) : super(key: key);
 
   @override
   PredictionPlaceState createState() => PredictionPlaceState();

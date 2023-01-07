@@ -11,8 +11,6 @@ import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
 import 'log.dart';
 
-typedef uint8_t = int;
-
 class SerialComm {
   // The start of a message is 0xAA.
   static const int startOfMessage = 0xAA;
@@ -23,9 +21,9 @@ class SerialComm {
   // Checksum calculator that returns a single byte
   // FIXME
   static int checksum(Uint8List data) {
-    uint8_t currCrc = 0x0000;
-    uint8_t sum1 = currCrc;
-    uint8_t sum2 = (currCrc >> 8);
+    int currCrc = 0x0000;
+    int sum1 = currCrc;
+    int sum2 = (currCrc >> 8);
     int index;
     for (index = 0; index < data.length; index = index + 1) {
       sum1 = (sum1 + data[index]) % 255;

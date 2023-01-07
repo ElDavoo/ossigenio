@@ -59,7 +59,6 @@ class BLEManager extends ChangeNotifier {
     flutterBlue.state.listen((event) {});
     // When we receive a scan result, we try to connect to it
     scanstream.stream.listen((event) {
-      _scanResult = event;
       Log.v("Scan result received, trying to connect...");
       connectToDevice(event).catchError((e) {
         Log.l("Error connecting to device: $e");
@@ -69,7 +68,6 @@ class BLEManager extends ChangeNotifier {
     });
     // When we receive a disconnection event, we start scanning again
     disconnectstream.stream.listen((event) {
-      _scanResult = null;
       dvc = null;
       Log.v("Disconnected from device, starting scan again");
       startBLEScan();
@@ -100,9 +98,6 @@ class BLEManager extends ChangeNotifier {
 
   // Last device connected
   Device? dvc;
-
-  // Last scan result
-  ScanResult? _scanResult;
 
   // Method to scan for BLE devices
   void startBLEScan() async {
@@ -238,7 +233,6 @@ class BLEManager extends ChangeNotifier {
   void disconnect(Device device) {
     device.device.disconnect();
     dvc = null;
-    _scanResult = null;
     disconnectstream.add(null);
   }
 
