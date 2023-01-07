@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/ble_man.dart';
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_app/utils/ui.dart';
 
 import '../../utils/constants.dart';
 import '../../utils/log.dart';
+import '../../utils/place.dart';
 import '../widgets/air_quality_local.dart';
 import '../widgets/air_quality_place.dart';
 

@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 import '../../managers/account_man.dart';
+import '../../utils/place.dart';
 import 'air_quality.dart';
 
 class AirQualityPlace extends StatefulWidget {

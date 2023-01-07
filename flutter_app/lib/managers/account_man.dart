@@ -11,7 +11,9 @@ import 'package:latlong2/latlong.dart';
 import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
+import '../utils/place.dart';
 
+/// Classe per gestire le API e le richieste HTTP verso il server.
 class AccountManager {
   static final AccountManager _instance = AccountManager._internal();
 
@@ -19,144 +21,137 @@ class AccountManager {
     return _instance;
   }
 
-  AccountManager._internal() {
-    Log.l('AccountManager initializing...');
-    dio.options.baseUrl =
-        'https://${C.acc.server}:${C.acc.httpsPort}/api/v${C.acc.apiVersion}';
-    Log.l('AccountManager initialized');
+  AccountManager._internal();
+
+  static final Dio dio = Dio(BaseOptions(
+    baseUrl:
+        'https://${C.acc.server}:${C.acc.httpsPort}/api/v${C.acc.apiVersion}',
+  ));
+
+  /// Effettua una richiesta HTTP GET.
+  Future<Response> get(String url, String cookie) async {
+    return await dio.get(url,
+        options: Options(headers: {
+          'Cookie': cookie,
+        }));
   }
 
-  final Dio dio = Dio();
-  final PrefManager prefManager = PrefManager();
-
-  // a stream to notify the app when the login status changes
-  final StreamController<bool> _loginStatusController =
-      StreamController<bool>.broadcast();
-
-  Stream<bool> get loginStatus => _loginStatusController.stream;
-
+  /// Prova ad effettuare il login con le credenziali salvate.
   Future<bool> login() async {
-    Log.l('Logging in with cookie...');
-    // First try to get user api with cookie
+    Log.d('Logging in with saved credentials...');
+    final String? cookie = await PrefManager().read(C.pref.cookie);
+    if (cookie == null) {
+      Log.d('No saved credentials');
+      return false;
+    }
     try {
-      Response response = await dio.get(C.acc.urlUserInfo,
-          options: Options(headers: {
-            'Cookie': await prefManager.read(C.pref.cookie) as String
-          }));
+      Response response = await get(C.acc.urlUserInfo, cookie);
       if (response.statusCode == 200) {
-        Log.v('Logged in with cookie');
+        Log.d('Logged in with cookie');
         String username = response.data['name'];
         String email = response.data['email'];
-        // save the username and password
         PrefManager().saveAccountData(username, email);
-        _loginStatusController.add(true);
         return true;
       } else {
-        Log.l('Cookie login failed');
+        Log.l('Login fallito, codice ${response.statusCode}');
         AccountManager().logout();
         return false;
       }
     } on DioError catch (e) {
-      Log.l('Error while logging in with cookie: ${e.message}');
+      Log.v('Error while logging in with cookie: ${e.message}');
     } catch (e) {
-      Log.l('Error while logging in with cookie: ${e.toString()}');
+      Log.v('Error while logging in with cookie: ${e.toString()}');
     }
     return false;
   }
 
-  Future<bool> areDataSaved() async {
-    if (await prefManager.read(C.pref.cookie) != null) {
+  /// Ritorna true se l'utente è loggato, false altrimenti.
+  Future<bool> ensureLoggedIn() async {
+    if (await PrefManager().read(C.pref.cookie) != null) {
       return true;
     }
     return false;
   }
 
+  /// Effettua il login con una coppia username-password.
   Future<bool> loginWith(String email, String password) async {
-    // crypt the password with sha256 1 milion times
-    var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
-    for (int i = 0; i < C.acc.shaIterations; i++) {
-      digest = sha256.convert(digest.bytes);
-    }
-
-    // set the body
-    var body = jsonEncode({
+    // Imposta il corpo della richiesta
+    final String body = jsonEncode({
       'email': email,
-      'password': digest.toString(),
+      // Cifra la password prima di mandarla al server
+      'password': cipher(password),
     });
-    // FIXME
-    // notify the stream
-    // send the request
+
     Response? response;
+
     try {
       response = await dio.post(C.acc.urlLogin, data: body);
-      if (response.statusCode == 200) {
-        // login successful, query user api
 
-        // Get the cookie from the headers response
+      if (response.statusCode == 200) {
+        // Salva il cookie e i dati dell'utente
         String cookie = response.headers['set-cookie']![0];
-        // Save the cookie in the secure storage
-        prefManager.write("cookie", cookie);
-        response = await dio.get(C.acc.urlUserInfo,
-            options: Options(headers: {
-              'Cookie': await prefManager.read(C.pref.cookie) as String
-            }));
+        PrefManager().write("cookie", cookie);
+        response = await get(C.acc.urlUserInfo, cookie);
         if (response.statusCode == 200) {
           String username = response.data['name'];
           String email = response.data['email'];
-          // save the username and password
           PrefManager().saveAccountData(username, email);
-          // notify the stream
-          _loginStatusController.add(true);
           return true;
         } else {
-          Log.l('Error while logging in: ${response.statusCode}');
+          Log.l('Errore del server: ${response.statusCode}');
           return false;
         }
       } else {
-        // login failed
+        Log.l("Login fallito, codice ${response.statusCode}");
         return false;
       }
     } catch (e) {
       Log.v(e.toString());
       return false;
     }
-    // check the response
   }
 
-  Future<bool> register(String email, String username, String password) async {
-    // crypt the password with sha256 1 milion times
-    var bytes = utf8.encode(password);
-    var digest = sha256.convert(bytes);
-    for (int i = 0; i < C.acc.shaIterations; i++) {
+  /// Cifra la password con SHA256 per shaIterations volte.
+  String cipher(String password) {
+    Digest digest = sha256.convert(utf8.encode(password));
+    for (int i = 0; i < C.acc.shaIterations - 1; i++) {
       digest = sha256.convert(digest.bytes);
     }
-    var body = jsonEncode({
+    return digest.toString();
+  }
+
+  /// Effettua la registrazione con email, nome utente e password.
+  Future<bool> register(
+      {required String email,
+      required String name,
+      required String password}) async {
+    final String body = jsonEncode({
       'email': email,
-      'password': digest.toString(),
-      'name': username,
+      // Cifra la password prima di mandarla al server
+      'password': cipher(password),
+      'name': name,
     });
-    Response? response;
-    // send the request
+
+    final Response? response;
     try {
+      // Invia la richiesta
       response = await dio.post(C.acc.urlRegister, data: body);
     } catch (e) {
       Log.v(e.toString());
       return false;
     }
-    // check the response
+
     if (response.statusCode == 200) {
-      // save account data in the local storage
-      prefManager.saveAccountData(username, email);
-      // save cookie
-      String cookie = response.headers['set-cookie']![0];
-      prefManager.write("cookie", cookie);
-      // get mqtt credentials
+      // Se la registrazione è avvenuta,
+      // salva i dati dell'utente
+      PrefManager().saveAccountData(name, email);
+      final String cookie = response.headers['set-cookie']![0];
+      PrefManager().write("cookie", cookie);
+      // FIXME Ottieni le credenziali mqtt
       MqttManager.instance.tryLogin();
-      // login successful
       return true;
     } else {
-      // login failed
+      Log.l("Registrazione fallita, codice ${response.statusCode}");
       return false;
     }
   }
@@ -164,7 +159,7 @@ class AccountManager {
   Future<bool> checkIfValid(MacAddress mac) async {
     // Check if a mac address is original, if not, return false
     // First ensure we are logged in
-    if (await areDataSaved()) {
+    if (await ensureLoggedIn()) {
       // TODO check if the token is valid
       return true;
       var body = FormData.fromMap({
@@ -188,7 +183,7 @@ class AccountManager {
 
   void refreshMqtt() {
     getMqttCredentials().then((mqttCredentials) {
-      prefManager.saveMqttData(
+      PrefManager().saveMqttData(
           mqttCredentials['username']!, mqttCredentials['password']!);
       MqttManager.instance.tryLogin();
     });
@@ -196,7 +191,7 @@ class AccountManager {
 
   // Method to get mqtt credentials
   Future<Map<String, String>> getMqttCredentials() async {
-    if (await areDataSaved()) {
+    if (await ensureLoggedIn()) {
       // check if there are
       // TODO
       return {'username': 'test', 'password': 'test2'};
@@ -205,105 +200,118 @@ class AccountManager {
     }
   }
 
-  // A method that, given a coordinate, gives
-  // a list of places nearby. Every place has these properties:
-  // Name of the place, location of the place, air quality (express with a number)
+  /// Restituisce i luoghi vicino all'utente.
+  ///
+  /// Restituisce i luoghi in un raggio di 100 metri.
   Future<List<Place>> getNearbyPlaces(LatLng position) async {
-    // ensure we are logged in
-    await areDataSaved();
-    Log.v("Getting nearby places...");
-    // Ask to the server, sending position as a post request
-    var body = jsonEncode({
+    if (!await ensureLoggedIn()) {
+      return Future.error('Not logged in');
+    }
+
+    Log.d("Ottengo i posti vicino a me");
+    final String body = jsonEncode({
       'lat': position.latitude,
       'lon': position.longitude,
     });
-    // Read authentication cookie
-    String cookie = await prefManager.read("cookie") as String;
-    // send the request
-    Response? response;
+
+    final String cookie = await PrefManager().read("cookie") as String;
+
+    final Response? response;
     try {
       response = await dio.post(C.acc.urlGetPlaces,
           data: body, options: Options(headers: {'cookie': cookie}));
     } catch (e) {
-      Log.v(e.toString());
+      Log.l(e.toString());
       return [];
     }
-    // check the response
+
     if (response.statusCode == 200) {
-      // parse response json to return places
+      // Parsing del json
       List<Place> places = [];
       for (var place in response.data) {
-        Log.v("Place: ${place['name']}");
         places.add(Place.fromJson(place));
       }
+      Log.d("Ho ottenuto ${places.length} posti vicino a me");
       return places;
     } else {
-      return Future.error('Error getting nearby places');
+      return Future.error('Error ${response.statusCode}');
     }
   }
 
-  // A method that, given a coordinate, gives
-  // a list of places nearby. Every place has these properties:
-  // Name of the place, location of the place, air quality (express with a number)
+  /// Restituisce gli N luoghi più vicini.
+  ///
+  /// Un metodo che, data una posizione, restituisce
+  /// una lista di N luoghi più vicini, indipendentemente
+  /// dalla disstanza.
   Future<List<Place>> getPlaces(LatLng position) async {
-    // ensure we are logged in
-    await areDataSaved();
-    Log.v("Getting places...");
-    // Ask to the server, sending position as a post request
-    var body = jsonEncode({
+    if (!await ensureLoggedIn()) {
+      return Future.error('Not logged in');
+    }
+
+    Log.l("Carico i posti vicino a me...");
+
+    final String body = jsonEncode({
       'lat': position.latitude,
       'lon': position.longitude,
     });
-    // Read authentication cookie
-    String cookie = await prefManager.read("cookie") as String;
-    // send the request
-    Response? response;
+
+    final String cookie = await PrefManager().read(C.pref.cookie) as String;
+
+    final Response? response;
     try {
       response = await dio.post(C.acc.urlPlaces,
           data: body, options: Options(headers: {'cookie': cookie}));
     } catch (e) {
-      Log.v(e.toString());
+      Log.v("Errore: $e");
       return [];
     }
-    // check the response
+
     if (response.statusCode == 200) {
-      // parse response json to return places
+      // Prende tutti i posti e li converte in oggetti Place
       List<Place> places = [];
       for (var place in response.data) {
-        Log.v("Place: ${place['name']}");
         places.add(Place.fromJson(place));
       }
+      Log.d("Trovati ${places.length} posti");
       return places;
     } else {
-      return Future.error('Error getting nearby places');
+      return Future.error('Errore dal server: ${response.statusCode}');
     }
   }
 
+  /// Dato l'id di un luogo, restituisce le informazioni
+  ///
+  /// Un metodo che, dato l'id di un luogo, restituisce
+  /// le informazioni relative a quel luogo.
   Future<Place> getPlace(int placeId) async {
-    Log.l("Getting place with id $placeId");
-    //call the place api to get details
-    // Read authentication cookie
-    String cookie = await prefManager.read("cookie") as String;
-    // send the request
-    Response? response;
+    if (!await ensureLoggedIn()) {
+      return Future.error('Accesso non effettuato');
+    }
+
+    Log.d("Cerco le info del posto $placeId");
+
+    final String cookie = await PrefManager().read("cookie") as String;
+
+    final Response? response;
     try {
-      response = await dio.get(C.acc.urlPlace + placeId.toString(),
-          options: Options(headers: {'cookie': cookie}));
+      response = await get(C.acc.urlPlace + placeId.toString(), cookie);
     } catch (e) {
       Log.v(e.toString());
-      return Future.error('Error getting place');
+      return Future.error('Errore: $e');
     }
-    // check the response
+
     if (response.statusCode == 200) {
-      // parse response json to return places
-      Log.l("Place: ${response.data['name']}");
+      // Parsa il json e restituisce il luogo
+      Log.d("Place: ${response.data['name']} restituito");
       return Place.fromJson(response.data);
     } else {
-      return Future.error('Error getting place');
+      return Future.error('Errore dal server: ${response.statusCode}');
     }
   }
 
+  /// Effettua il logout.
   Future<void> logout() async {
+    // TODO chiama l'api di logout
     // Call the logout api
     // Read authentication cookie
     // String cookie = PrefManager().read("cookie") as String;
@@ -319,61 +327,29 @@ class AccountManager {
     await PrefManager().delete(C.pref.mqttPassword);
   }
 
+  /// Restituisce la lista delle predizioni.
+  ///
+  /// Un metodo che, dato l'id di un luogo, restituisce
+  /// la lista delle predizioni della CO2 per quel luogo.
+  /// Le predizioni sono 1 per ora per 24 ore.
   Future<List<Prediction>> getPredictions(int id) async {
-    // Read authentication cookie
-    String cookie = await PrefManager().read("cookie") as String;
-    // send the request
-    return dio
-        .get(C.acc.urlPredictions + id.toString(),
-            options: Options(headers: {'cookie': cookie}))
-        .then((response) {
-      // check the response
+    if (!await ensureLoggedIn()) {
+      return Future.error('Accesso non effettuato');
+    }
+
+    final String cookie = await PrefManager().read("cookie") as String;
+
+    return get(C.acc.urlPredictions + id.toString(), cookie).then((response) {
       if (response.statusCode == 200) {
-        // parse response json to return places
+        // Parsa tutte le predizioni dal json e le restituisce
         List<Prediction> predictions = [];
         for (var prediction in response.data) {
           predictions.add(Prediction.fromJson(prediction));
         }
         return predictions;
       } else {
-        return Future.error('Error getting predictions');
+        return Future.error('Errore dal server: ${response.statusCode}');
       }
     });
   }
-}
-
-class Place {
-  late int id;
-
-  // Defines a place
-  late String name;
-  late int co2Level;
-  late LatLng location;
-
-  Place(this.id, this.name, this.co2Level, this.location);
-
-  // fromJson
-  Place.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    try {
-      co2Level = json['co2'];
-    } catch (e) {
-      co2Level = 400;
-    }
-    location = LatLng(json['lat'], json['lon']);
-  }
-
-  // Implement equality
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Place &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          location == other.location;
-
-  @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ location.hashCode;
 }

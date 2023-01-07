@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 
-import '../../managers/account_man.dart';
 import '../../managers/gps_man.dart';
+import '../../utils/place.dart';
 
 // A stateful widget which gets the list of nearby places
 // And asks the user to select one of them

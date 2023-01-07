@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/ui.dart';
 
 import '../../managers/account_man.dart';
+import '../../utils/place.dart';
 
 // A stateful widget which takes a place,
 // Asks the api for the predictions and displays them

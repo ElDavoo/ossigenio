@@ -17,6 +17,7 @@ import '../Messages/message.dart';
 import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
+import '../utils/place.dart';
 
 class MqttManager {
   static final MqttManager instance = MqttManager._internal();

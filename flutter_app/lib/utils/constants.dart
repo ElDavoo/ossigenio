@@ -45,7 +45,7 @@ class AccConsts {
 
   int get apiVersion => 1;
 
-  int get shaIterations => 1000;
+  int get shaIterations => 1001;
 }
 
 /// Classe che contiene le costanti usate nell'ambito del Bluetooth.

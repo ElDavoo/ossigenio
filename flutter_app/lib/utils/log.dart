@@ -46,11 +46,16 @@ class Log {
   }
 
   /// Stampa un messaggio in snack, e se in modalità debug anche in console.
+  ///
+  /// Se siamo in modalità debug, su snack viene mostrato anche
+  /// il nome della funzione chiamante.
   static void l(String message) {
     if (kDebugMode) {
       debugPrint(_formatMsg(message));
+      _snackStream.add(_formatMsg(message));
+    } else {
+      _snackStream.add(message);
     }
-    _snackStream.add(_formatMsg(message));
   }
 
   /// Aggiunge il listener al stream di snack.

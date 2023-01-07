@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../utils/log.dart';
+import '../utils/place.dart';
 
 class GpsManager {
   static final GpsManager _instance = GpsManager._internal();

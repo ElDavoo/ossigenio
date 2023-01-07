@@ -38,8 +38,11 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void onPressed() {
     AccountManager()
-        .register(emailinputController.text, usernameinputController.text,
-            passwordinputController.text)
+        .register(
+      email: emailinputController.text,
+      name: usernameinputController.text,
+      password: passwordinputController.text,
+    )
         .then((value) => {
               if (value)
                 {
