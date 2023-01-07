@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+import 'constants.dart';
+
+/// Vari widget
 class UIWidgets {
-  static Widget verticalSlider(int value) {
+  /// Uno slider verticale che mostra un valore numerico
+  /// affiancato da una unità di misura
+  static Widget verticalSlider(int baseline, int value, String unit) {
     return Padding(
         padding: const EdgeInsets.fromLTRB(70, 0, 0, 0),
         child: SfSliderTheme(
@@ -12,10 +17,9 @@ class UIWidgets {
               inactiveTrackHeight: 7,
             ),
             child: SfSlider.vertical(
-              min: 400.0,
+              min: baseline,
               max: value + 300,
               value: value,
-              interval: 2,
               showTicks: false,
               showLabels: false,
               enableTooltip: true,
@@ -25,30 +29,36 @@ class UIWidgets {
               onChanged: (dynamic newvalue) {
                 newvalue = value;
               },
-              inactiveColor: Colors.blue,
-              activeColor: Colors.red,
+              inactiveColor: C.colors.inactiveSlider,
+              activeColor: C.colors.activeSlider,
               tooltipTextFormatterCallback: (actualValue, formattedText) {
-                //add the unit to the value
-                return "${actualValue.toInt()} ppm";
+                // Aggiunge l'unità di misura
+                return "${actualValue.toInt()} $unit";
               },
             )));
   }
 
+  /// Un widget che mostra uno spinner di caricamento con del testo
   static Widget spinText(String text) {
     return Center(
         child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         const CircularProgressIndicator(),
-        Text(text),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(text),
+        ),
       ],
     ));
   }
 
+  /// Encapsula un widget in una card
   static Widget buildCard(Widget child) {
     return Card(
+        // Disattiva l'ombra
         elevation: 0,
-        color: const Color.fromRGBO(255, 255, 255, 0.8),
+        color: C.colors.cardBg,
         shadowColor: Colors.black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/ui.dart';
 
-// A stateful widget which gets the stream of co2 values
-// from a BLE device and displays them
+import '../../utils/constants.dart';
+
+/// Mostra i valori della CO2 da un sensore o da un posto
 class AirQuality extends StatefulWidget {
+  /// Il valore della CO2 in ppm
   final int co2;
+  /// Il valore della temperatura in gradi Celsius
   final int? temperature;
+  /// Il valore dell'umidità in percentuale
   final int? humidity;
+  /// Mostra se il sensore si sta riscaldando
   final bool? isHeating;
 
   const AirQuality(
@@ -31,7 +36,7 @@ class AirQualityState extends State<AirQuality> {
         if (widget.isHeating != null && widget.isHeating!)
           Container(
             decoration: BoxDecoration(
-              color: Colors.yellow.shade200,
+              color: C.colors.isHeatingBg
             ),
             width: double.infinity,
             child: Center(
@@ -86,7 +91,7 @@ class AirQualityState extends State<AirQuality> {
                     ),
                   ],
                 )),
-                UIWidgets.verticalSlider(widget.co2),
+                UIWidgets.verticalSlider(400, widget.co2, "ppm"),
               ]),
         ),
       ],

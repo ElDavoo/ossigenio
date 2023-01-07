@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/server.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -10,6 +11,7 @@ class C {
   static const PrefConsts pref = PrefConsts();
   static const BTConsts bt = BTConsts();
   static const MqttConsts mqtt = MqttConsts();
+  static const Clrs colors = Clrs();
 }
 
 class AccConsts {
@@ -138,4 +140,16 @@ class PermConsts {
         Permission.bluetoothConnect,
         Permission.location,
       ];
+}
+
+class Clrs {
+  const Clrs();
+
+  Color get cardBg => const Color.fromRGBO(255, 255, 255, 0.8);
+
+  Color get inactiveSlider => Colors.blue;
+
+  Color get activeSlider => Colors.red;
+
+  Color get isHeatingBg => Colors.yellow.shade200;
 }

@@ -38,11 +38,12 @@ class Device extends ChangeNotifier {
   late Timer timer;
 
   Device(ScanResult result, this.btUart) {
+    device = result.device;
     Log.d("Inizializzazione di ${device.name} - ${device.id}");
     // Rifa il calcolo del numero seriale
     serialNumber = BLEManager.processAdv(result.advertisementData)!;
 
-    device = result.device;
+
 
     messagesStream = btUart.txCharacteristic.value
         .map((value) {
