@@ -24,11 +24,11 @@ def login_post():
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
-    hashed_password = sha256(password.encode('utf-8')).digest()
-    for i in range(0,1000,1):
-        hashed_password = sha256(hashed_password).digest()
-    hashed_password = sha256(hashed_password).hexdigest()
-    if not user or not check_password_hash(user.password, hashed_password):
+    #hashed_password = sha256(password.encode('utf-8')).digest()
+    #for i in range(0,1000,1):
+    #    hashed_password = sha256(hashed_password).digest()
+    #hashed_password = sha256(hashed_password).hexdigest()
+    if not user or not check_password_hash(user.password, password):
         flash('Please check your login details and try again.')
         return redirect(url_for('auth.login'))  # if the user doesn't exist or password is wrong, reload the page
 
