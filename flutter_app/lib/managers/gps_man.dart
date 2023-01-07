@@ -37,7 +37,7 @@ class GpsManager {
     Log.d("Inizializzazione");
     // Quando viene ricevuta una posizione affidabile,
     // la memorizziamo e la notifichiamo
-    _poStream.where((event) => filterEvent(event)).listen((event) {
+    _poStream.where((event) => _filterEvent(event)).listen((event) {
       Log.d('Posizione aggiornata: $event');
       position = event;
       // Ottiene la lista dei luoghi vicini e la aggiunge
@@ -56,7 +56,7 @@ class GpsManager {
   /// aggiornare la posizione se non è precisa o non è cambiata.
   /// Tuttavia, la prima posizione sarà ottenuta con criteri
   /// meno rigidi, per velocizzare l'avvio dell'app.
-  static bool filterEvent(Position pos) {
+  static bool _filterEvent(Position pos) {
     // Criteri se la posizione è la prima
     if (position == null) {
       return pos.accuracy < 50 && pos.speed < 10 && !pos.isMocked;
