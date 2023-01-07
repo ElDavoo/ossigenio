@@ -7,6 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>AirQualityMonitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <script>
+        function hash_pass() {
+            //alert('Validating form...');
+            var bytes = utf8.encode(document.getElementById('password').value);
+            var digest = sha256.convert(bytes);
+            for (var i = 0; i < 1000; i++) {
+                digest = sha256.convert(digest.bytes);
+            }
+            window.alert(digest);
+            //return digest.toString();
+            return true;
+        }
+    </script>
 </head>
 
 <body>
