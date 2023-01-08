@@ -5,7 +5,6 @@ import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
-import 'package:flutter_app/ui/pages/place_page.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../utils/constants.dart';
@@ -186,7 +185,7 @@ class AccountManager {
 
   /// Ottiene le credenziali MQTT, le salva e prova a connettersi.
   ///
-  /// TODO
+  /// TODO Implementare l'ottenimento delle credenziali MQTT
   void refreshMqtt() {
     getMqttCredentials().then((mqttCredentials) {
       PrefManager().saveMqttData(
@@ -197,7 +196,7 @@ class AccountManager {
 
   /// Ottiene le credenziali MQTT dal server.
   ///
-  /// TODO
+  /// TODO Ottenere le credenziali MQTT dal server
   Future<Map<String, String>> getMqttCredentials() async {
     if (await ensureLoggedIn()) {
       return {'username': 'test', 'password': 'test2'};

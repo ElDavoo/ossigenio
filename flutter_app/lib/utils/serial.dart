@@ -33,7 +33,7 @@ class SerialComm {
       sum1 += 255;
     }
 
-    // TODO ???
+    // TODO Capire bene come funziona il checksum
     return sum1 - 2;
   }
 
@@ -80,7 +80,7 @@ class SerialComm {
         break;
       case MessageTypes.extendedMessage:
         Log.v("Extended message received");
-        // TODO
+        // TODO Implementare il supporto ai messaggi estesi
         return null;
       case MessageTypes.startupMessage:
         message = StartupMessage.fromBytes(payload);

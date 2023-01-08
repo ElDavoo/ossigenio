@@ -93,7 +93,7 @@ class MqttManager {
     client =
         MqttServerClient.withPort(C.mqtt.server, username, C.mqtt.mqttPort);
 
-    // TODO
+    // TODO attivare mqtt criptato
     //client.secure = true;
     client.logging(on: false);
 

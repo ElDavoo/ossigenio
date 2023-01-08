@@ -21,7 +21,6 @@ class Device extends ChangeNotifier {
   late BluetoothDevice device;
 
   /// Lo stato del dispositivo
-  /// TODO serve davvero?
   BluetoothDeviceState state = BluetoothDeviceState.connected;
 
   /// La lista dei messaggi scambiati col dispositivo
@@ -73,11 +72,9 @@ class Device extends ChangeNotifier {
       }
     });
 
-    // Riflette lo stato del dispositivo
+    // Se ci disconnettiamo dal sensore, lo rimuoviamo
     device.state.listen((event) {
-      state = event;
-      // Diciamolo al manager
-      if (state == BluetoothDeviceState.disconnected) {
+      if (event == BluetoothDeviceState.disconnected) {
         device.disconnect();
         timer.cancel();
         BLEManager().disconnect(this);

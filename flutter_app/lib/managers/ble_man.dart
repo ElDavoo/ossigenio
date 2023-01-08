@@ -25,16 +25,11 @@ class BLEManager extends ChangeNotifier {
   /// Indica se si sta cercando un dispositivo
   bool _isScanning = false;
 
-  /// Uno stream di dispositivi connessi
-  // TODO: Usare un ValueNotifier
-
   /// Uno stream di potenziali sensori
-  /// TODO: Usare un ValueNotifier
-  final StreamController<ScanResult> scanstream =
-      StreamController<ScanResult>.broadcast();
+  final StreamController<ScanResult> _scanstream =
+      StreamController<ScanResult>();
 
-  /// L'ultimo dispositivo a cui ci si è connessi
-  /// TODO: Usare un ValueNotifier
+  /// Il dispositivo a cui siamo connessi
   ValueNotifier<Device?> dvc = ValueNotifier<Device?>(null);
 
   BLEManager._internal() {
@@ -43,7 +38,7 @@ class BLEManager extends ChangeNotifier {
       _isScanning = isScanning;
     });
     // Quando troviamo un risultato, proviamo a connetterci
-    scanstream.stream.listen((event) {
+    _scanstream.stream.listen((event) {
       Log.d("Scan result received, trying to connect...");
       connectToDevice(event).catchError((e) {
         Log.l("Errore durante la connessione: $e");
@@ -58,7 +53,7 @@ class BLEManager extends ChangeNotifier {
   /// Inizia la scansione dei dispositivi.
   ///
   /// Questo metodo inizia a cercare dispositivi a cui connettersi.
-  /// Quando lo trova, lo aggiunge allo stream [scanstream].
+  /// Quando lo trova, lo aggiunge allo stream [_scanstream].
   Future<void> startBLEScan() async {
     if (_isScanning) {
       await _flutterBlue.stopScan();
@@ -114,7 +109,7 @@ class BLEManager extends ChangeNotifier {
     // Nel caso molto raro in cui c'è più di un sensore,
     // prendiamo quello che prende di più
     btdevice.sort((a, b) => b.rssi.compareTo(a.rssi));
-    scanstream.add(btdevice.first);
+    _scanstream.add(btdevice.first);
 
     return;
   }

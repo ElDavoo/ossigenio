@@ -170,6 +170,7 @@ class _HomePageState extends State<HomePage>
   void _showOverlay(BuildContext context,
       {required FeedbackValues fbvalue}) async {
     // Convert the fbvalue to an emoji with a dict
+    // TODO usare delle foto di emoji, resa grafica migliore
     final Map<FeedbackValues, String> emojiDict = {
       FeedbackValues.negative: "🙁",
       FeedbackValues.neutral: "😐",

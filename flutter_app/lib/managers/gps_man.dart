@@ -22,22 +22,23 @@ class GpsManager {
   );
 
   /// L'ultima posizione dell'utente
-  /// TODO: Convertire a LatLng
-  static Position? position;
+  static LatLng? position;
 
   /// Lo stream di posizioni
   final Stream<Position> _poStream =
       Geolocator.getPositionStream(locationSettings: _locationSettings);
 
   /// Stream di posti vicini all'utente
-  StreamController<List<Place>> placeStream =
+  final StreamController<List<Place>> placeStream =
       StreamController<List<Place>>.broadcast();
 
   GpsManager._internal() {
     Log.d("Inizializzazione");
     // Quando viene ricevuta una posizione affidabile,
     // la memorizziamo e la notifichiamo
-    _poStream.where((event) => _filterEvent(event)).listen((event) {
+    _poStream.where((event) => _filterEvent(event)).map((event) {
+      return LatLng(event.latitude, event.longitude);
+    }).listen((event) {
       Log.d('Posizione aggiornata');
       position = event;
       // Ottiene la lista dei luoghi vicini e la aggiunge
