@@ -28,6 +28,8 @@ class Device(MethodView):
         # TODO rate limit
         if device is None:
             return "Device not found", 404
+        if device.owner == current_user.id:
+            return "Device is already yours", 200
         if device.owner is not None:
             return "Device already associated", 409
         device.owner = current_user.id
