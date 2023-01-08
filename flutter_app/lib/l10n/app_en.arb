@@ -14,5 +14,13 @@
     "cancel": "Cancel",
     "@cancel": {
       "description": "Cancel button"
+    },
+    "home": "Home",
+    "@home": {
+      "description": "Home button"
+    },
+    "map": "Map",
+    "@map": {
+      "description": "Map button"
     }
 }

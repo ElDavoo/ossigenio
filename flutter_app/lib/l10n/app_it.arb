@@ -14,5 +14,13 @@
     "cancel": "Annulla",
     "@cancel": {
       "description": "Testo del pulsante di annullamento"
+    },
+    "home": "Home",
+    "@home": {
+      "description": "Testo del pulsante di home"
+    },
+    "map": "Mappa",
+    "@map": {
+      "description": "Testo del pulsante di mappa"
     }
 }

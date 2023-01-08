@@ -68,4 +68,18 @@ class UIWidgets {
           child: child,
         ));
   }
+
+  /// Ritorna un BoxDecoration con un gradiente
+  static BoxDecoration gradientBox() {
+    return BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          C.colors.startShade,
+          C.colors.endShade,
+        ],
+      ),
+    );
+  }
 }

@@ -152,4 +152,10 @@ class Clrs {
   Color get activeSlider => Colors.red;
 
   Color get isHeatingBg => Colors.yellow.shade200;
+
+  Color get endShade => const Color.fromRGBO(227, 252, 230, 0.8);
+  Color get startShade => const Color.fromRGBO(111, 206, 250, 0.5);
+
+  Color get blue1 => Colors.blue;
+  Color get blue2 => Colors.blueAccent;
 }

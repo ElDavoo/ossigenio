@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
+import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
@@ -15,8 +16,8 @@ import '../../utils/constants.dart';
 import '../../utils/log.dart';
 import '../widgets/debug_tab.dart';
 import 'login_page.dart';
-import 'map_page.dart';
 import 'main_page.dart';
+import 'map_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -78,15 +79,15 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
+    _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 250));
     animation =
-        CurveTween(curve: Curves.fastOutSlowIn).animate(animationController!);
+        CurveTween(curve: Curves.fastOutSlowIn).animate(_animationController!);
     _init();
   }
 
   int _selectedIndex = 0;
-  AnimationController? animationController;
+  AnimationController? _animationController;
   Animation<double>? animation;
 
   @override
@@ -121,50 +122,16 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called.
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: NewGradientAppBar(
-          gradient: const LinearGradient(
-            colors: [Colors.blue, Colors.blueAccent],
+          gradient: LinearGradient(
+            colors: [C.colors.blue1, C.colors.blue2],
           ),
           leading: IconButton(
             icon: const Icon(Icons.no_accounts),
             onPressed: () {
               // Show a dialog to confirm logout
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text(AppLocalizations.of(context)!.logout),
-                      content: Text(
-                          AppLocalizations.of(context)!.logoutConfirmMessage),
-                      actions: [
-                        TextButton(
-                            child: Text(
-                                AppLocalizations.of(context)!.cancel),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            }),
-                        TextButton(
-                          child: Text(
-                              AppLocalizations.of(context)!.logout),
-                          onPressed: () {
-                            // Logout
-                            AccountManager().logout().then((value) {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const LoginPage()),
-                                  (route) => false);
-                            });
-                          },
-                        ),
-                      ],
-                    );
-                  });
+              buildLogoutDialog(context);
             },
           ),
           title: Text(AppLocalizations.of(context)!.title),
@@ -174,25 +141,12 @@ class _MyHomePageState extends State<MyHomePage>
               child: bluetoothBatt(),
             ),
             Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: bluetoothRSSI(),
-            ),
-            Padding(
               padding: const EdgeInsets.only(right: 15.0),
-              child: bluetoothStateWidget(),
+              child: bluetoothRSSI(),
             ),
           ]),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              Color.fromRGBO(227, 252, 230, 0.8),
-              Color.fromRGBO(111, 206, 250, 0.5)
-            ],
-          ),
-        ),
+        decoration: UIWidgets.gradientBox(),
         child: PageView.builder(
           controller: pageController,
           onPageChanged: (index) {
@@ -204,46 +158,60 @@ class _MyHomePageState extends State<MyHomePage>
           },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 50,
-        selectedFontSize: 15,
-        selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
-        selectedItemColor: Colors.blue,
-        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-        backgroundColor: const Color.fromRGBO(255, 255, 255, 0.2),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Mappa',
-            backgroundColor: Colors.green,
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: bottomTapped,
-      ),
+      bottomNavigationBar: buildBottomNavigationBar(context),
     );
   }
 
-  GestureDetector bluetoothStateWidget() {
-    return GestureDetector(
-      onTap: () {
-        // Show the device tab
-        if (BLEManager().dvc != null) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DebugTab(
-                        device: BLEManager().dvc!,
-                      )));
-        } else {
-          Log.l("Nessun dispositivo connesso");
-        }
-      },
-      child: const Icon(Icons.bluetooth),
+  void buildLogoutDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.logout),
+            content: Text(AppLocalizations.of(context)!.logoutConfirmMessage),
+            actions: [
+              TextButton(
+                  child: Text(AppLocalizations.of(context)!.cancel),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
+              TextButton(
+                child: Text(AppLocalizations.of(context)!.logout),
+                onPressed: () {
+                  // Logout
+                  AccountManager().logout().then((value) {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                        (route) => false);
+                  });
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  BottomNavigationBar buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      selectedFontSize: 15,
+      selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
+      selectedItemColor: Colors.blue,
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+      backgroundColor: C.colors.cardBg,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.home),
+          label: AppLocalizations.of(context)!.home,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.map),
+          label: AppLocalizations.of(context)!.map,
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      onTap: bottomTapped,
     );
   }
 
@@ -258,24 +226,37 @@ class _MyHomePageState extends State<MyHomePage>
               stream: BLEManager().devicestream.stream,
               builder: (context, snapshot) {
                 if (BLEManager().dvc != null) {
-                  return StreamBuilder<int>(
-                      stream: BLEManager.rssiStream(BLEManager().dvc!),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          int rssi = snapshot.data!;
-                          if (rssi > -70) {
-                            return const Icon(Icons.signal_cellular_alt_sharp);
-                          } else if (rssi > -90) {
-                            return const Icon(
-                                Icons.signal_cellular_alt_2_bar_sharp);
+                  return InkWell(
+                    onLongPress: () {
+                      if (BLEManager().dvc != null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DebugTab(
+                                      device: BLEManager().dvc!,
+                                    )));
+                      }
+                    },
+                    child: StreamBuilder<int>(
+                        stream: BLEManager.rssiStream(BLEManager().dvc!),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            int rssi = snapshot.data!;
+                            if (rssi > -70) {
+                              return const Icon(
+                                  Icons.signal_cellular_alt_sharp);
+                            } else if (rssi > -90) {
+                              return const Icon(
+                                  Icons.signal_cellular_alt_2_bar_sharp);
+                            } else {
+                              return const Icon(
+                                  Icons.signal_cellular_alt_1_bar_sharp);
+                            }
                           } else {
-                            return const Icon(
-                                Icons.signal_cellular_alt_1_bar_sharp);
+                            return Container();
                           }
-                        } else {
-                          return Container();
-                        }
-                      });
+                        }),
+                  );
                 } else {
                   return Container();
                 }
@@ -377,14 +358,14 @@ class _MyHomePageState extends State<MyHomePage>
         ),
       );
     });
-    animationController!.addListener(() {
+    _animationController!.addListener(() {
       overlayState!.setState(() {});
     });
     // inserting overlay entry
     overlayState!.insert(overlayEntry);
-    animationController!.forward();
+    _animationController!.forward();
     await Future.delayed(const Duration(seconds: 1))
-        .whenComplete(() => animationController!.reverse())
+        .whenComplete(() => _animationController!.reverse())
         // removing overlay entry after stipulated time.
         .whenComplete(() => overlayEntry.remove());
   }
