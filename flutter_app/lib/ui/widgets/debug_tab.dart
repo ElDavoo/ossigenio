@@ -1,8 +1,3 @@
-/*
-A stateless widget build from a Device.
-It shows data in a cool way, with radiants
- */
-
 import 'package:flutter/material.dart';
 
 import '../../Messages/message.dart';

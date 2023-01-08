@@ -108,5 +108,87 @@
     "predictions": "Previsioni",
     "@predictions": {
         "description": "Previsioni"
+    },
+    "sensorWarmingWarning": "Il sensore si sta riscaldando.\nI valori potrebbero non essere precisi",
+    "@sensorWarmingWarning": {
+        "description": "Messaggio di avviso di riscaldamento sensore"
+    },
+    "airQualityIs": "La qualità dell'aria è",
+    "@airQualityIs": {
+        "description": "Messaggio di qualità dell'aria"
+    },
+    "tempHum": "Temperatura: {temp}°C\nUmidità: {hum}%",
+    "@tempHum": {
+        "description": "Messaggio di temperatura e umidità",
+        "placeholders": {
+            "temp": {
+                "type": "int",
+                "example": "20"
+            },
+            "hum": {
+                "type": "int",
+                "example": "50"
+            }
+        }
+    },
+    "co2Explanation": "Misurare la concentrazione di anidride carbonica nell'aria è importante per assicurare un ambiente sano e confortevole. Un livello di CO2 troppo alto può causare sonnolenza, mal di testa, perdita di concentrazione e altri sintomi. La CO2 viene misurata in PPM (parti per milione).",
+    "@co2Explanation": {
+        "description": "Spiegazione CO2"
+    },
+    "excellent": "excellent!",
+    "@excellent": {
+        "description": "Espressione di eccellenza"
+    },
+    "verygood": "very good",
+    "@verygood": {
+        "description": "Espressione di molto buono"
+    },
+    "good": "good",
+    "@good": {
+        "description": "Espressione di buono"
+    },
+    "acceptable": "acceptable",
+    "@acceptable": {
+        "description": "Espressione di accettabile"
+    },
+    "bad": "bad",
+    "@bad": {
+        "description": "Bad air quality"
+    },
+    "verybad": "very bad",
+    "@verybad": {
+        "description": "Very bad air quality"
+    },
+    "dangerous": "dangerous",
+    "@dangerous": {
+        "description": "Dangerous air quality"
+    },
+    "excellentExplanation": "The air is very clean, you can breathe without any problems",
+    "@excellentExplanation": {
+        "description": "Explanation of excellent air quality"
+    },
+    "verygoodExplanation": "The air is clean, you can breathe without any problems",
+    "@verygoodExplanation": {
+        "description": "Explanation of very good air quality"
+    },
+    "goodExplanation": "The air is clean, you can breathe without any problems",
+    "@goodExplanation": {
+        "description": "Explanation of good air quality"
+    },
+    "acceptableExplanation": "The air is clean, you can breathe without any problems",
+    "@acceptableExplanation": {
+        "description": "Explanation of acceptable air quality"
+    },
+    "badExplanation": "The air is not clean, you can breathe without any problems",
+    "@badExplanation": {
+        "description": "Explanation of bad air quality"
+    },
+    "verybadExplanation": "The air is not clean, you can breathe without any problems",
+    "@verybadExplanation": {
+        "description": "Explanation of very bad air quality"
+    },
+    "dangerousExplanation": "The air is not clean, you can breathe without any problems",
+    "@dangerousExplanation": {
+        "description": "Explanation of dangerous air quality"
     }
 }

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/server.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -14,12 +15,53 @@ class C {
   static const BTConsts bt = BTConsts();
   static const MqttConsts mqtt = MqttConsts();
   static const Clrs colors = Clrs();
+  static const RangeQuotas quotas = RangeQuotas();
 
   /// DIEF, Modena
   static LatLng defaultLocation = LatLng(44.6291399, 10.9488126);
 
   /// Bound per restringere la mappa all'italia
   static LatLngBounds italyBounds = LatLngBounds(LatLng(48, 6), LatLng(36, 19));
+
+  static String catchWord(BuildContext context, int co2level) {
+    if (co2level <= quotas.excellent) {
+      return AppLocalizations.of(context)!.excellent;
+    }
+    if (co2level <= quotas.veryGood) {
+      return AppLocalizations.of(context)!.verygood;
+    }
+    if (co2level <= quotas.good) return AppLocalizations.of(context)!.good;
+    if (co2level <= quotas.acceptable) {
+      return AppLocalizations.of(context)!.acceptable;
+    }
+    if (co2level <= quotas.bad) return AppLocalizations.of(context)!.bad;
+    if (co2level <= quotas.veryBad) {
+      return AppLocalizations.of(context)!.verybad;
+    }
+    return AppLocalizations.of(context)!.dangerous;
+  }
+
+  static String explanation(BuildContext context, int co2level) {
+    if (co2level <= quotas.excellent) {
+      return AppLocalizations.of(context)!.excellentExplanation;
+    }
+    if (co2level <= quotas.veryGood) {
+      return AppLocalizations.of(context)!.verygoodExplanation;
+    }
+    if (co2level <= quotas.good) {
+      return AppLocalizations.of(context)!.goodExplanation;
+    }
+    if (co2level <= quotas.acceptable) {
+      return AppLocalizations.of(context)!.acceptableExplanation;
+    }
+    if (co2level <= quotas.bad) {
+      return AppLocalizations.of(context)!.badExplanation;
+    }
+    if (co2level <= quotas.veryBad) {
+      return AppLocalizations.of(context)!.verybadExplanation;
+    }
+    return AppLocalizations.of(context)!.dangerousExplanation;
+  }
 }
 
 class AccConsts {
@@ -172,4 +214,36 @@ class Clrs {
   Color get startLerp => Colors.blueAccent;
 
   Color get endLerp => Colors.red;
+
+  Color get excellent => Colors.green;
+
+  Color get veryGood => Colors.greenAccent;
+
+  Color get good => Colors.yellow;
+
+  Color get acceptable => Colors.orange;
+
+  Color get bad => Colors.deepOrange;
+
+  Color get veryBad => Colors.red;
+
+  Color get dangerous => Colors.purple;
+}
+
+class RangeQuotas {
+  const RangeQuotas();
+
+  int get excellent => 450;
+
+  int get veryGood => 600;
+
+  int get good => 800;
+
+  int get acceptable => 1000;
+
+  int get bad => 1300;
+
+  int get veryBad => 1700;
+
+  int get dangerous => 2500;
 }

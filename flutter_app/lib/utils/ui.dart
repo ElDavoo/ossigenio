@@ -85,11 +85,35 @@ class UI {
 
   /// Restituisce un colore gradiente in base al valore della co2
   static decideColor(int co2level) {
-    // Convertiamo il valore in percentuale
-    final double percentage = (co2level.toDouble() - 400) / (2000 - 400);
-
-    // The color to be returned
-    return Color.lerp(C.colors.startShade, C.colors.endShade, percentage)!;
+    if (co2level < C.quotas.excellent) {
+      return C.colors.excellent;
+    } else if (co2level < C.quotas.veryGood) {
+      final double percentage =
+          (co2level - C.quotas.excellent) / (C.quotas.veryGood - C.quotas.excellent);
+      return Color.lerp(C.colors.excellent, C.colors.veryGood, percentage)!;
+    } else if (co2level < C.quotas.good) {
+      final double percentage =
+          (co2level - C.quotas.veryGood) / (C.quotas.good - C.quotas.veryGood);
+      return Color.lerp(C.colors.veryGood, C.colors.good, percentage)!;
+    } else if (co2level < C.quotas.acceptable) {
+      final double percentage =
+          (co2level - C.quotas.good) / (C.quotas.acceptable - C.quotas.good);
+      return Color.lerp(C.colors.good, C.colors.acceptable, percentage)!;
+    } else if (co2level < C.quotas.bad) {
+      final double percentage =
+          (co2level - C.quotas.acceptable) / (C.quotas.bad - C.quotas.acceptable);
+      return Color.lerp(C.colors.acceptable, C.colors.bad, percentage)!;
+    } else if (co2level < C.quotas.veryBad) {
+      final double percentage =
+          (co2level - C.quotas.bad) / (C.quotas.veryBad - C.quotas.bad);
+      return Color.lerp(C.colors.bad, C.colors.veryBad, percentage)!;
+    } else if (co2level < C.quotas.dangerous) {
+      final double percentage =
+          (co2level - C.quotas.veryBad) / (C.quotas.dangerous - C.quotas.veryBad);
+      return Color.lerp(C.colors.veryBad, C.colors.dangerous, percentage)!;
+    } else {
+      return C.colors.dangerous;
+    }
   }
 
 }
