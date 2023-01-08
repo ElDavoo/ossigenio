@@ -7,13 +7,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/gps_man.dart';
 import 'package:flutter_app/ui/pages/place_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../managers/account_man.dart';
+import '../../utils/constants.dart';
 import '../../utils/place.dart';
+import '../../utils/ui.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
@@ -24,29 +27,41 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage>
     with AutomaticKeepAliveClientMixin<MapPage> {
+  /// Controller dei popup
   final PopupController _popupController = PopupController();
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
+  /// Lista dei marker da mostrare sulla mappa
   List<Marker> _markers = [];
+  /// Lista dei luoghi, associati ai marker
   List<Place> _places = [];
 
-  Widget popupBuilder(BuildContext context, marker) {
-    // Find in _places a place with the same position of the marker
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _centerOnLocationUpdate = CenterOnLocationUpdate.always;
+    _centerCurrentLocationStreamController = StreamController<double?>();
+    _refresh();
+  }
+
+  @override
+  void dispose() {
+    _centerCurrentLocationStreamController.close();
+    super.dispose();
+  }
+
+  /// Costruisce un popup di un marker.
+  Widget _popupBuilder(BuildContext context, marker) {
+    // Cerchiamo un Place con la stessa posizione del marker selezionato
     final place =
         _places.firstWhere((element) => element.location == marker.point);
     return Container(
       width: 200,
       height: 150,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            Color.fromRGBO(227, 252, 230, 1),
-            Color.fromRGBO(111, 206, 250, 0.9)
-          ],
-        ),
-      ),
+      decoration: UI.gradientBox(),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -66,7 +81,7 @@ class MapPageState extends State<MapPage>
             FittedBox(
               fit: BoxFit.fitWidth,
               child: Text(
-                "CO2 Attuale: ${place.co2Level} ppm",
+                AppLocalizations.of(context)!.actualCO2(place.co2Level),
                 style: const TextStyle(
                   fontSize: 40,
                 ),
@@ -81,7 +96,7 @@ class MapPageState extends State<MapPage>
                       builder: (context) => PredictionPlace(place: place)),
                 );
               },
-              child: const Text("Predizioni"),
+              child: Text(AppLocalizations.of(context)!.predictions),
             ),
           ],
         ),
@@ -89,54 +104,53 @@ class MapPageState extends State<MapPage>
     );
   }
 
-  void refresh() {
+  /// Chiede manualmente i luoghi al server
+  void _refresh() {
     AccountManager()
         .getPlaces(LatLng(
             GpsManager.position!.latitude, GpsManager.position!.longitude))
         .then((value) {
-      onNearbyPlacesChanged(value);
       _places = value;
+      _onNearbyPlacesChanged(value);
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _centerOnLocationUpdate = CenterOnLocationUpdate.never;
-    _centerCurrentLocationStreamController = StreamController<double?>();
-    refresh();
-  }
-
-  @override
-  void dispose() {
-    _centerCurrentLocationStreamController.close();
-    super.dispose();
-  }
-
-  void onNearbyPlacesChanged(List<Place> coords) {
+  /// Aggiorna la lista dei marker
+  void _onNearbyPlacesChanged(List<Place> coords) {
     setState(() {
-      _markers = placetomarkers(coords);
+      _markers = _placetomarkers(coords);
     });
+  }
+
+  /// Converte una lista di Place in una lista di Marker
+  static List<Marker> _placetomarkers(List<Place> coords) {
+    return coords.map((point) {
+      return Marker(
+        point: point.location,
+        width: 45,
+        height: 45,
+        builder: (context) => Icon(
+          Icons.location_on_outlined,
+          size: 45,
+          color: UI.decideColor(point.co2Level),
+        ),
+      );
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    LatLng center = LatLng(44.6291399, 10.9488126);
-    if (GpsManager.position != null) {
-      center =
-          LatLng(GpsManager.position!.latitude, GpsManager.position!.longitude);
-    }
     return FlutterMap(
       options: MapOptions(
         onTap: (_, __) {
           _popupController.hideAllPopups();
         },
-        center: center,
+        center: C.defaultLocation,
         minZoom: 9.0,
         zoom: 15.0,
         maxZoom: 21.0,
-        maxBounds: LatLngBounds(LatLng(48, 6), LatLng(36, 19)),
+        maxBounds: C.italyBounds,
         interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
         onPositionChanged: (MapPosition position, bool hasGesture) {
           if (hasGesture) {
@@ -151,7 +165,7 @@ class MapPageState extends State<MapPage>
           right: 20,
           bottom: 20,
           child: InkWell(
-            onLongPress: refresh,
+            onLongPress: _refresh,
             child: FloatingActionButton(
               onPressed: () {
                 // Automatically center the location marker on the map when location updated until user interact with the map.
@@ -202,7 +216,7 @@ class MapPageState extends State<MapPage>
                 popupState: PopupState(),
                 popupSnap: PopupSnap.markerTop,
                 popupController: _popupController,
-                popupBuilder: popupBuilder),
+                popupBuilder: _popupBuilder),
             builder: (context, markers) {
               return Container(
                 decoration: BoxDecoration(
@@ -220,62 +234,5 @@ class MapPageState extends State<MapPage>
         ),
       ],
     );
-  }
-
-  static List<Marker> latlngtomarkers(List<LatLng> coords) {
-    return coords
-        .map((point) => Marker(
-              point: point,
-              width: 60,
-              height: 60,
-              builder: (context) => const Icon(
-                Icons.pin_drop,
-                size: 60,
-                color: Colors.blueAccent,
-              ),
-            ))
-        .toList();
-  }
-
-  static List<Marker> placetomarkers(List<Place> coords) {
-    return coords.map((point) {
-      Color clr = decideColor(point.co2Level);
-      return Marker(
-        point: point.location,
-        width: 60,
-        height: 60,
-        builder: (context) => Icon(
-          Icons.location_on_outlined,
-          size: 30,
-          color: clr,
-        ),
-      );
-    }).toList();
-  }
-
-  @override
-  bool get wantKeepAlive => true;
-
-  static decideColor(int co2level) {
-    // Decide color with a linear grdient with the lerp method
-    // https://api.flutter.dev/flutter/dart-ui/lerpDouble.html
-
-    // The color gradient is from green to red
-    Color startColor = Colors.green;
-    Color endColor = Colors.red;
-
-    // The gradient is from 0 to 1000
-    double startValue = 0;
-    double endValue = 1000;
-
-    // The value to be converted
-    double value = co2level.toDouble();
-
-    // The value converted to a percentage
-    double percentage = (value - startValue) / (endValue - startValue);
-
-    // The color to be returned
-    Color color = Color.lerp(startColor, endColor, percentage)!;
-    return color;
   }
 }

@@ -11,6 +11,10 @@
     "@signup": {
       "description": "Registrati"
     },
+    "signupFailed": "Registrazione fallita",
+    "@signupFailed": {
+      "description": "Registrazione fallita"
+    },
     "logout": "Esci",
     "@logout": {
       "description": "Testo del pulsante di logout"
@@ -46,5 +50,63 @@
     "password": "Password",
     "@password": {
       "description": "Testo del campo password"
+    },
+    "greeting": "Ciao, ",
+    "@greeting": {
+        "description": "Saluta l'utente"
+    },
+    "predictionPlaceSummary": "Al momento a {name} ci sono {ppm} ppm di CO2",
+    "@predictionPlaceSummary": {
+        "description": "Riassunto della previsione per un luogo",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "DIEF"
+            },
+            "ppm": {
+                "type": "int",
+                "example": "400"
+            }
+        }
+    },
+    "predictionIntro": "Le previsioni per le prossime 24 ore sono:",
+    "@predictionIntro": {
+        "description": "Introduzione alle previsioni"
+    },
+    "predictionLoading": "Sto predicendo il futuro...",
+    "@predictionLoading": {
+        "description": "Messaggio di caricamento delle previsioni"
+    },
+    "username": "Nome",
+    "@username": {
+        "description": "Testo del campo username"
+    },
+    "placeSelected": "Luogo selezionato: {place}",
+    "@placeSelected": {
+        "description": "Messaggio di luogo selezionato",
+        "placeholders": {
+            "place": {
+                "type": "String",
+                "example": "DIEF"
+            }
+        }
+    },
+    "placeNotSelected": "Nessun luogo selezionato",
+    "@placeNotSelected": {
+        "description": "Messaggio di nessun luogo selezionato"
+    },
+    "actualCO2": "CO2 attuale: {co2} ppm",
+    "@actualCO2": {
+        "description": "Messaggio di CO2 attuale",
+        "placeholders": {
+            "co2": {
+                "type": "int",
+                "example": "400"
+            }
+        }
+    },
+    "predictions": "Previsioni",
+    "@predictions": {
+        "description": "Testo del pulsante di previsioni"
     }
 }

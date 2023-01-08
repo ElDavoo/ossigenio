@@ -116,7 +116,7 @@ class Device extends ChangeNotifier {
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest3));
     Future.delayed(const Duration(milliseconds: 600))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest1));
-    Future.delayed(const Duration(milliseconds: 2500))
+    Future.delayed(const Duration(milliseconds: 2400))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest0));
 
     // Chiede un messaggio di debug ogni 30 secondi

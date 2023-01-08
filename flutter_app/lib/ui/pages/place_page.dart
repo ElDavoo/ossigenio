@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../managers/account_man.dart';
 import '../../utils/place.dart';
@@ -42,14 +43,16 @@ class PredictionPlaceState extends State<PredictionPlace> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Al momento a ${widget.place.name} ci sono ${widget.place.co2Level} ppm di CO2",
+                  AppLocalizations.of(context)!.predictionPlaceSummary(
+                      widget.place.name, widget.place.co2Level),
                   style: const TextStyle(fontSize: 40),
                   textAlign: TextAlign.center,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Livelli di CO2 previsti per le prossime 24h'),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(AppLocalizations.of(context)!.predictionIntro,
+                    style: const TextStyle(fontSize: 30)),
               ),
               Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -92,7 +95,8 @@ class PredictionPlaceState extends State<PredictionPlace> {
                         } else if (snapshot.hasError) {
                           return Text("${snapshot.error}");
                         }
-                        return UI.spinText("Sto predicendo il futuro...");
+                        return UI.spinText(
+                            AppLocalizations.of(context)!.predictionLoading);
                       }),
                 ),
               ),
@@ -107,17 +111,12 @@ class PredictionPlaceState extends State<PredictionPlace> {
   List<FlSpot> getSpots(List<Prediction> snapshot) {
     // Converte una lista di predizioni in una lista di coppie di numeri
     final List<Map<String, double>> list = snapshot
-        .map((e) => {
-              't': 0.toDouble(),
-              'c': e.co2.toDouble()
-            })
+        .map((e) => {'t': 0.toDouble(), 'c': e.co2.toDouble()})
         .toList();
     for (int i = 0; i < list.length; i++) {
       list[i]['t'] = i.toDouble();
     }
-    return list
-        .map((e) => FlSpot(e['t']!, e['c']!))
-        .toList();
+    return list.map((e) => FlSpot(e['t']!, e['c']!)).toList();
   }
 
   AxisTitles rightTitles() {

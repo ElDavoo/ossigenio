@@ -5,6 +5,7 @@ import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/widgets/where_are_you.dart';
 import 'package:flutter_app/utils/ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/constants.dart';
 import '../../utils/log.dart';
@@ -26,21 +27,41 @@ class NewHomePageState extends State<NewHomePage>
   @override
   void initState() {
     super.initState();
-    GpsManager().placeStream.stream.listen((event) => onUpdatedPlaces(event));
+    // Se la posizione viene aggiornata e il luogo
+    // selezionato non è più in lista, seleziona automaticamente
+    // il null place
+    GpsManager().placeStream.stream.listen((event) {
+      if (!event.contains(MqttManager.place)) {
+        setState(() {
+          _onSelectedPlace(null);
+        });
+      }
+    });
+    // Get the name of the user from the preferences
+    // and display it in the greeting text
+    PrefManager().read(C.pref.username).then((value) {
+      if (value != null) {
+        setState(() {
+          name = value;
+        });
+      }
+    });
   }
 
-  void onSelectedPlace(Place? place) {
+  /// Gestisce il cambio di luogo selezionato.
+  void _onSelectedPlace(Place? place) {
     if (place != null) {
-      Log.l("Selected place: ${place.name}");
+      Log.d(AppLocalizations.of(context)!.placeSelected(place.name));
     } else {
-      Log.l("Selected place: null");
+      Log.d(AppLocalizations.of(context)!.placeNotSelected);
     }
     setState(() {
       MqttManager.place = place;
     });
   }
 
-  Widget greetingText(String name) {
+  /// Costruisce il testo che saluta l'utente.
+  Widget _greetingText(String name) {
     const stylesmall = TextStyle(
         fontSize: 60.0, color: Colors.black87, fontWeight: FontWeight.w300);
     const stylebig = TextStyle(
@@ -62,19 +83,16 @@ class NewHomePageState extends State<NewHomePage>
     );
     return RichText(
       text: TextSpan(
-        // Note: Styles for TextSpans must be explicitly defined.
-        // Child text spans will inherit styles from parent
         style: stylesmall,
         children: [
-          buildCenteredTextSpan(text: "Ciao, ", style: stylesmall),
-          buildCenteredTextSpan(text: name, style: stylebig),
+          _centeredTextSpan(AppLocalizations.of(context)!.greeting, stylesmall),
+          _centeredTextSpan(name, stylebig),
         ],
       ),
     );
   }
 
-  WidgetSpan buildCenteredTextSpan(
-      {required String text, required TextStyle style}) {
+  WidgetSpan _centeredTextSpan(String text, TextStyle style) {
     return WidgetSpan(
       alignment: PlaceholderAlignment.middle,
       child: Text(text, style: style),
@@ -84,62 +102,46 @@ class NewHomePageState extends State<NewHomePage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // Get the name of the user from the preferences
-    // and display it in the greeting text
-
-    PrefManager().read(C.pref.username).then((value) {
-      if (value != null) {
-        setState(() {
-          name = value;
-        });
-      }
-    });
-
-    return Padding(
-        padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
-        child: SingleChildScrollView(
-            child: Column(
-          children: <Widget>[
-            UI.buildCard(
-              FittedBox(
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.topLeft,
-                child: greetingText(name),
-              ),
-            ),
-            UI.buildCard(WhereAreYou(
-              onPlaceSelected: onSelectedPlace,
-            )),
-            if (MqttManager.place != null && BLEManager().dvc == null)
+    return SingleChildScrollView(
+      child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+          child: Column(
+            children: <Widget>[
               UI.buildCard(
-                  AirQualityPlace(placeId: MqttManager.place!.id)),
-            StreamBuilder(
-              stream: BLEManager().disconnectstream.stream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Container();
-                } else {
-                  if (BLEManager().dvc != null) {
-                    return UI.buildCard(
-                        AirQualityLocal(device: BLEManager().dvc!));
-                  } else {
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  alignment: Alignment.topLeft,
+                  child: _greetingText(name),
+                ),
+              ),
+              UI.buildCard(WhereAreYou(
+                onPlaceSelected: _onSelectedPlace,
+              )),
+              // Se non c'è un sensore collegato e viene selezionato un luogo,
+              // mostra la qualità dell'aria del luogo selezionato
+              if (MqttManager.place != null && BLEManager().dvc == null)
+                UI.buildCard(AirQualityPlace(placeId: MqttManager.place!.id)),
+              StreamBuilder(
+                stream: BLEManager().disconnectstream.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
                     return Container();
+                  } else {
+                    if (BLEManager().dvc != null) {
+                      return UI.buildCard(
+                          AirQualityLocal(device: BLEManager().dvc!));
+                    } else {
+                      return Container();
+                    }
                   }
-                }
-              },
-            ),
-          ],
-        )));
+                },
+              ),
+            ],
+          )),
+    );
   }
 
+  // Vogliamo che la pagina rimanga in memoria
   @override
   bool get wantKeepAlive => true;
-
-  onUpdatedPlaces(List<Place> event) {
-    if (!event.contains(MqttManager.place)) {
-      setState(() {
-        onSelectedPlace(null);
-      });
-    }
-  }
 }

@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/server.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Class that holds all the constants used in the app.
@@ -12,6 +14,12 @@ class C {
   static const BTConsts bt = BTConsts();
   static const MqttConsts mqtt = MqttConsts();
   static const Clrs colors = Clrs();
+
+  /// DIEF, Modena
+  static LatLng defaultLocation = LatLng(44.6291399, 10.9488126);
+
+  /// Bound per restringere la mappa all'italia
+  static LatLngBounds italyBounds = LatLngBounds(LatLng(48, 6), LatLng(36, 19));
 }
 
 class AccConsts {
@@ -154,8 +162,14 @@ class Clrs {
   Color get isHeatingBg => Colors.yellow.shade200;
 
   Color get endShade => const Color.fromRGBO(227, 252, 230, 0.8);
+
   Color get startShade => const Color.fromRGBO(111, 206, 250, 0.5);
 
   Color get blue1 => Colors.blue;
+
   Color get blue2 => Colors.blueAccent;
+
+  Color get startLerp => Colors.blueAccent;
+
+  Color get endLerp => Colors.red;
 }

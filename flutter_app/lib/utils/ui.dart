@@ -82,4 +82,14 @@ class UI {
       ),
     );
   }
+
+  /// Restituisce un colore gradiente in base al valore della co2
+  static decideColor(int co2level) {
+    // Convertiamo il valore in percentuale
+    final double percentage = (co2level.toDouble() - 400) / (2000 - 400);
+
+    // The color to be returned
+    return Color.lerp(C.colors.startShade, C.colors.endShade, percentage)!;
+  }
+
 }

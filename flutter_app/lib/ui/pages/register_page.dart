@@ -1,14 +1,14 @@
-/*
-Stateful widget for register page
- */
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/ui/pages/home_page.dart';
+import 'package:flutter_app/utils/ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../utils/log.dart';
 
+/// UI della pagina di registrazione
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -16,12 +16,18 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
+/// Stato della UI della pagina di registrazione
 class _RegisterPageState extends State<RegisterPage> {
+  /// Controller per il campo di testo dello username
   final usernameinputController = TextEditingController();
+
+  /// Controller per il campo di testo dell'email
   final emailinputController = TextEditingController();
+
+  /// Controller per il campo di testo della password
   final passwordinputController = TextEditingController();
 
-  StreamSubscription? _log;
+  late final StreamSubscription? _log;
 
   @override
   void initState() {
@@ -31,18 +37,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    // Clean up the
     _log?.cancel();
     super.dispose();
   }
 
-  void onPressed() {
+  /// Azioni alla pressione del tasto di registrazione
+  void _onRegisterPressed() {
     AccountManager()
         .register(
-      email: emailinputController.text,
-      name: usernameinputController.text,
-      password: passwordinputController.text,
-    )
+          email: emailinputController.text,
+          name: usernameinputController.text,
+          password: passwordinputController.text,
+        )
         .then((value) => {
               if (value)
                 {
@@ -52,7 +58,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   )
                 }
               else
-                {Log.l('Register failed')}
+                {
+                  Log.l(AppLocalizations.of(context)!.signupFailed),
+                }
             });
   }
 
@@ -62,16 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                Color.fromRGBO(227, 252, 230, 0.8),
-                Color.fromRGBO(111, 206, 250, 0.5)
-              ],
-            ),
-          ),
+          decoration: UI.gradientBox(),
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -91,19 +90,20 @@ class _RegisterPageState extends State<RegisterPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      labelText: 'Nome utente',
+                      labelText: AppLocalizations.of(context)!.username,
                     ),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                   child: TextField(
+                    keyboardType: TextInputType.emailAddress,
                     controller: emailinputController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      labelText: 'Email',
+                      labelText: AppLocalizations.of(context)!.email,
                     ),
                   ),
                 ),
@@ -116,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      labelText: 'Password',
+                      labelText: AppLocalizations.of(context)!.password,
                     ),
                   ),
                 ),
@@ -127,8 +127,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50),
                       ),
-                      onPressed: onPressed,
-                      child: const Text('Registrati'),
+                      onPressed: _onRegisterPressed,
+                      child: Text(AppLocalizations.of(context)!.signup),
                     )),
               ],
             ),
