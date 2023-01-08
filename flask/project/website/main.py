@@ -31,7 +31,7 @@ def profile():
 @main.route('/administrator')
 @login_required
 def profile_admin():
-    users = Utente.query
+    users = Utente.query.order_by(Utente.id.desc())
     device = Device.query
     if current_user.admin == True:  # restrict access to admin page only to admins
         return render_template('profile_admin.html', name=current_user.name, users=users, devices=device)
