@@ -71,7 +71,7 @@ def toggle():
         admin = user.admin
         db.session.query(Utente).filter(Utente.id == id).update({'admin': not admin})
         db.session.commit()
-        users = Utente.query
+        users = Utente.query.order_by(Utente.id.desc())
         return render_template('profile_admin.html', name=current_user.name, users=users)
     else:
         return render_template('profile.html', name=current_user.name)
