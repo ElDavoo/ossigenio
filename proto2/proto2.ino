@@ -1,6 +1,6 @@
 /*
 /*!
-air-quality-monitor
+air-quality-monitor (aka Ossigenio)
 @file     proto2.ino
 @author   Antonio Solida
 @license  GNU GPLv3
@@ -9,10 +9,12 @@ Please do not divulgate.
 v0.2: first version based on ESP32
 */
 
+// start general include section
 #include <Arduino.h>
 #include <SPI.h>
 #include <stdint.h>
 #include <Wire.h>
+// start general include section
 
 // start BLE include section
 #include "BleSerial.h"
@@ -31,13 +33,16 @@ volatile uint8_t feedback = 0; //volatile because this variable is read by inter
 volatile bool feed = false; //used to avoid too feedback consecutively
 // end FEEDBACK include section
 
-// start CCS811 section (co2 sensor)
+// start CCS811 include section (co2 sensor)
 #include "SparkFunCCS811.h"
 #define CCS811_ADDR 0x5A //I2C Address (is not hardcoded into library for compatibility purpose)
 CCS811 mySensor(CCS811_ADDR);
-#include "ens210.h" //temp sensor on board of ccs811 chip; used to monitorate last one warming-up
+// end CCS811 include section
+
+// start ens210 include section (temp sensor on board of ccs811 chip; used to monitorate last one warming-up)
+#include "ens210.h"
 ENS210 ens210;
-// end CCS811 section
+// end ens210 include section
 
 // start serial parsing section
 #include "serialProtocol.h"
@@ -45,8 +50,8 @@ ENS210 ens210;
 
 // start global variables section
 #define campTime 1000
-int autoSend = 10000;
-unsigned long lastExecutedMillis = 0; // to campionate environment datas every 1 sec
+int autoSend = 10000; // autosends env data every 10 seconds
+unsigned long lastExecutedMillis = 0; // to campionate environment datas every campTime msec
 unsigned long lastExecutedMillisCount = 0; // to send automatically environment datas every 10 secs
 float temperature;
 float humidity;
@@ -57,28 +62,16 @@ int raw; //seems not possible to read raw data from ccs811; used for ens210 temp
 boolean debug = false; //to enable debug mode
 
 void ble_setup(){
-  ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here
+  ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here //DISABLE IN PRODUCTION
+  //ble.begin("Ossigenio", true, ledPin); //ENABLE IN PRODUCTION ONLY
 }
 
 void setup() {
-  // put your setup code here, to run once:
   Wire.begin(17,16); //initialize i2c comm
   mySensor.begin(); //initialize ccs811 sensor
   gHs300x.begin(); //initialize gHs3001 sensor
-  ble_setup();
+  ble_setup(); //initialize ble
 
-  /*
-  // MAYBE, THIS SECTION, COULD BE DEPRECATED???
-  pinMode(positiveButtonPin, INPUT);
-  pinMode(neutralButtonPin, INPUT);
-  pinMode(negativeButtonPin, INPUT); //
-  attachInterrupt(1, positive, RISING); //INT1 ASSOCIATO AL PIN 2 -> positiveButtonPin
-  attachInterrupt(0, neutral, RISING); //INT0 ASSOCIATO AL PIN 3 -> neutralButtonPin
-  attachInterrupt(3, negative, RISING); //INT3 ASSOCIATO AL PIN 1 -> negativeButtonPin
-  */
-  /*touchAttachInterrupt(T8, positive, 40); // PIN 33 (left side)
-  touchAttachInterrupt(T7, neutral, 40); // PIN 27 (left side)
-  touchAttachInterrupt(T4, negative, 40);*/ // PIN 13 (left side)
   touchAttachInterrupt(T0, positive, 40); // PIN 4 (on right side)
   touchAttachInterrupt(T2, neutral, 40); // PIN 2 (on right side)
   touchAttachInterrupt(T4, negative, 40); // PIN 13 (on left side)
@@ -94,13 +87,13 @@ void loop() {
   if (currentMillis - lastExecutedMillis >= campTime) {
     lastExecutedMillis = currentMillis; // save the last executed time
     if (gHs300x.getTemperatureHumidity(m)){
-      m.extract(temperature, humidity);
+      m.extract(temperature, humidity); // read temperature and humidity values
     }
     if (mySensor.dataAvailable()) {
       mySensor.readAlgorithmResults();
-      co2 = (float) mySensor.getCO2();
-      ens210.measure(&t_data, &t_status, &h_data, &h_status );
-      raw = (int) ens210.toCelsius(t_data,10)/10.0; //temperature of co2 sensor?
+      co2 = (float) mySensor.getCO2(); // read co2 value
+      ens210.measure(&t_data, &t_status, &h_data, &h_status ); //see after comment
+      raw = (int) ens210.toCelsius(t_data,10)/10.0; //temperature of co2 sensor
     }
     feed = false; //re-enabling feedback disabled into isr
   }
@@ -112,11 +105,9 @@ void loop() {
   }
   
   // ble read section
-  //String c = ble.readString();
   uint8_t buf[4] = {0x00,0x00,0x00,0x00};
   while (ble.available() > 0){
     int rlen = ble.readBytes(buf, 4);
-    //ble.write(buf[0]);
   }
   unsigned long currentMillisCount = millis();
   if (currentMillisCount - lastExecutedMillisCount >= autoSend){

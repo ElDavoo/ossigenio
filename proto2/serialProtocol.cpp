@@ -28,8 +28,6 @@ extern const uint32_t serialNumber;
 #define highByte(w) ((uint8_t) ((w) >> 8)) // declared in this way to save memory
 
 void getMsg0(int temp, int humidity, int raw_data){
-    //char buffer[5];
-    //ble.print(0xAA80); //AA, numero campi e tipo --- 0xAA80 = dec43648
     uint8_t buffer[8];
 
     buffer[0] = 0xAA;
@@ -48,14 +46,11 @@ void getMsg0(int temp, int humidity, int raw_data){
     message[3] = (uint8_t) raw_data;
 
     uint8_t crc = checksumCalculator(message,4);
-    //ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-	//ble.write(crc); 
     buffer[7] = crc;
     ble.write(buffer,8);
 }
 
 void getMsg1(int temp, int humidity, int co2) {
-    //char buffer[5];
 
     uint8_t buffer[8];
     uint8_t message[4];
@@ -75,24 +70,15 @@ void getMsg1(int temp, int humidity, int co2) {
     uint8_t crc = checksumCalculator(message,4);
     buffer[7] = crc;
     ble.write(buffer,8);
-    //ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-	//ble.write(crc); 
 }
 
 void getMsg2(/*NOT YET IMPLEMENTED*/){
-    //TO DO
+    //RESERVED FOR FUTURE USE
 }
 
 void getMsg3(){
-    //char buffer[5];
-    //ble.print(0xAA83); //questo valore qui è stampato come 0xAA83 nel monitor seriale
     uint8_t battery = 100;
     uint8_t buffer[11];
-    /*ble.write(0xAA);
-    ble.write(0x83);
-    ble.write((uint8_t) MODEL);
-    ble.write((uint8_t) VERSION);
-    ble.write(battery);*/
     buffer[0] = 0xAA;
     buffer[1] = 0x83;
     buffer[2] = (uint8_t) MODEL;
@@ -117,15 +103,11 @@ void getMsg3(){
     message[8] = (uint8_t) battery;
 
     uint8_t crc = checksumCalculator(message,9); 
-    //ble.write(0xFF);
-	//ble.write(crc);
     buffer[10] = crc;
     ble.write(buffer,11); 
 }
 
 void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
-    //char buffer[5];
-    //ble.print(0xAA81); //AA, numero campi e tipo --- 0xAA81 = dec43649
     uint8_t buffer[9];
 
     buffer[0] = 0xAA;
@@ -146,8 +128,6 @@ void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     message[4] = (uint8_t) feedback;
 
     uint8_t crc = checksumCalculator(message,5);
-    //ble.write(0xFF); //PLACEHOLDER per separare il valore di co2 dal crc --- 0xFFF = dec65535
-	//ble.write(crc); 
     buffer[8] = crc;
     ble.write(buffer,9);
 }
