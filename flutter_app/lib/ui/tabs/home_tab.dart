@@ -119,22 +119,16 @@ class NewHomePageState extends State<NewHomePage>
               )),
               // Se non c'è un sensore collegato e viene selezionato un luogo,
               // mostra la qualità dell'aria del luogo selezionato
-              if (MqttManager.place != null && BLEManager().dvc == null)
+              if (MqttManager.place != null && BLEManager().dvc.value == null)
                 UI.buildCard(AirQualityPlace(placeId: MqttManager.place!.id)),
-              StreamBuilder(
-                stream: BLEManager().disconnectstream.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Container();
-                  } else {
-                    if (BLEManager().dvc != null) {
-                      return UI.buildCard(
-                          AirQualityLocal(device: BLEManager().dvc!));
-                    } else {
-                      return Container();
-                    }
+              ValueListenableBuilder(
+                valueListenable: BLEManager().dvc,
+                builder: (context, dvc, child) {
+                  if (dvc == null) {
+                    return const SizedBox();
                   }
-                },
+                  return UI.buildCard(AirQualityDevice(device: dvc));
+                }
               ),
             ],
           )),

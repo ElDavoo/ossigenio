@@ -8,16 +8,16 @@ import '../../utils/ui.dart';
 import 'air_quality.dart';
 
 /// Un widget che wrappa AirQuality, nello StreamBuilder di un dispositivo
-class AirQualityLocal extends StatefulWidget {
+class AirQualityDevice extends StatefulWidget {
   final Device device;
 
-  const AirQualityLocal({Key? key, required this.device}) : super(key: key);
+  const AirQualityDevice({Key? key, required this.device}) : super(key: key);
 
   @override
-  AirQualityLocalState createState() => AirQualityLocalState();
+  AirQualityDeviceState createState() => AirQualityDeviceState();
 }
 
-class AirQualityLocalState extends State<AirQualityLocal> {
+class AirQualityDeviceState extends State<AirQualityDevice> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<CO2Message>(

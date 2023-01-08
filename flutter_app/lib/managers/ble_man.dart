@@ -27,13 +27,6 @@ class BLEManager extends ChangeNotifier {
 
   /// Uno stream di dispositivi connessi
   // TODO: Usare un ValueNotifier
-  final StreamController<Device> devicestream =
-      StreamController<Device>.broadcast();
-
-  /// Uno stream che notifica quando ci si è disconnessi
-  // TODO: Usare un ValueNotifier
-  final StreamController<void> disconnectstream =
-      StreamController<void>.broadcast();
 
   /// Uno stream di potenziali sensori
   /// TODO: Usare un ValueNotifier
@@ -42,7 +35,7 @@ class BLEManager extends ChangeNotifier {
 
   /// L'ultimo dispositivo a cui ci si è connessi
   /// TODO: Usare un ValueNotifier
-  Device? dvc;
+  ValueNotifier<Device?> dvc = ValueNotifier<Device?>(null);
 
   BLEManager._internal() {
     Log.d("Initializing");
@@ -55,17 +48,11 @@ class BLEManager extends ChangeNotifier {
       connectToDevice(event).catchError((e) {
         Log.l("Errore durante la connessione: $e");
         event.device.disconnect();
-        disconnectstream.add(null);
+        startBLEScan();
       });
     });
-    // Quando riceviamo un evento di disconnessione
-    // buttiamo via il dispositivo e ricominciamo la scansione
-    disconnectstream.stream.listen((event) {
-      Log.l("Sensore disconnesso");
-      dvc = null;
-      startBLEScan();
-    });
     Log.d("Inizializzato");
+    startBLEScan();
   }
 
   /// Inizia la scansione dei dispositivi.
@@ -162,8 +149,7 @@ class BLEManager extends ChangeNotifier {
       // costruire il Device e aggiungerlo allo stream.
 
       if (e.code == 'already_connected') {
-        dvc = Device(result, await BTUart.fromDevice(result.device));
-        devicestream.add(dvc!);
+        dvc.value = Device(result, await BTUart.fromDevice(result.device));
         return;
       }
 
@@ -173,8 +159,7 @@ class BLEManager extends ChangeNotifier {
       rethrow;
     }
 
-    dvc = Device(result, await BTUart.fromDevice(result.device));
-    devicestream.add(dvc!);
+    dvc.value = Device(result, await BTUart.fromDevice(result.device));
     return;
   }
 
@@ -183,8 +168,8 @@ class BLEManager extends ChangeNotifier {
   /// Si disconnette dal dispositivo.
   void disconnect(Device device) {
     device.device.disconnect();
-    dvc = null;
-    disconnectstream.add(null);
+    dvc.value = null;
+    startBLEScan();
   }
 
   /// Invia dati grezzi a un dispositivo.
