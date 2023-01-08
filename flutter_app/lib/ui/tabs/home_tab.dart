@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../utils/constants.dart';
 import '../../utils/log.dart';
 import '../../utils/place.dart';
-import '../widgets/air_quality_local.dart';
+import '../widgets/air_quality_device.dart';
 import '../widgets/air_quality_place.dart';
 
 class NewHomePage extends StatefulWidget {

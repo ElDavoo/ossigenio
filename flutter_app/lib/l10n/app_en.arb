@@ -190,5 +190,21 @@
     "dangerousExplanation": "The air is not clean, you can breathe without any problems",
     "@dangerousExplanation": {
         "description": "Explanation of dangerous air quality"
+    },
+    "connectingToSensor": "Connecting to sensor...",
+    "@connectingToSensor": {
+        "description": "Connecting to sensor"
+    },
+    "loading": "Loading...",
+    "@loading": {
+        "description": "Loading"
+    },
+    "whereAreYou": "Where are you?",
+    "@whereAreYou": {
+        "description": "Where are you"
+    },
+    "noPlaceSelected": "No place selected",
+    "@noPlaceSelected": {
+        "description": "No place selected"
     }
 }

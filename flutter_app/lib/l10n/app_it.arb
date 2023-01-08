@@ -190,5 +190,21 @@
     "dangerousExplanation": "La qualità dell'aria è pericolosa. Ci sono problemi di inquinamento.",
     "@dangerousExplanation": {
         "description": "Spiegazione qualità dell'aria pericolosa"
+    },
+    "connectingToSensor": "Connessione al sensore...",
+    "@connectingToSensor": {
+        "description": "Messaggio di connessione al sensore"
+    },
+    "loading": "Caricamento...",
+    "@loading": {
+        "description": "Messaggio di caricamento"
+    },
+    "whereAreYou": "Dove sei?",
+    "@whereAreYou": {
+        "description": "Messaggio di dove sei"
+    },
+    "noPlaceSelected": "Nessun luogo selezionato",
+    "@noPlaceSelected": {
+        "description": "Messaggio di nessun luogo selezionato"
     }
 }

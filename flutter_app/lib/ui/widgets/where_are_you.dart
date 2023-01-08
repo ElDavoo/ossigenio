@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/managers/mqtt_man.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../managers/gps_man.dart';
 import '../../utils/place.dart';
+import '../../utils/ui.dart';
 
-// A stateful widget which gets the list of nearby places
-// And asks the user to select one of them
-// And saves the selection in its state
+/// Un widget che chiede all'utente dove si trova
 class WhereAreYou extends StatefulWidget {
-  // A function which is called when the user selects a place
+  // Una funzione chiamata quando l'utente ha selezionato un posto
   final Function(Place? place) onPlaceSelected;
 
   const WhereAreYou({Key? key, required this.onPlaceSelected})
@@ -19,14 +19,13 @@ class WhereAreYou extends StatefulWidget {
 }
 
 class WhereAreYouState extends State<WhereAreYou> {
-  Place? selectedPlace;
-
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text("Dove ti trovi?", style: TextStyle(fontSize: 22)),
+        Text(AppLocalizations.of(context)!.whereAreYou,
+            style: const TextStyle(fontSize: 22)),
         //Padding to separate the text from the dropdown
         //const Padding(padding: EdgeInsets.all(10.0)),
         StreamBuilder(
@@ -41,21 +40,20 @@ class WhereAreYouState extends State<WhereAreYou> {
                 );
               }).toList();
               // Add a "None" item to the list
-              items.add(const DropdownMenuItem<Place>(
+              items.add(DropdownMenuItem<Place>(
                 value: null,
-                child: Text("Nessuno"),
+                child: Text(AppLocalizations.of(context)!.noPlaceSelected),
               ));
               return DropdownButton<Place>(
                 // Check if the value is in the value list
                 value: MqttManager.place,
                 onChanged: (Place? newValue) {
                   widget.onPlaceSelected(newValue);
-                  selectedPlace = newValue;
                 },
                 items: items,
               );
             } else {
-              return const Text("Loading...");
+              return UI.spinText(AppLocalizations.of(context)!.loading);
             }
           },
         )

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../Messages/co2_message.dart';
 import '../../Messages/message.dart';
 import '../../utils/device.dart';
+import '../../utils/ui.dart';
 import 'air_quality.dart';
 
-// A stateful widget which is a wrapper for AirQuality
-// Takes a device and wraps AirQuality widget in a stream builder
-
+/// Un widget che wrappa AirQuality, nello StreamBuilder di un dispositivo
 class AirQualityLocal extends StatefulWidget {
   final Device device;
 
@@ -35,7 +35,9 @@ class AirQualityLocalState extends State<AirQualityLocal> {
               isHeating: widget.device.isHeating,
             );
           }
-          return const Text('No data');
+          return UI.spinText(
+            AppLocalizations.of(context)!.connectingToSensor,
+          );
         });
   }
 }
