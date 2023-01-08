@@ -5,6 +5,7 @@ import 'package:flutter_app/managers/account_man.dart';
 import 'package:flutter_app/managers/perm_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/login_page.dart';
+import 'package:flutter_app/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
@@ -55,8 +56,9 @@ class MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initialWidget = const Text("Errore");
-    AccountManager().login().then((value) {
-      if (value) {
+    PrefManager().read(C.pref.cookie).then((value) {
+      if (value != null){
+        AccountManager().login();
         setState(() {
           initialWidget = const HomePage();
         });
@@ -68,7 +70,6 @@ class MyAppState extends State<MyApp> {
     });
   }
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
