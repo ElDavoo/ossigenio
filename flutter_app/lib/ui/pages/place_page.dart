@@ -4,10 +4,9 @@ import 'package:flutter_app/utils/ui.dart';
 
 import '../../managers/account_man.dart';
 import '../../utils/place.dart';
+import '../../utils/prediction.dart';
 
-// A stateful widget which takes a place,
-// Asks the api for the predictions and displays them
-
+/// Pagina che mostra le predizioni di un luogo
 class PredictionPlace extends StatefulWidget {
   final Place place;
 
@@ -17,21 +16,8 @@ class PredictionPlace extends StatefulWidget {
   PredictionPlaceState createState() => PredictionPlaceState();
 }
 
-// A Prediction is a pair of "timestamp - co2 level"
-class Prediction {
-  DateTime timestamp;
-  int co2;
-
-  Prediction(this.timestamp, this.co2);
-
-  // fromJson constructor
-  Prediction.fromJson(Map<String, dynamic> json)
-      : timestamp = DateTime.parse(json['timestamp']),
-        co2 = json['co2'];
-}
-
 class PredictionPlaceState extends State<PredictionPlace> {
-  late Future<List<Prediction>> future;
+  late final Future<List<Prediction>> future;
 
   @override
   void initState() {
@@ -46,13 +32,7 @@ class PredictionPlaceState extends State<PredictionPlace> {
         title: Text(widget.place.name),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue, Colors.white],
-          ),
-        ),
+        decoration: UI.gradientBox(),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -93,13 +73,13 @@ class PredictionPlaceState extends State<PredictionPlace> {
                                 ),
                                 bottomTitles: rightTitles(),
                               ),
-                              borderData: FlBorderData(show: true),
+                              borderData: FlBorderData(show: false),
                               minX: 0,
                               maxX: 24,
                               minY: 400,
                               lineBarsData: [
                                 LineChartBarData(
-                                  spots: getSpots(snapshot),
+                                  spots: getSpots(snapshot.data!),
                                   isCurved: true,
                                   barWidth: 3,
                                   isStrokeCapRound: true,
@@ -112,8 +92,7 @@ class PredictionPlaceState extends State<PredictionPlace> {
                         } else if (snapshot.hasError) {
                           return Text("${snapshot.error}");
                         }
-                        return UIWidgets.spinText(
-                            "Sto predicendo il futuro...");
+                        return UI.spinText("Sto predicendo il futuro...");
                       }),
                 ),
               ),
@@ -124,15 +103,20 @@ class PredictionPlaceState extends State<PredictionPlace> {
     );
   }
 
-  List<FlSpot> getSpots(AsyncSnapshot<List<Prediction>> snapshot) {
-    var list =
-        snapshot.data!.map((e) => {'t': 0, 'c': e.co2.toDouble()}).toList();
-    // Delete X and make it progressive
+  /// Converte una lista di predizioni in una lista di punti per il grafico
+  List<FlSpot> getSpots(List<Prediction> snapshot) {
+    // Converte una lista di predizioni in una lista di coppie di numeri
+    final List<Map<String, double>> list = snapshot
+        .map((e) => {
+              't': 0.toDouble(),
+              'c': e.co2.toDouble()
+            })
+        .toList();
     for (int i = 0; i < list.length; i++) {
       list[i]['t'] = i.toDouble();
     }
     return list
-        .map((e) => FlSpot(e['t']!.toDouble(), e['c']!.toDouble()))
+        .map((e) => FlSpot(e['t']!, e['c']!))
         .toList();
   }
 
@@ -148,21 +132,22 @@ class PredictionPlaceState extends State<PredictionPlace> {
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
-      color: Colors.blueGrey,
+      color: Colors.black87,
       fontFamily: 'Digital',
-      fontSize: 18,
+      fontSize: 16,
     );
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(hhmm(value.toInt()), style: style),
+      child: Text(hhmm(value), style: style),
     );
   }
 
-  String hhmm(int offset) {
-    // Get the current HH:MM
-    var now = DateTime.now();
-    var hour = (now.hour + offset) % 24;
-    var minute = now.minute;
-    return '$hour:$minute';
+  /// Restituisce l'orario in HH:MM di [offset] ore in avanti.
+  String hhmm(double offset) {
+    final int off = offset.toInt();
+    final DateTime now = DateTime.now();
+    final String hour = ((now.hour + off) % 24).toString();
+    final String minutes = now.minute.toString().padLeft(2, '0');
+    return '$hour:$minutes';
   }
 }

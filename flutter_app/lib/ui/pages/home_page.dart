@@ -15,19 +15,20 @@ import '../../utils/constants.dart';
 import '../../utils/log.dart';
 import '../widgets/debug_tab.dart';
 import 'login_page.dart';
-import 'main_page.dart';
-import 'map_page.dart';
+import '../tabs/home_tab.dart';
+import '../tabs/map_tab.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+/// La UI principale dell'app, contiene la barra di navigazione e le pagine
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
+/// Lo stato della home page dell'app
+class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
-
   late final StreamSubscription _log;
 
   void _init() {
@@ -53,12 +54,12 @@ class _MyHomePageState extends State<MyHomePage>
               if (BLEManager().dvc!.isHeating) {
                 Log.l(AppLocalizations.of(context)!.waitForHeating);
               } else {
-              _showOverlay(context, fbvalue: event.feedback);
-              // Mostra un messaggio di ringraziamento
-              Future.delayed(const Duration(seconds: 2), () {
-                Log.l(AppLocalizations.of(context)!.feedbackSent);
+                _showOverlay(context, fbvalue: event.feedback);
+                // Mostra un messaggio di ringraziamento
+                Future.delayed(const Duration(seconds: 2), () {
+                  Log.l(AppLocalizations.of(context)!.feedbackSent);
+                });
               }
-              );}
             });
       }
     });
@@ -77,10 +78,6 @@ class _MyHomePageState extends State<MyHomePage>
     _init();
   }
 
-  int _selectedIndex = 0;
-  AnimationController? _animationController;
-  Animation<double>? animation;
-
   @override
   void dispose() {
     BLEManager().stopBLEScan();
@@ -88,72 +85,56 @@ class _MyHomePageState extends State<MyHomePage>
     super.dispose();
   }
 
+  /// La pagina corrente
+  int _selectedIndex = 0;
+  AnimationController? _animationController;
+  Animation<double>? animation;
+
+  /// Lista delle pagine da mostrare
   final List<Widget> _pages = <Widget>[
     const NewHomePage(),
     const MapPage(),
   ];
-  PageController pageController = PageController(
+
+  final PageController _pageController = PageController(
     initialPage: 0,
     keepPage: true,
   );
 
-  void pageChanged(int index) {
+  /// Cambia pagina
+  void _changePage(int index) {
     setState(() {
       _selectedIndex = index;
-    });
-  }
-
-  void bottomTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      pageController.animateToPage(index,
+      _pageController.animateToPage(index,
           duration: const Duration(milliseconds: 100), curve: Curves.ease);
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: NewGradientAppBar(
-          gradient: LinearGradient(
-            colors: [C.colors.blue1, C.colors.blue2],
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.no_accounts),
-            onPressed: () {
-              // Show a dialog to confirm logout
-              buildLogoutDialog(context);
-            },
-          ),
-          title: Text(AppLocalizations.of(context)!.title),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 10.0),
-              child: bluetoothBatt(),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 15.0),
-              child: bluetoothRSSI(),
-            ),
-          ]),
-      body: Container(
-        decoration: UIWidgets.gradientBox(),
-        child: PageView.builder(
-          controller: pageController,
-          onPageChanged: (index) {
-            pageChanged(index);
-          },
-          itemCount: _pages.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _pages[index];
-          },
+  /// Costruisce la barra inferiore dell'app
+  BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
+    return BottomNavigationBar(
+      selectedFontSize: 15,
+      selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
+      selectedItemColor: Colors.blue,
+      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+      backgroundColor: C.colors.cardBg,
+      items: <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.home),
+          label: AppLocalizations.of(context)!.home,
         ),
-      ),
-      bottomNavigationBar: buildBottomNavigationBar(context),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.map),
+          label: AppLocalizations.of(context)!.map,
+        ),
+      ],
+      currentIndex: _selectedIndex,
+      onTap: _changePage,
     );
   }
 
-  void buildLogoutDialog(BuildContext context) {
+  /// Chiede all'utente se vuole uscire dall'applicazione
+  static void _buildLogoutDialog(BuildContext context) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -184,29 +165,56 @@ class _MyHomePageState extends State<MyHomePage>
         });
   }
 
-  BottomNavigationBar buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      selectedFontSize: 15,
-      selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
-      selectedItemColor: Colors.blue,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-      backgroundColor: C.colors.cardBg,
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.home),
-          label: AppLocalizations.of(context)!.home,
+  void _showOverlay(BuildContext context,
+      {required FeedbackValues fbvalue}) async {
+    // Convert the fbvalue to an emoji with a dict
+    final Map<FeedbackValues, String> emojiDict = {
+      FeedbackValues.negative: "🙁",
+      FeedbackValues.neutral: "😐",
+      FeedbackValues.positive: "😉",
+    };
+    final String emoji = emojiDict[fbvalue]!;
+
+    OverlayState? overlayState = Overlay.of(context);
+    OverlayEntry overlayEntry;
+    overlayEntry = OverlayEntry(builder: (context) {
+      return FadeTransition(
+        opacity: animation!,
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Color.fromRGBO(227, 252, 230, 0.9),
+                Color.fromRGBO(111, 206, 250, 0.6)
+              ],
+            ),
+          ),
+          child: Center(
+            child: Material(
+              child: Text(
+                emoji,
+                style: const TextStyle(fontSize: 80),
+              ),
+            ),
+          ),
         ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.map),
-          label: AppLocalizations.of(context)!.map,
-        ),
-      ],
-      currentIndex: _selectedIndex,
-      onTap: bottomTapped,
-    );
+      );
+    });
+    _animationController!.addListener(() {
+      overlayState!.setState(() {});
+    });
+    // inserting overlay entry
+    overlayState!.insert(overlayEntry);
+    _animationController!.forward();
+    await Future.delayed(const Duration(seconds: 1))
+        .whenComplete(() => _animationController!.reverse())
+        // removing overlay entry after stipulated time.
+        .whenComplete(() => overlayEntry.remove());
   }
 
-  Widget bluetoothRSSI() {
+  Widget _bluetoothRSSI() {
     return StreamBuilder(
         stream: BLEManager().disconnectstream.stream,
         builder: (context, snapshot) {
@@ -257,7 +265,7 @@ class _MyHomePageState extends State<MyHomePage>
         });
   }
 
-  Widget bluetoothBatt() {
+  Widget _bluetoothBatt() {
     return StreamBuilder(
         stream: BLEManager().disconnectstream.stream,
         builder: (context, snapshot) {
@@ -312,52 +320,45 @@ class _MyHomePageState extends State<MyHomePage>
         });
   }
 
-  void _showOverlay(BuildContext context,
-      {required FeedbackValues fbvalue}) async {
-    // Convert the fbvalue to an emoji with a dict
-    final Map<FeedbackValues, String> emojiDict = {
-      FeedbackValues.negative: "🙁",
-      FeedbackValues.neutral: "😐",
-      FeedbackValues.positive: "😉",
-    };
-    final String emoji = emojiDict[fbvalue]!;
-
-    OverlayState? overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry;
-    overlayEntry = OverlayEntry(builder: (context) {
-      return FadeTransition(
-        opacity: animation!,
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topCenter,
-              colors: [
-                Color.fromRGBO(227, 252, 230, 0.9),
-                Color.fromRGBO(111, 206, 250, 0.6)
-              ],
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: NewGradientAppBar(
+          gradient: LinearGradient(
+            colors: [C.colors.blue1, C.colors.blue2],
           ),
-          child: Center(
-            child: Material(
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 80),
-              ),
-            ),
+          leading: IconButton(
+            icon: const Icon(Icons.no_accounts),
+            onPressed: () {
+              // Show a dialog to confirm logout
+              _buildLogoutDialog(context);
+            },
           ),
+          title: Text(AppLocalizations.of(context)!.title),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 10.0),
+              child: _bluetoothBatt(),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: _bluetoothRSSI(),
+            ),
+          ]),
+      body: Container(
+        decoration: UI.gradientBox(),
+        child: PageView.builder(
+          controller: _pageController,
+          onPageChanged: (index) {
+            _changePage(index);
+          },
+          itemCount: _pages.length,
+          itemBuilder: (BuildContext context, int index) {
+            return _pages[index];
+          },
         ),
-      );
-    });
-    _animationController!.addListener(() {
-      overlayState!.setState(() {});
-    });
-    // inserting overlay entry
-    overlayState!.insert(overlayEntry);
-    _animationController!.forward();
-    await Future.delayed(const Duration(seconds: 1))
-        .whenComplete(() => _animationController!.reverse())
-        // removing overlay entry after stipulated time.
-        .whenComplete(() => overlayEntry.remove());
+      ),
+      bottomNavigationBar: _buildBottomNavigationBar(context),
+    );
   }
 }

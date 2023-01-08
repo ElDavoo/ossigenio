@@ -3,6 +3,14 @@
     "@title": {
       "description": "Title of the application"
     },
+    "login": "Login",
+    "@login": {
+      "description": "Login button"
+    },
+    "signup": "Signup",
+    "@signup": {
+      "description": "Signup button"
+    },
     "logout": "Logout",
     "@logout": {
       "description": "Logout button"
@@ -30,5 +38,13 @@
     "waitForHeating": "Wait for the sensor to heat up before sending feedback",
     "@waitForHeating": {
       "description": "Message when user tries to send feedback before the sensor is heated up"
+    },
+    "email": "Email",
+    "@email": {
+      "description": "Email field"
+    },
+    "password": "Password",
+    "@password": {
+      "description": "Password field"
     }
 }

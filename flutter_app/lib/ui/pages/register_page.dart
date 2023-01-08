@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const MyHomePage()),
+                    MaterialPageRoute(builder: (context) => const HomePage()),
                   )
                 }
               else

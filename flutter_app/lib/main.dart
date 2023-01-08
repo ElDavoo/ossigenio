@@ -58,7 +58,7 @@ class MyAppState extends State<MyApp> {
     AccountManager().login().then((value) {
       if (value) {
         setState(() {
-          initialWidget = const MyHomePage();
+          initialWidget = const HomePage();
         });
       } else {
         setState(() {

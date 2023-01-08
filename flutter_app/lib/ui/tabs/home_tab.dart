@@ -100,18 +100,18 @@ class NewHomePageState extends State<NewHomePage>
         child: SingleChildScrollView(
             child: Column(
           children: <Widget>[
-            UIWidgets.buildCard(
+            UI.buildCard(
               FittedBox(
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topLeft,
                 child: greetingText(name),
               ),
             ),
-            UIWidgets.buildCard(WhereAreYou(
+            UI.buildCard(WhereAreYou(
               onPlaceSelected: onSelectedPlace,
             )),
             if (MqttManager.place != null && BLEManager().dvc == null)
-              UIWidgets.buildCard(
+              UI.buildCard(
                   AirQualityPlace(placeId: MqttManager.place!.id)),
             StreamBuilder(
               stream: BLEManager().disconnectstream.stream,
@@ -120,7 +120,7 @@ class NewHomePageState extends State<NewHomePage>
                   return Container();
                 } else {
                   if (BLEManager().dvc != null) {
-                    return UIWidgets.buildCard(
+                    return UI.buildCard(
                         AirQualityLocal(device: BLEManager().dvc!));
                   } else {
                     return Container();

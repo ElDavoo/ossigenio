@@ -12,6 +12,7 @@ import '../utils/constants.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
 import '../utils/place.dart';
+import '../utils/prediction.dart';
 
 /// Classe per gestire le API e le richieste HTTP verso il server.
 class AccountManager {
@@ -156,24 +157,26 @@ class AccountManager {
     }
   }
 
+  /// Controlla se il dispositivo è originale
+  ///
+  /// Ritorna true se il dispositivo è originale, false altrimenti.
+  /// Viene mandato il MAC address del dispositivo al server.
   Future<bool> checkIfValid(MacAddress mac) async {
-    // Check if a mac address is original, if not, return false
-    // First ensure we are logged in
     if (await ensureLoggedIn()) {
-      // TODO check if the token is valid
-      return true;
-      var body = FormData.fromMap({
-        'macAddress': mac.toString(),
+      final String body = jsonEncode({
+        'id': mac.toString(),
       });
-      // send the request
-      Response response = await dio.post(C.acc.urlCheckMac, data: body);
-      Log.v(response.data);
-      // check the response
+
+      String cookie = await PrefManager().read(C.pref.cookie) as String;
+
+      Response response = await dio.post(C.acc.urlCheckMac, data: body,
+          options: Options(headers: {
+            'Cookie': cookie,
+          }));
+
       if (response.statusCode == 200) {
-        // mac is original
         return true;
       } else {
-        // mac is spoofed
         return false;
       }
     } else {

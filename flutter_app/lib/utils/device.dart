@@ -105,7 +105,7 @@ class Device extends ChangeNotifier {
           // meno frequentemente
           timer.cancel();
           timer = Timer.periodic(
-              const Duration(seconds: 60), (_) => periodicallyRequest);
+              const Duration(seconds: 120), (_) => periodicallyRequest);
         }
       }
       Log.l("Diff: ${(msg.rawData - msg.temperature).abs()}");
@@ -116,7 +116,7 @@ class Device extends ChangeNotifier {
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest3));
     Future.delayed(const Duration(milliseconds: 600))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest1));
-    Future.delayed(const Duration(milliseconds: 2000))
+    Future.delayed(const Duration(milliseconds: 2500))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest0));
 
     // Chiede un messaggio di debug ogni 30 secondi

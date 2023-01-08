@@ -162,7 +162,7 @@ class BLEManager extends ChangeNotifier {
       // costruire il Device e aggiungerlo allo stream.
 
       if (e.code == 'already_connected') {
-        dvc = Device(result, await getUart(result.device));
+        dvc = Device(result, await BTUart.fromDevice(result.device));
         devicestream.add(dvc!);
         return;
       }
@@ -173,52 +173,12 @@ class BLEManager extends ChangeNotifier {
       rethrow;
     }
 
-    dvc = Device(result, await getUart(result.device));
+    dvc = Device(result, await BTUart.fromDevice(result.device));
     devicestream.add(dvc!);
     return;
   }
 
-  static Future<BTUart> getUart(BluetoothDevice device) async {
-    BTUart? uart;
-    // Discover services
-    try {
-      await device.discoverServices().then((value) {
-        try {
-          List<BluetoothCharacteristic> uartCharacteristics = value
-              .firstWhere(
-                  (service) => service.uuid.toString() == C.bt.nordicUARTID)
-              .characteristics;
-          BluetoothCharacteristic rxCharacteristic =
-              uartCharacteristics.firstWhere((characteristic) =>
-                  characteristic.uuid.toString() == C.bt.nordicUARTRXID);
-          BluetoothCharacteristic txCharacteristic =
-              uartCharacteristics.firstWhere((characteristic) =>
-                  characteristic.uuid.toString() == C.bt.nordicUARTTXID);
 
-          uart = BTUart(rxCharacteristic, txCharacteristic);
-          txCharacteristic.setNotifyValue(true);
-
-          return uart;
-        } catch (e) {
-          Log.v("Error discovering services: $e");
-          rethrow;
-        }
-      }).catchError((error) {
-        Log.v("Error discovering services: $error");
-        throw error;
-      });
-    } catch (e) {
-      Log.v("Error connecting to device: $e");
-      rethrow;
-    }
-    // ????????
-    if (uart == null) {
-      Log.v("Error discovering services");
-      throw Exception("Error discovering services");
-    } else {
-      return uart!;
-    }
-  }
 
   /// Si disconnette dal dispositivo.
   void disconnect(Device device) {

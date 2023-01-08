@@ -91,7 +91,7 @@ class AirQualityState extends State<AirQuality> {
                     ),
                   ],
                 )),
-                UIWidgets.verticalSlider(400, widget.co2, "ppm"),
+                UI.verticalSlider(400, widget.co2, "ppm"),
               ]),
         ),
       ],

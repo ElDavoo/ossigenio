@@ -5,7 +5,7 @@ import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'constants.dart';
 
 /// Vari widget
-class UIWidgets {
+class UI {
   /// Uno slider verticale che mostra un valore numerico
   /// affiancato da una unità di misura
   static Widget verticalSlider(int baseline, int value, String unit) {

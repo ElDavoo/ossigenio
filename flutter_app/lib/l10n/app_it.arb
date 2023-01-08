@@ -3,6 +3,14 @@
     "@title": {
       "description": "Titolo della pagina"
     },
+    "login": "Login",
+    "@login": {
+      "description": "Login"
+    },
+    "signup": "Registrati",
+    "@signup": {
+      "description": "Registrati"
+    },
     "logout": "Esci",
     "@logout": {
       "description": "Testo del pulsante di logout"
@@ -30,5 +38,13 @@
     "waitForHeating": "Attendere il riscaldamento prima di mandare il feedback",
     "@waitForHeating": {
       "description": "Messaggio di attesa riscaldamento prima di mandare il feedback"
+    },
+    "email": "Email",
+    "@email": {
+      "description": "Testo del campo email"
+    },
+    "password": "Password",
+    "@password": {
+      "description": "Testo del campo password"
     }
 }

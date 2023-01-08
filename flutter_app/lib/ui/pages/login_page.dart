@@ -1,16 +1,16 @@
-/*
-A flutter login page that can also be used as a sign up page.
- */
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ui/pages/register_page.dart';
+import 'package:flutter_app/utils/ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import '../../managers/account_man.dart';
 import '../../utils/log.dart';
 import 'home_page.dart';
 
+/// UI della pagina di login
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -18,11 +18,16 @@ class LoginPage extends StatefulWidget {
   LoginPageState createState() => LoginPageState();
 }
 
+/// Stato della UI della pagina di login
 class LoginPageState extends State<LoginPage> {
+  /// Controller per il campo di testo dell'email
   final emailinputController = TextEditingController();
+
+  /// Controller per il campo di testo della password
   final passwordinputController = TextEditingController();
 
-  StreamSubscription? _log;
+  /// Stream per il log
+  late final StreamSubscription _log;
 
   @override
   void initState() {
@@ -33,43 +38,32 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // Clean up the
-    _log?.cancel();
+    _log.cancel();
     super.dispose();
   }
 
-  void onPressed() {
+  /// Prova a fare il login
+  void _loginButton() {
     AccountManager()
         .loginWith(emailinputController.text, passwordinputController.text)
         .then((value) => {
               if (value)
                 {
+                  // Se il login ha successo, vai alla home page
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const MyHomePage()),
+                    MaterialPageRoute(builder: (context) => const HomePage()),
                   )
                 }
-              else
-                {Log.l('Login failed')}
             });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Login page
     return Scaffold(
         resizeToAvoidBottomInset: true,
         body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Color.fromRGBO(227, 252, 230, 0.8),
-                  Color.fromRGBO(111, 206, 250, 0.5)
-                ],
-              ),
-            ),
+            decoration: UI.gradientBox(),
             child: Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,6 +71,7 @@ class LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Container(
                     padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+                    // TODO sostituire con logo
                     child: const FlutterLogo(
                       size: 120,
                     ),
@@ -85,11 +80,12 @@ class LoginPageState extends State<LoginPage> {
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: TextField(
                       controller: emailinputController,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        labelText: 'Email',
+                        labelText: AppLocalizations.of(context)!.email,
                       ),
                     ),
                   ),
@@ -102,7 +98,7 @@ class LoginPageState extends State<LoginPage> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),
-                        labelText: 'Password',
+                        labelText: AppLocalizations.of(context)!.password,
                       ),
                     ),
                   ),
@@ -113,8 +109,10 @@ class LoginPageState extends State<LoginPage> {
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),
                         ),
-                        onPressed: onPressed,
-                        child: const Text('Log In'),
+                        onPressed: _loginButton,
+                        child: Text(
+                          AppLocalizations.of(context)!.login,
+                        ),
                       )),
                   TextButton(
                     onPressed: () {
@@ -125,8 +123,8 @@ class LoginPageState extends State<LoginPage> {
                       );
                     },
                     child: Text(
-                      'Registrati',
-                      style: TextStyle(color: Colors.grey[600]),
+                      AppLocalizations.of(context)!.signup,
+                      style: TextStyle(color: Colors.grey[800]),
                     ),
                   ),
                 ],
