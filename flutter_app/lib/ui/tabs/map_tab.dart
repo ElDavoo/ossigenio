@@ -31,8 +31,10 @@ class MapPageState extends State<MapPage>
   final PopupController _popupController = PopupController();
   late CenterOnLocationUpdate _centerOnLocationUpdate;
   late StreamController<double?> _centerCurrentLocationStreamController;
+
   /// Lista dei marker da mostrare sulla mappa
   List<Marker> _markers = [];
+
   /// Lista dei luoghi, associati ai marker
   List<Place> _places = [];
 

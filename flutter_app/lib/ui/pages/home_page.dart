@@ -220,7 +220,7 @@ class _HomePageState extends State<HomePage>
   Widget _bluetoothRSSI() {
     return ValueListenableBuilder(
         valueListenable: BLEManager().dvc,
-        builder: (context, Device? dvc, child) {
+        builder: (context, Device? dvc, _) {
           if (dvc == null) {
             return const SizedBox();
           }
@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage>
   Widget _bluetoothBatt() {
     return ValueListenableBuilder(
         valueListenable: BLEManager().dvc,
-        builder: (context, Device? dvc, child) {
+        builder: (context, Device? dvc, _) {
           if (dvc == null) {
             return const SizedBox();
           }

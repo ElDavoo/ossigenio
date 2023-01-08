@@ -46,7 +46,7 @@ class WhereAreYouState extends State<WhereAreYou> {
               ));
               return DropdownButton<Place>(
                 // Check if the value is in the value list
-                value: MqttManager.place,
+                value: MqttManager.place.value,
                 onChanged: (Place? newValue) {
                   widget.onPlaceSelected(newValue);
                 },

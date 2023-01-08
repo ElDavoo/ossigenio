@@ -31,7 +31,7 @@ class NewHomePageState extends State<NewHomePage>
     // selezionato non è più in lista, seleziona automaticamente
     // il null place
     GpsManager().placeStream.stream.listen((event) {
-      if (!event.contains(MqttManager.place)) {
+      if (!event.contains(MqttManager.place.value)) {
         setState(() {
           _onSelectedPlace(null);
         });
@@ -56,7 +56,7 @@ class NewHomePageState extends State<NewHomePage>
       Log.d(AppLocalizations.of(context)!.placeNotSelected);
     }
     setState(() {
-      MqttManager.place = place;
+      MqttManager.place.value = place;
     });
   }
 
@@ -117,19 +117,28 @@ class NewHomePageState extends State<NewHomePage>
               UI.buildCard(WhereAreYou(
                 onPlaceSelected: _onSelectedPlace,
               )),
+              ValueListenableBuilder(
+                  valueListenable: MqttManager.place,
+                  builder: (context, place, _) {
+                    if (place != null && BLEManager().dvc.value == null) {
+                      return UI.buildCard(AirQualityPlace(placeId: place.id));
+                    }
+                    return const SizedBox();
+                  }),
               // Se non c'è un sensore collegato e viene selezionato un luogo,
               // mostra la qualità dell'aria del luogo selezionato
-              if (MqttManager.place != null && BLEManager().dvc.value == null)
-                UI.buildCard(AirQualityPlace(placeId: MqttManager.place!.id)),
+              if (MqttManager.place.value != null &&
+                  BLEManager().dvc.value == null)
+                UI.buildCard(
+                    AirQualityPlace(placeId: MqttManager.place.value!.id)),
               ValueListenableBuilder(
-                valueListenable: BLEManager().dvc,
-                builder: (context, dvc, child) {
-                  if (dvc == null) {
-                    return const SizedBox();
-                  }
-                  return UI.buildCard(AirQualityDevice(device: dvc));
-                }
-              ),
+                  valueListenable: BLEManager().dvc,
+                  builder: (context, dvc, _) {
+                    if (dvc == null) {
+                      return const SizedBox();
+                    }
+                    return UI.buildCard(AirQualityDevice(device: dvc));
+                  }),
             ],
           )),
     );

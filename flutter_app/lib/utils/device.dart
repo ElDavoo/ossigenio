@@ -42,8 +42,6 @@ class Device extends ChangeNotifier {
     // Rifa il calcolo del numero seriale
     serialNumber = BLEManager.processAdv(result.advertisementData)!;
 
-
-
     messagesStream = btUart.txCharacteristic.value
         .map((value) {
           // Crea un messaggio da un valore
@@ -87,8 +85,8 @@ class Device extends ChangeNotifier {
         .where((message) => message is DebugMessage)
         .cast<DebugMessage>()
         .listen((msg) {
-          // Quando riceviamo un messaggio di debug,
-          // controlliamo se il sensore si sta riscaldando.
+      // Quando riceviamo un messaggio di debug,
+      // controlliamo se il sensore si sta riscaldando.
       if (isHeating) {
         // Il sensore è pronto se la differenza tra la temperatura
         // del sensore vicino e quella del sensore lontano è maggiore di 3
@@ -105,7 +103,7 @@ class Device extends ChangeNotifier {
               const Duration(seconds: 120), (_) => periodicallyRequest);
         }
       }
-      Log.l("Diff: ${(msg.rawData - msg.temperature).abs()}");
+      Log.v("Diff: ${(msg.rawData - msg.temperature).abs()}");
     });
 
     // Messaggi da mandare alla connessione

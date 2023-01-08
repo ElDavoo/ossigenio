@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/account_man.dart';
@@ -13,51 +12,36 @@ import '../managers/ble_man.dart';
 import 'ui/pages/home_page.dart';
 
 void main() {
-  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  final WidgetsBinding widgetsBinding =
+      WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    /* Start to initialize the various app subsystems
-          * (e.g. BLE, DB, etc.) */
+    // Iniziamo a inizializzare i manager
     PrefManager();
     BLEManager();
     PermissionManager().checkPermissions();
-    if (kDebugMode) {
-      //debugPaintSizeEnabled=true;
-    }
-
-    runApp(
-        /*MultiProvider(providers: [
-          ChangeNotifierProvider(create: (context) => BLEManager()),
-
-        ],
-          child: const MyApp(),
-        ));*/
-        const MyApp());
+    runApp(const App());
   });
-  /*
-  Bisogna mettere qui i ChangeNotifierProvider.
-  In questo modo, saranno disponibili globalmente.
-   */
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class App extends StatefulWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
-  MyAppState createState() => MyAppState();
+  AppState createState() => AppState();
 }
 
-class MyAppState extends State<MyApp> {
-  late Widget initialWidget;
+class AppState extends State<App> {
+  late final Widget initialWidget;
 
   @override
   void initState() {
     super.initState();
-    initialWidget = const Text("Errore");
+    // Se l'utente è già loggato, avviamo la HomePage
     PrefManager().read(C.pref.cookie).then((value) {
-      if (value != null){
+      if (value != null) {
         AccountManager().login();
         setState(() {
           initialWidget = const HomePage();
@@ -77,7 +61,7 @@ class MyAppState extends State<MyApp> {
       supportedLocales: AppLocalizations.supportedLocales,
       onGenerateTitle: (context) => AppLocalizations.of(context)!.title,
       theme: ThemeData(
-        // This is the theme of your application.
+        // Colore principale dell'applicazione
         primarySwatch: Colors.blue,
       ),
       home: initialWidget,

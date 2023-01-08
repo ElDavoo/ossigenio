@@ -8,10 +8,13 @@ import '../../utils/constants.dart';
 class AirQuality extends StatefulWidget {
   /// Il valore della CO2 in ppm
   final int co2;
+
   /// Il valore della temperatura in gradi Celsius
   final int? temperature;
+
   /// Il valore dell'umidità in percentuale
   final int? humidity;
+
   /// Mostra se il sensore si sta riscaldando
   final bool? isHeating;
 
@@ -36,9 +39,7 @@ class AirQualityState extends State<AirQuality> {
       children: [
         if (widget.isHeating != null && widget.isHeating!)
           Container(
-            decoration: BoxDecoration(
-              color: C.colors.isHeatingBg
-            ),
+            decoration: BoxDecoration(color: C.colors.isHeatingBg),
             width: double.infinity,
             child: Center(
               child: Row(
@@ -98,8 +99,7 @@ class AirQualityState extends State<AirQuality> {
     );
   }
 
-  String _buildExplanationText(int co2,
-      [int? temp, int? hum]) {
+  String _buildExplanationText(int co2, [int? temp, int? hum]) {
     String text = "";
     if (temp != null && hum != null) {
       text = "${AppLocalizations.of(context)!.tempHum(temp, hum)}\n";
@@ -127,9 +127,9 @@ class AirQualityTextState extends State<AirQualityText> {
   Widget build(BuildContext context) {
     final String text = C.catchWord(context, widget.co2);
     final TextStyle style = TextStyle(
-        fontSize: 80,
-        fontWeight: FontWeight.bold,
-        color: UI.decideColor(widget.co2),
+      fontSize: 80,
+      fontWeight: FontWeight.bold,
+      color: UI.decideColor(widget.co2),
     );
     return FittedBox(
       fit: BoxFit.fill,

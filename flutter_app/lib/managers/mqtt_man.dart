@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
@@ -26,7 +27,7 @@ class MqttManager {
   }
 
   /// Il posto selezionato dall'utente
-  static Place? place;
+  static ValueNotifier<Place?> place = ValueNotifier(null);
 
   /// Il MAC address del dispositivo
   late MacAddress mac;
@@ -50,8 +51,10 @@ class MqttManager {
   /// e prova a connettersi al server MQTT.
   Future<MqttServerClient> _loginFromSecureStorage() async {
     if (await PrefManager().areMqttDataSaved()) {
-      final String username = await PrefManager().read(C.pref.mqttUsername) as String;
-      final String password = await PrefManager().read(C.pref.mqttPassword) as String;
+      final String username =
+          await PrefManager().read(C.pref.mqttUsername) as String;
+      final String password =
+          await PrefManager().read(C.pref.mqttPassword) as String;
       Log.d('Credenziali lette');
 
       try {
@@ -77,7 +80,8 @@ class MqttManager {
       return await _loginFromSecureStorage();
     } catch (e) {
       // Ottiene nuove credenziali dal server
-      final Map<String, String> creds = await AccountManager().getMqttCredentials();
+      final Map<String, String> creds =
+          await AccountManager().getMqttCredentials();
       // Salva le credenziali nel secure storage
       PrefManager().write(C.pref.mqttUsername, creds['username']!);
       PrefManager().write(C.pref.mqttPassword, creds['password']!);
@@ -98,7 +102,6 @@ class MqttManager {
     client.logging(on: false);
 
     try {
-
       Log.d('Connessione al server MQTT');
       MqttConnectionStatus? status = await client.connect(username, password);
       while (status?.state == MqttConnectionState.connecting) {
@@ -111,11 +114,9 @@ class MqttManager {
       } else {
         return Future.error("Errore di connessione");
       }
-
     } catch (e) {
       return Future.error("Errore: $e");
     }
-
   }
 
   /// Metodo per inviare un messaggio al server MQTT
@@ -150,13 +151,12 @@ class MqttManager {
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
     // Aggiunge il posto selezionato, se presente
-    if (place != null) {
-      payload['place'] = place?.id;
+    if (place.value != null) {
+      payload['place'] = place.value?.id;
     }
 
     // Invia il payload combinato
     _sendDict('$topic${C.mqtt.combinedTopic}', payload);
-
   }
 
   /// Pubblica un messaggio di debug.
@@ -172,13 +172,12 @@ class MqttManager {
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
     // Aggiunge il posto selezionato, se presente
-    if (place != null) {
-      payload['place'] = place?.id;
+    if (place.value != null) {
+      payload['place'] = place.value?.id;
     }
 
     // Invia il payload combinato
     _sendDict('$topic${C.mqtt.combinedTopic}', payload);
-
   }
 
   /// Pubblica un messaggio di feedback.
@@ -194,8 +193,8 @@ class MqttManager {
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
     // Aggiunge il posto selezionato, se presente
-    if (place != null) {
-      payload['place'] = place?.id;
+    if (place.value != null) {
+      payload['place'] = place.value?.id;
     }
 
     // Invia il payload combinato
@@ -214,8 +213,8 @@ class MqttManager {
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
     // Aggiunge il posto selezionato, se presente
-    if (place != null) {
-      payload['place'] = place?.id;
+    if (place.value != null) {
+      payload['place'] = place.value?.id;
     }
     // Invia il payload combinato
     _sendDict('$topic${C.mqtt.combinedTopic}', payload);

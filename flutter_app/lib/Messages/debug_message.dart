@@ -5,8 +5,10 @@ import 'package:flutter_app/Messages/message.dart';
 class DebugMessage extends Message {
   /// Valore grezzo del sensore
   late final int rawData;
+
   /// Temperatura in gradi Celsius
   late final int temperature;
+
   /// Umidità in percentuale
   late final int humidity;
 

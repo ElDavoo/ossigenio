@@ -5,7 +5,6 @@ import '../utils/log.dart';
 
 /// Manager che salva e carica dati dallo storage sicuro
 class PrefManager {
-
   static final PrefManager _instance = PrefManager._internal();
   static const FlutterSecureStorage _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),

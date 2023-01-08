@@ -158,8 +158,6 @@ class BLEManager extends ChangeNotifier {
     return;
   }
 
-
-
   /// Si disconnette dal dispositivo.
   void disconnect(Device device) {
     device.device.disconnect();

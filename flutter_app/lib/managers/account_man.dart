@@ -168,7 +168,8 @@ class AccountManager {
 
       String cookie = await PrefManager().read(C.pref.cookie) as String;
 
-      Response response = await dio.post(C.acc.urlCheckMac, data: body,
+      Response response = await dio.post(C.acc.urlCheckMac,
+          data: body,
           options: Options(headers: {
             'Cookie': cookie,
           }));

@@ -13,17 +13,15 @@ class BTUart {
   static Future<BTUart> fromDevice(BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
     List<BluetoothCharacteristic> uartCharacteristics = services
-        .firstWhere(
-            (service) => service.uuid.toString() == C.bt.nordicUARTID)
+        .firstWhere((service) => service.uuid.toString() == C.bt.nordicUARTID)
         .characteristics;
-    BluetoothCharacteristic rxCharacteristic =
-    uartCharacteristics.firstWhere((characteristic) =>
-    characteristic.uuid.toString() == C.bt.nordicUARTRXID);
-    BluetoothCharacteristic txCharacteristic =
-    uartCharacteristics.firstWhere((characteristic) =>
-    characteristic.uuid.toString() == C.bt.nordicUARTTXID);
+    BluetoothCharacteristic rxCharacteristic = uartCharacteristics.firstWhere(
+        (characteristic) =>
+            characteristic.uuid.toString() == C.bt.nordicUARTRXID);
+    BluetoothCharacteristic txCharacteristic = uartCharacteristics.firstWhere(
+        (characteristic) =>
+            characteristic.uuid.toString() == C.bt.nordicUARTTXID);
     txCharacteristic.setNotifyValue(true);
     return BTUart(rxCharacteristic, txCharacteristic);
-
   }
 }
