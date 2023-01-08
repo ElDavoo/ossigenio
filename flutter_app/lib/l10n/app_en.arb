@@ -22,5 +22,13 @@
     "map": "Map",
     "@map": {
       "description": "Map button"
+    },
+    "feedbackSent": "Feedback sent, thank you!",
+    "@feedbackSent": {
+      "description": "Message when feedback is sent"
+    },
+    "waitForHeating": "Wait for the sensor to heat up before sending feedback",
+    "@waitForHeating": {
+      "description": "Message when user tries to send feedback before the sensor is heated up"
     }
 }

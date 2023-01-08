@@ -22,5 +22,13 @@
     "map": "Mappa",
     "@map": {
       "description": "Testo del pulsante di mappa"
+    },
+    "feedbackSent": "Feedback inviato, grazie!",
+    "@feedbackSent": {
+      "description": "Messaggio di conferma invio feedback"
+    },
+    "waitForHeating": "Attendere il riscaldamento prima di mandare il feedback",
+    "@waitForHeating": {
+      "description": "Messaggio di attesa riscaldamento prima di mandare il feedback"
     }
 }

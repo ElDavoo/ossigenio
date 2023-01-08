@@ -96,6 +96,10 @@ class Device extends ChangeNotifier {
         // Il sensore è pronto se la differenza tra la temperatura
         // del sensore vicino e quella del sensore lontano è maggiore di 3
         isHeating = (msg.rawData - msg.temperature).abs() <= 3;
+        // Fix, quando il sensore sta partendo, la temperatura è 0
+        if (msg.rawData == 0) {
+          isHeating = true;
+        }
         if (!isHeating) {
           // Riprogrammiamo il timer per chiedere messaggi
           // meno frequentemente
@@ -112,7 +116,7 @@ class Device extends ChangeNotifier {
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest3));
     Future.delayed(const Duration(milliseconds: 600))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest1));
-    Future.delayed(const Duration(milliseconds: 900))
+    Future.delayed(const Duration(milliseconds: 2000))
         .then((value) => BLEManager.sendMsg(this, MessageTypes.msgRequest0));
 
     // Chiede un messaggio di debug ogni 30 secondi

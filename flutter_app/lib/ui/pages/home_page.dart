@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
-import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -22,35 +21,18 @@ import 'map_page.dart';
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
-  //BLEManager bleManager = BLEManager();
-  // get BLEManager from ChangeNotifierProvider
 
-  StreamSubscription? _log;
+  late final StreamSubscription _log;
 
   void _init() {
-    // Read the device mac address from shared preferences
-    PrefManager().read(C.pref.deviceMac).then((value) {
-      /*if (value != null) {
-        // Attempt to connect to the device
-        bleManager.connectToDevice(value);
-      }*/
-    });
     _log = Log.addListener(context);
-    // Add a disconnection event
+    // Mostra l'overlay di feedback quando arriva il feedback
     BLEManager().devicestream.stream.listen((event) {
       if (BLEManager().dvc != null) {
         BLEManager()
@@ -67,7 +49,16 @@ class _MyHomePageState extends State<MyHomePage>
             .map((msg) => msg.message)
             .cast<FeedbackMessage>()
             .listen((event) {
+              // Manda il feedback solo se il sensore è caldo
+              if (BLEManager().dvc!.isHeating) {
+                Log.l(AppLocalizations.of(context)!.waitForHeating);
+              } else {
               _showOverlay(context, fbvalue: event.feedback);
+              // Mostra un messaggio di ringraziamento
+              Future.delayed(const Duration(seconds: 2), () {
+                Log.l(AppLocalizations.of(context)!.feedbackSent);
+              }
+              );}
             });
       }
     });
@@ -93,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     BLEManager().stopBLEScan();
-    _log?.cancel();
+    _log.cancel();
     super.dispose();
   }
 
