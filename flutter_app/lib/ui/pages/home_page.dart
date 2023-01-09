@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
+import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -57,11 +58,15 @@ class _HomePageState extends State<HomePage>
               if (BLEManager().dvc.value!.isHeating) {
                 Log.l(AppLocalizations.of(context)!.waitForHeating);
               } else {
-                _showOverlay(context, fbvalue: event.feedback);
-                // Mostra un messaggio di ringraziamento
-                Future.delayed(const Duration(seconds: 2), () {
-                  Log.l(AppLocalizations.of(context)!.feedbackSent);
-                });
+                if (MqttManager.place.value != null) {
+                  _showOverlay(context, fbvalue: event.feedback);
+                  // Mostra un messaggio di ringraziamento
+                  Future.delayed(const Duration(milliseconds: 1500), () {
+                    Log.l(AppLocalizations.of(context)!.feedbackSent);
+                  });
+                } else {
+                  Log.l(AppLocalizations.of(context)!.placeNotSelected);
+                }
               }
             });
       }
