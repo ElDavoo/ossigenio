@@ -87,9 +87,10 @@ def on_message(clnt, userdata, msg):
             conn.rollback()
 
 
+conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))
+
+
 def run():
-    conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))
-    global conn
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
