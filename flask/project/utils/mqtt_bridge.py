@@ -3,6 +3,7 @@ This python file saves the data from the MQTT broker
 to a postgresql database.
 """
 import os
+import threading
 from json import JSONDecodeError
 
 import psycopg2
@@ -15,6 +16,7 @@ from paho.mqtt.client import ssl
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     print("'SQLALCHEMY_DATABASE_URI'not set")
     exit(1)
+
 
 def conn_from_uri(uri):
     # Get the postgres uri from the environment variable
@@ -30,17 +32,16 @@ def conn_from_uri(uri):
     # get the database name
     db = uri_parts[1].split('/')[1].split('?')[0]
     # connect to the database with ssl
-    conn = psycopg2.connect(dbname=db, user=user, password=password, host=host, port=port, sslmode='require')
-    return conn
+    conne = psycopg2.connect(dbname=db, user=user, password=password, host=host, port=port, sslmode='require')
+    return conne
 
-conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))
 
-def on_connect(client, userdata, flags, rc):
+def on_connect(mclient, userdata, flags, rc):
     print("Connected with result code " + str(rc))
-    client.subscribe("sensors/+/combined")
+    mclient.subscribe("sensors/+/combined")
 
 
-def on_message(client, userdata, msg):
+def on_message(clnt, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
     # desjsonify the payload
     try:
@@ -64,13 +65,14 @@ def on_message(client, userdata, msg):
     cur = conn.cursor()
     # insert the sensor data into the database
     try:
-        cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, lat, lon) "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (sensor_id, timestamp, co2, humidity, rawdata, temperature, 0, 0))
+        cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, place) "
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                    (sensor_id, timestamp, co2, humidity, rawdata, temperature, place_id))
         conn.commit()
     except Exception as e:
         print(e)
         conn.rollback()
-    
+
     cur = conn.cursor()
     # insert the sensor data into the co2_history table
     if place_id:
@@ -80,29 +82,30 @@ def on_message(client, userdata, msg):
                         (place_id, timestamp, co2)
                         )
             conn.commit()
-        except Exception as e:
-            print(e)
+        except Exception as ex:
+            print(ex)
             conn.rollback()
 
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
-# only verify server certificate
-#client.tls_set(ca_certs=certifi.where(), cert_reqs=ssl.CERT_REQUIRED,
-#               tls_version=ssl.PROTOCOL_TLSv1_2)
-#client.tls_insecure_set(True)
-# set username and password
-client.username_pw_set("test", "test2")
+def run():
+    conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))
+    global conn
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    # only verify server certificate
+    # client.tls_set(ca_certs=certifi.where(), cert_reqs=ssl.CERT_REQUIRED,
+    #               tls_version=ssl.PROTOCOL_TLSv1_2)
+    # client.tls_insecure_set(True)
+    # set username and password
+    client.username_pw_set("test", "test2")
+    try:
+        print("Connecting to MQTT broker...")
+        client.connect("modena.davidepalma.it", 1883, 60)
+        client.loop_forever()
+    except Exception as e:
+        print(e)
 
-if __name__ != '__main__':
-    client.loop_start()
 
-try:
-    client.connect("modena.davidepalma.it", 1883, 60)
-    print("Connecting to MQTT broker...")
-except Exception as e:
-    print(e)
-
-if __name__ == "__main__":
-    client.loop_forever()
+def start():
+    return threading.Thread(target=run).start()
