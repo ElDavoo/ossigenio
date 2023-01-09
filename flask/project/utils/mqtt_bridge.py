@@ -56,6 +56,8 @@ def on_message(clnt, userdata, msg):
     rawdata = data.get('rawdata', None)
     temperature = data.get('temperature', None)
     place_id = data.get('place', None)
+    feedback = data.get('feedback', None)
+
 
     # set the timestamp as now
     timestamp = datetime.datetime.now()
@@ -65,9 +67,10 @@ def on_message(clnt, userdata, msg):
     cur = conn.cursor()
     # insert the sensor data into the database
     try:
-        cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, place) "
-                    "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                    (sensor_id, timestamp, co2, humidity, rawdata, temperature, place_id))
+        cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, "
+                    "place)"
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
+                    (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, place_id))
         conn.commit()
     except Exception as e:
         print(e)
