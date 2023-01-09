@@ -30,8 +30,8 @@ class NewHomePageState extends State<NewHomePage>
     // Se la posizione viene aggiornata e il luogo
     // selezionato non è più in lista, seleziona automaticamente
     // il null place
-    GpsManager().placeStream.stream.listen((event) {
-      if (!event.contains(MqttManager.place.value)) {
+    GpsManager().placeStream.addListener(() {
+      if (!GpsManager().placeStream.value.contains(MqttManager.place.value)) {
         setState(() {
           _onSelectedPlace(null);
         });

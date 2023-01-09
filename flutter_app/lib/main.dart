@@ -17,7 +17,7 @@ void initFMTC() async {
   await store.manage.createAsync();
   store.metadata.addAsync(
     key: 'sourceURL',
-    value: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    value: C.tileUrl,
   );
   store.metadata.addAsync(
     key: 'validDuration',

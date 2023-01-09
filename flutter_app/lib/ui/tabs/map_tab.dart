@@ -8,7 +8,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
-import 'package:latlong2/latlong.dart';
 
 import '../../managers/account_man.dart';
 import '../../utils/constants.dart';
@@ -106,10 +105,7 @@ class MapPageState extends State<MapPage>
 
   /// Chiede manualmente i luoghi al server
   void _refresh() {
-    AccountManager()
-        .getPlaces(LatLng(
-            GpsManager.position!.latitude, GpsManager.position!.longitude))
-        .then((value) {
+    AccountManager().getPlaces(GpsManager.position.value!).then((value) {
       _places = value;
       _onNearbyPlacesChanged(value);
     });
@@ -185,7 +181,7 @@ class MapPageState extends State<MapPage>
       ],
       children: [
         TileLayer(
-          urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+          urlTemplate: C.tileUrl,
           tileProvider: FMTC.instance(C.fmtcStoreName).getTileProvider(),
           maxNativeZoom: 18.0,
         ),

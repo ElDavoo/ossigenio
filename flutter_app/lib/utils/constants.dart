@@ -23,7 +23,10 @@ class C {
   /// Bound per restringere la mappa all'italia
   static LatLngBounds italyBounds = LatLngBounds(LatLng(48, 6), LatLng(36, 19));
 
-  static String fmtcStoreName = 'fmtc_store';
+  static const String fmtcStoreName = 'fmtc_store';
+
+  static const String tileUrl =
+      "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   static String catchWord(BuildContext context, int co2level) {
     if (co2level <= quotas.excellent) {

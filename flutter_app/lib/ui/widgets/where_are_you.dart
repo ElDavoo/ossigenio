@@ -20,20 +20,25 @@ class WhereAreYou extends StatefulWidget {
 
 class WhereAreYouState extends State<WhereAreYou> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(AppLocalizations.of(context)!.whereAreYou,
             style: const TextStyle(fontSize: 22)),
-        //Padding to separate the text from the dropdown
-        //const Padding(padding: EdgeInsets.all(10.0)),
-        StreamBuilder(
-          stream: GpsManager().placeStream.stream,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
+        ValueListenableBuilder(
+            valueListenable: GpsManager().placeStream,
+            builder: (context, place, _) {
+              if (place.isEmpty) {
+                return UI.spinText(AppLocalizations.of(context)!.loading);
+              }
               List<DropdownMenuItem<Place>> items =
-                  snapshot.data.map<DropdownMenuItem<Place>>((Place value) {
+                  place.map<DropdownMenuItem<Place>>((Place value) {
                 return DropdownMenuItem<Place>(
                   value: value,
                   child: Text(value.name),
@@ -52,11 +57,7 @@ class WhereAreYouState extends State<WhereAreYou> {
                 },
                 items: items,
               );
-            } else {
-              return UI.spinText(AppLocalizations.of(context)!.loading);
-            }
-          },
-        )
+            }),
       ],
     );
   }

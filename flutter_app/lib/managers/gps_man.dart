@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/managers/account_man.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -22,15 +23,14 @@ class GpsManager {
   );
 
   /// L'ultima posizione dell'utente
-  static LatLng? position;
+  static final ValueNotifier<LatLng?> position = ValueNotifier(null);
 
   /// Lo stream di posizioni
   final Stream<Position> _poStream =
       Geolocator.getPositionStream(locationSettings: _locationSettings);
 
   /// Stream di posti vicini all'utente
-  final StreamController<List<Place>> placeStream =
-      StreamController<List<Place>>.broadcast();
+  final ValueNotifier<List<Place>> placeStream = ValueNotifier([]);
 
   GpsManager._internal() {
     Log.d("Inizializzazione");
@@ -40,12 +40,12 @@ class GpsManager {
       return LatLng(event.latitude, event.longitude);
     }).listen((event) {
       Log.d('Posizione aggiornata');
-      position = event;
+      position.value = event;
       // Ottiene la lista dei luoghi vicini e la aggiunge
       AccountManager()
           .getNearbyPlaces(LatLng(event.latitude, event.longitude))
           .then((list) {
-        placeStream.add(list);
+        placeStream.value = list;
       });
     });
     Log.d('Inizializzato');
@@ -59,15 +59,14 @@ class GpsManager {
   /// meno rigidi, per velocizzare l'avvio dell'app.
   static bool _filterEvent(Position pos) {
     // Criteri se la posizione è la prima
-    if (position == null) {
+    if (position.value == null) {
       return pos.accuracy < 50 && pos.speed < 10 && !pos.isMocked;
     }
 
     // Non considerare posizioni a meno di 30 metri dall'ultima
-    if (position != null &&
-        Geolocator.distanceBetween(pos.latitude, pos.longitude,
-                position!.latitude, position!.longitude) <
-            30) {
+    if (Geolocator.distanceBetween(pos.latitude, pos.longitude,
+            position.value!.latitude, position.value!.longitude) <
+        30) {
       return false;
     }
 
