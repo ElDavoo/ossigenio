@@ -248,9 +248,9 @@ class RangeQuotas {
 
   int get acceptable => 1000;
 
-  int get bad => 1300;
+  int get bad => 1500;
 
-  int get veryBad => 1700;
+  int get veryBad => 2500;
 
-  int get dangerous => 2500;
+  int get dangerous => 4000;
 }
