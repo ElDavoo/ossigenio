@@ -2,8 +2,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 
 import '../../managers/account_man.dart';
+import '../../utils/constants.dart';
 import '../../utils/place.dart';
 import '../../utils/prediction.dart';
 
@@ -29,8 +31,11 @@ class PredictionPlaceState extends State<PredictionPlace> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: NewGradientAppBar(
         title: Text(widget.place.name),
+        gradient: LinearGradient(
+          colors: [C.colors.blue1, C.colors.blue2],
+        ),
       ),
       body: Container(
         decoration: UI.gradientBox(),

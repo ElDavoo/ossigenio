@@ -305,6 +305,7 @@ class _HomePageState extends State<HomePage>
           ),
           leading: IconButton(
             icon: const Icon(Icons.no_accounts),
+            color: Colors.white,
             onPressed: () {
               // Show a dialog to confirm logout
               _buildLogoutDialog(context);

@@ -76,6 +76,7 @@ class AppState extends State<App> {
       theme: ThemeData(
         // Colore principale dell'applicazione
         primarySwatch: Colors.blue,
+        useMaterial3: true,
       ),
       home: widget.initialWidget,
     );
