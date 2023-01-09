@@ -22,7 +22,7 @@ class HomeTab extends StatefulWidget {
 
 class HomeTabState extends State<HomeTab>
     with AutomaticKeepAliveClientMixin<HomeTab> {
-  String name = 'null';
+  String name = '';
 
   @override
   void initState() {
@@ -122,6 +122,18 @@ class HomeTabState extends State<HomeTab>
               ValueListenableBuilder(
                   valueListenable: MqttManager.place,
                   builder: (context, place, _) {
+                    if (place != null) {
+                      return ValueListenableBuilder(
+                          valueListenable: BLEManager().dvc,
+                          builder: (context, device, _) {
+                            if (device == null) {
+                              return UI.buildCard(
+                                  AirQualityPlace(placeId: place.id));
+                            } else {
+                              return const SizedBox();
+                            }
+                          });
+                    }
                     if (place != null && BLEManager().dvc.value == null) {
                       return UI.buildCard(AirQualityPlace(placeId: place.id));
                     }

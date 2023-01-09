@@ -10,7 +10,7 @@ class UI {
   /// affiancato da una unità di misura
   static Widget verticalSlider(int baseline, int value, String unit) {
     return Padding(
-        padding: const EdgeInsets.fromLTRB(70, 0, 0, 0),
+        padding: const EdgeInsets.fromLTRB(75, 0, 0, 0),
         child: SfSliderTheme(
             data: SfSliderThemeData(
               activeTrackHeight: 7,
