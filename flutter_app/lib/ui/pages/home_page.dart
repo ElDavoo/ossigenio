@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage>
 
   /// Lista delle pagine da mostrare
   final List<Widget> _pages = <Widget>[
-    const NewHomePage(),
+    const HomeTab(),
     const MapPage(),
   ];
 

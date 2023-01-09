@@ -13,15 +13,15 @@ import '../../utils/place.dart';
 import '../widgets/air_quality_device.dart';
 import '../widgets/air_quality_place.dart';
 
-class NewHomePage extends StatefulWidget {
-  const NewHomePage({Key? key}) : super(key: key);
+class HomeTab extends StatefulWidget {
+  const HomeTab({Key? key}) : super(key: key);
 
   @override
-  NewHomePageState createState() => NewHomePageState();
+  HomeTabState createState() => HomeTabState();
 }
 
-class NewHomePageState extends State<NewHomePage>
-    with AutomaticKeepAliveClientMixin<NewHomePage> {
+class HomeTabState extends State<HomeTab>
+    with AutomaticKeepAliveClientMixin<HomeTab> {
   String name = 'null';
 
   @override
