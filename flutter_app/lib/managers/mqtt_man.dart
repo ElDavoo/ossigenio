@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_app/Messages/feedback_message.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
 import 'package:flutter_app/managers/account_man.dart';
+import 'package:flutter_app/managers/ble_man.dart';
 import 'package:flutter_app/managers/pref_man.dart';
 import 'package:mqtt5_client/mqtt5_client.dart';
 import 'package:mqtt5_client/mqtt5_server_client.dart';
@@ -129,6 +130,13 @@ class MqttManager {
     // Aggiunge il posto selezionato, se presente
     if (place.value == null) {
       Log.d("Nessun posto selezionato, non mando al server");
+      return;
+    }
+
+    // Non mandare se il sensore si sta riscaldando
+    if (BLEManager().dvc.value?.isHeating == true) {
+      Log.d("Il sensore si sta riscaldando, non mando al server");
+      return;
     }
 
     // Chiama la funzione specifica in base al tipo di messaggio
