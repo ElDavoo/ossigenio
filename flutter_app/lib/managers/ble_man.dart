@@ -41,7 +41,7 @@ class BLEManager extends ChangeNotifier {
     _scanstream.stream.listen((event) {
       Log.d("Scan result received, trying to connect...");
       connectToDevice(event).catchError((e) {
-        Log.l("Errore durante la connessione: $e");
+        Log.d("Errore durante la connessione: $e");
         event.device.disconnect();
         startBLEScan();
       });
