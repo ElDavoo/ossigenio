@@ -54,6 +54,7 @@ def on_message(client, userdata, msg):
     humidity = data.get('humidity', None)
     rawdata = data.get('rawdata', None)
     temperature = data.get('temperature', None)
+    place_id = data.get('place', None)
 
     # set the timestamp as now
     timestamp = datetime.datetime.now()
@@ -66,6 +67,12 @@ def on_message(client, userdata, msg):
         cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, lat, lon) "
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (sensor_id, timestamp, co2, humidity, rawdata, temperature, 0, 0))
         conn.commit()
+        if place_id:
+            cur = conn.cursor()
+            cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES(%s, %s, %s);",
+                        (place_id, timestamp, co2)
+                        )
+            conn.commit()
     except Exception as e:
         print(e)
         conn.rollback()
