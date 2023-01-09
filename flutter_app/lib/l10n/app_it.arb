@@ -1,0 +1,210 @@
+{
+    "title": "Ossigenio",
+    "@title": {
+      "description": "Titolo della pagina"
+    },
+    "login": "Login",
+    "@login": {
+      "description": "Login"
+    },
+    "signup": "Registrati",
+    "@signup": {
+      "description": "Registrati"
+    },
+    "signupFailed": "Registrazione fallita",
+    "@signupFailed": {
+      "description": "Registrazione fallita"
+    },
+    "logout": "Esci",
+    "@logout": {
+      "description": "Testo del pulsante di logout"
+    },
+    "logoutConfirmMessage": "Sei sicuro di voler uscire?",
+    "@logoutConfirmMessage": {
+      "description": "Messaggio di conferma di logout"
+    },
+    "cancel": "Annulla",
+    "@cancel": {
+      "description": "Testo del pulsante di annullamento"
+    },
+    "home": "Home",
+    "@home": {
+      "description": "Testo del pulsante di home"
+    },
+    "map": "Mappa",
+    "@map": {
+      "description": "Testo del pulsante di mappa"
+    },
+    "feedbackSent": "Feedback inviato, grazie!",
+    "@feedbackSent": {
+      "description": "Messaggio di conferma invio feedback"
+    },
+    "waitForHeating": "Attendere il riscaldamento prima di mandare il feedback",
+    "@waitForHeating": {
+      "description": "Messaggio di attesa riscaldamento prima di mandare il feedback"
+    },
+    "email": "Email",
+    "@email": {
+      "description": "Testo del campo email"
+    },
+    "password": "Password",
+    "@password": {
+      "description": "Testo del campo password"
+    },
+    "greeting": "Ciao, ",
+    "@greeting": {
+        "description": "Saluta l'utente"
+    },
+    "predictionPlaceSummary": "Al momento a {name} ci sono {ppm} ppm di CO2",
+    "@predictionPlaceSummary": {
+        "description": "Riassunto della previsione per un luogo",
+        "placeholders": {
+            "name": {
+                "type": "String",
+                "example": "DIEF"
+            },
+            "ppm": {
+                "type": "int",
+                "example": "400"
+            }
+        }
+    },
+    "predictionIntro": "Le previsioni per le prossime 24 ore sono:",
+    "@predictionIntro": {
+        "description": "Introduzione alle previsioni"
+    },
+    "predictionLoading": "Sto predicendo il futuro...",
+    "@predictionLoading": {
+        "description": "Messaggio di caricamento delle previsioni"
+    },
+    "username": "Nome",
+    "@username": {
+        "description": "Testo del campo username"
+    },
+    "placeSelected": "Luogo selezionato: {place}",
+    "@placeSelected": {
+        "description": "Messaggio di luogo selezionato",
+        "placeholders": {
+            "place": {
+                "type": "String",
+                "example": "DIEF"
+            }
+        }
+    },
+    "placeNotSelected": "Nessun luogo selezionato",
+    "@placeNotSelected": {
+        "description": "Messaggio di nessun luogo selezionato"
+    },
+    "actualCO2": "CO2 attuale: {co2} ppm",
+    "@actualCO2": {
+        "description": "Messaggio di CO2 attuale",
+        "placeholders": {
+            "co2": {
+                "type": "int",
+                "example": "400"
+            }
+        }
+    },
+    "predictions": "Previsioni",
+    "@predictions": {
+        "description": "Testo del pulsante di previsioni"
+    },
+    "sensorWarmingWarning": "Il sensore si sta riscaldando.\nI valori potrebbero non essere precisi",
+    "@sensorWarmingWarning": {
+        "description": "Messaggio di avviso di riscaldamento sensore"
+    },
+    "airQualityIs": "La qualità dell'aria è",
+    "@airQualityIs": {
+        "description": "Messaggio di qualità dell'aria"
+    },
+    "tempHum": "Temperatura: {temp}°C\nUmidità: {hum}%",
+    "@tempHum": {
+        "description": "Messaggio di temperatura e umidità",
+        "placeholders": {
+            "temp": {
+                "type": "int",
+                "example": "20"
+            },
+            "hum": {
+                "type": "int",
+                "example": "50"
+            }
+        }
+    },
+    "co2Explanation": "Misurare la concentrazione di anidride carbonica nell'aria è importante per assicurare un ambiente sano e confortevole. Un livello di CO2 troppo alto può causare sonnolenza, mal di testa, perdita di concentrazione e altri sintomi. La CO2 viene misurata in PPM (parti per milione).",
+    "@co2Explanation": {
+        "description": "Spiegazione CO2"
+    },
+    "excellent": "eccellente!",
+    "@excellent": {
+        "description": "Messaggio di qualità dell'aria eccellente"
+    },
+    "verygood": "ottima",
+    "@verygood": {
+        "description": "Messaggio di qualità dell'aria ottima"
+    },
+    "good": "buona",
+    "@good": {
+        "description": "Messaggio di qualità dell'aria buona"
+    },
+    "acceptable": "accettabile",
+    "@acceptable": {
+        "description": "Messaggio di qualità dell'aria accettabile"
+    },
+    "bad": "scarsa",
+    "@bad": {
+        "description": "Messaggio di qualità dell'aria scarsa"
+    },
+    "verybad": "pessima",
+    "@verybad": {
+        "description": "Messaggio di qualità dell'aria pessima"
+    },
+    "dangerous": "pericolosa",
+    "@dangerous": {
+        "description": "Messaggio di qualità dell'aria pericolosa"
+    },
+    "excellentExplanation": "La qualità dell'aria è eccellente. Non ci sono particolari problemi di inquinamento.",
+    "@excellentExplanation": {
+        "description": "Spiegazione qualità dell'aria eccellente"
+    },
+    "verygoodExplanation": "La qualità dell'aria è ottima. Normali valori riscontrabili all'aperto in città.",
+    "@verygoodExplanation": {
+        "description": "Spiegazione qualità dell'aria ottima"
+    },
+    "goodExplanation": "La qualità dell'aria è buona. Normali valori riscontrabili al chiuso.",
+    "@goodExplanation": {
+        "description": "Spiegazione qualità dell'aria buona"
+    },
+    "acceptableExplanation": "La qualità dell'aria è accettabile. Non ci sono particolari problemi di inquinamento; i soggetti con patologie respiratorie croniche potrebbero respirare con maggiore fatica.",
+    "@acceptableExplanation": {
+        "description": "Spiegazione qualità dell'aria accettabile"
+    },
+    "badExplanation": "La qualità dell'aria è scarsa. I soggetti con patologie respiratorie croniche potrebbero lamentare problemi di dispnea e/o tosse.",
+    "@badExplanation": {
+        "description": "Spiegazione qualità dell'aria scarsa"
+    },
+    "verybadExplanation": "La qualità dell'aria è pessima. Si può andare incontro a problemi cognitivi e a sostenere attività fisica.",
+    "@verybadExplanation": {
+        "description": "Spiegazione qualità dell'aria pessima"
+    },
+    "dangerousExplanation": "La qualità dell'aria è pericolosa. Altissimi rischi per la propria salute!",
+    "@dangerousExplanation": {
+        "description": "Spiegazione qualità dell'aria pericolosa"
+    },
+    "connectingToSensor": "Connessione al sensore...",
+    "@connectingToSensor": {
+        "description": "Messaggio di connessione al sensore"
+    },
+    "loading": "Caricamento...",
+    "@loading": {
+        "description": "Messaggio di caricamento"
+    },
+    "whereAreYou": "Dove sei?",
+    "@whereAreYou": {
+        "description": "Messaggio di dove sei"
+    },
+    "noPlaceSelected": "Nessun luogo selezionato",
+    "@noPlaceSelected": {
+        "description": "Messaggio di nessun luogo selezionato"
+    }
+}

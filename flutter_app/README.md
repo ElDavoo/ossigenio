@@ -1,16 +1,21 @@
-# flutter_app
+# Ossigenio Companion app
 
-IoT project
+Questa è l'applicazione mobile per il progetto Ossigenio.
 
-## Getting Started
+## Funzionalità
 
-This project is a starting point for a Flutter application.
+### Collegamento con il dispositivo Ossigenio
 
-A few resources to get you started if this is your first Flutter project:
+Consente di monitorare la qualità dell'aria vicino a sè grazie al sensore correlato. Quando il
+sensore è collegato e viene selezionato in quale stanza ci si trova, l'applicazione manderà i dati
+raccolti al server.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Mappa
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Si possono visualizzare le informazioni raccolte dai sensori presenti nei luoghi di studio, sia
+quelli vicini sia quelli più lontani, grazie ad una mappa interattiva.
+
+## Tecnologia
+
+L'applicazione è stata sviluppata con Flutter, un framework per lo sviluppo di applicazioni mobile
+cross-platform.
