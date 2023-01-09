@@ -104,7 +104,7 @@ class NewHomePageState extends State<NewHomePage>
     super.build(context);
     return SingleChildScrollView(
       child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 32, 24, 16),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
           child: Column(
             children: <Widget>[
               UI.buildCard(

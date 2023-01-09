@@ -126,20 +126,25 @@ class MqttManager {
       Log.d('Not connected to mqtt server');
       return;
     }
+    // Aggiunge il posto selezionato, se presente
+    if (place.value == null) {
+      Log.d("Nessun posto selezionato, non mando al server");
+    }
+
     // Chiama la funzione specifica in base al tipo di messaggio
     if (message is CO2Message) {
-      _publishCo2(message);
+      _publishCo2(message, place.value!.id);
     } else if (message is DebugMessage) {
-      _publishDebug(message);
+      // _publishDebug(message);
     } else if (message is FeedbackMessage) {
-      _publishFeedback(message);
+      _publishFeedback(message, place.value!.id);
     } else if (message is StartupMessage) {
-      _publishStartup(message);
+      // _publishStartup(message);
     }
   }
 
   /// Pubblica un messaggio di CO2.
-  void _publishCo2(CO2Message message) {
+  void _publishCo2(CO2Message message, int placeId) {
     final int deviceId = mac.toInt();
 
     final String topic = '${C.mqtt.rootTopic}$deviceId/';
@@ -147,13 +152,12 @@ class MqttManager {
     _sendInt('$topic${C.mqtt.co2Topic}', message.co2);
     _sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     _sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
+    _sendInt('$topic${C.mqtt.placeTopic}', placeId);
 
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
     // Aggiunge il posto selezionato, se presente
-    if (place.value != null) {
-      payload['place'] = place.value?.id;
-    }
+    payload['place'] = placeId;
 
     // Invia il payload combinato
     _sendDict('$topic${C.mqtt.combinedTopic}', payload);
@@ -171,7 +175,6 @@ class MqttManager {
 
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
-    // Aggiunge il posto selezionato, se presente
     if (place.value != null) {
       payload['place'] = place.value?.id;
     }
@@ -181,7 +184,7 @@ class MqttManager {
   }
 
   /// Pubblica un messaggio di feedback.
-  void _publishFeedback(FeedbackMessage message) {
+  void _publishFeedback(FeedbackMessage message, int placeId) {
     final int deviceId = mac.toInt();
     final String topic = '${C.mqtt.rootTopic}$deviceId/';
 
@@ -189,13 +192,12 @@ class MqttManager {
     _sendInt('$topic${C.mqtt.humidityTopic}', message.humidity);
     _sendInt('$topic${C.mqtt.temperatureTopic}', message.temperature);
     _sendInt('$topic${C.mqtt.feedbackTopic}', message.feedback.index);
+    _sendInt('$topic${C.mqtt.placeTopic}', place.value!.id);
 
     // Costruisce il messaggio combinato
     Map<String, dynamic> payload = message.toDict();
     // Aggiunge il posto selezionato, se presente
-    if (place.value != null) {
-      payload['place'] = place.value?.id;
-    }
+    payload['place'] = placeId;
 
     // Invia il payload combinato
     _sendDict('$topic${C.mqtt.combinedTopic}', payload);

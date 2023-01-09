@@ -163,6 +163,8 @@ class MqttConsts {
 
   String get batteryTopic => 'battery';
 
+  String get placeTopic => 'place';
+
   String get combinedTopic => 'combined';
 
   int get mqttPort => 1883;
