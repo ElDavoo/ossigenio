@@ -62,7 +62,7 @@ def on_message(client, userdata, msg):
     sensor_id = msg.topic.split('/')[1]
 
     cur = conn.cursor()
-    # insert the data into the database
+    # insert the sensor data into the database
     try:
         cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, lat, lon) "
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (sensor_id, timestamp, co2, humidity, rawdata, temperature, 0, 0))
@@ -72,6 +72,7 @@ def on_message(client, userdata, msg):
         conn.rollback()
     
     cur = conn.cursor()
+    # insert the sensor data into the co2_history table
     if place_id:
         try:
             cur = conn.cursor()
