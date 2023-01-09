@@ -53,26 +53,26 @@ class GpsManager {
 
   /// Filtra le posizioni ricevute
   ///
-  /// Questp metodo filtra le posizioni ricevute in modo da non
+  /// Questo metodo filtra le posizioni ricevute in modo da non
   /// aggiornare la posizione se non è precisa o non è cambiata.
   /// Tuttavia, la prima posizione sarà ottenuta con criteri
   /// meno rigidi, per velocizzare l'avvio dell'app.
   static bool _filterEvent(Position pos) {
     // Criteri se la posizione è la prima
     if (position.value == null) {
-      return pos.accuracy < 50 && pos.speed < 10 && !pos.isMocked;
+      return pos.accuracy < 80 && pos.speed < 15 && !pos.isMocked;
     }
 
-    // Non considerare posizioni a meno di 30 metri dall'ultima
+    // Non considerare posizioni a meno di 20 metri dall'ultima
     if (Geolocator.distanceBetween(pos.latitude, pos.longitude,
             position.value!.latitude, position.value!.longitude) <
-        30) {
+        20) {
       return false;
     }
 
     return !pos.isMocked &&
-        pos.accuracy < 30 &&
-        pos.speed < 3 &&
+        pos.accuracy < 40 &&
+        pos.speed < 4 &&
         pos.speedAccuracy < 2;
   }
 }
