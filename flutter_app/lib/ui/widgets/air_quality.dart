@@ -72,7 +72,7 @@ class AirQualityState extends State<AirQuality> {
 
         // FIXME
         SizedBox(
-          height: 390,
+          height: 450,
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
