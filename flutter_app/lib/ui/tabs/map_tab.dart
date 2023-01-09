@@ -1,7 +1,3 @@
-/*
-This class files implements a stateful widget which shows a map
- */
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -11,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../managers/account_man.dart';
@@ -18,6 +15,7 @@ import '../../utils/constants.dart';
 import '../../utils/place.dart';
 import '../../utils/ui.dart';
 
+/// UI della mappa
 class MapPage extends StatefulWidget {
   const MapPage({Key? key}) : super(key: key);
 
@@ -187,8 +185,8 @@ class MapPageState extends State<MapPage>
       ],
       children: [
         TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'it.eldavo.aqm',
+          urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+          tileProvider: FMTC.instance(C.fmtcStoreName).getTileProvider(),
           maxNativeZoom: 18.0,
         ),
         CurrentLocationLayer(

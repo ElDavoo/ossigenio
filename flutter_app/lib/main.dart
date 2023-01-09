@@ -6,9 +6,28 @@ import 'package:flutter_app/managers/pref_man.dart';
 import 'package:flutter_app/ui/pages/login_page.dart';
 import 'package:flutter_app/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_map_tile_caching/flutter_map_tile_caching.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import 'ui/pages/home_page.dart';
+
+void initFMTC() async {
+  FlutterMapTileCaching.initialise(await RootDirectory.temporaryCache);
+  final StoreDirectory store = FMTC.instance(C.fmtcStoreName);
+  await store.manage.createAsync();
+  store.metadata.addAsync(
+    key: 'sourceURL',
+    value: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+  );
+  store.metadata.addAsync(
+    key: 'validDuration',
+    value: '14',
+  );
+  store.metadata.addAsync(
+    key: 'behaviour',
+    value: 'cacheFirst',
+  );
+}
 
 void main() {
   final WidgetsBinding widgetsBinding =
@@ -20,6 +39,7 @@ void main() {
     // Iniziamo a inizializzare i manager
     PrefManager();
     PermissionManager().checkPermissions();
+    initFMTC();
     // Se l'utente è già loggato, avviamo la HomePage
     PrefManager().read(C.pref.cookie).then((value) {
       if (value != null) {
