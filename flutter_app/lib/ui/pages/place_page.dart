@@ -50,59 +50,62 @@ class PredictionPlaceState extends State<PredictionPlace> {
                 child: Text(
                   AppLocalizations.of(context)!.predictionPlaceSummary(
                       widget.place.name, widget.place.co2Level),
-                  style: const TextStyle(fontSize: 40),
+                  style: const TextStyle(fontSize: 32),
                   textAlign: TextAlign.center,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(AppLocalizations.of(context)!.predictionIntro,
-                    style: const TextStyle(fontSize: 30)),
+                    style: const TextStyle(fontSize: 24)),
               ),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: SizedBox(
-                  height: 300,
-                  child: FutureBuilder<List<Prediction>>(
-                      future: future,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return LineChart(
-                            LineChartData(
-                              lineTouchData: LineTouchData(enabled: false),
-                              gridData: FlGridData(show: false),
-                              titlesData: FlTitlesData(
-                                show: true,
-                                topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Container(
+                    constraints:
+                        const BoxConstraints(minHeight: 100, maxHeight: 400),
+                    child: FutureBuilder<List<Prediction>>(
+                        future: future,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return LineChart(
+                              LineChartData(
+                                lineTouchData: LineTouchData(enabled: false),
+                                gridData: FlGridData(show: false),
+                                titlesData: FlTitlesData(
+                                  show: true,
+                                  topTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false),
+                                  ),
+                                  leftTitles: AxisTitles(
+                                    sideTitles: SideTitles(showTitles: false),
+                                  ),
+                                  bottomTitles: rightTitles(),
                                 ),
-                                leftTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false),
-                                ),
-                                bottomTitles: rightTitles(),
+                                borderData: FlBorderData(show: false),
+                                minX: 0,
+                                maxX: 24,
+                                minY: 400,
+                                lineBarsData: [
+                                  LineChartBarData(
+                                    spots: getSpots(snapshot.data!),
+                                    isCurved: true,
+                                    barWidth: 3,
+                                    isStrokeCapRound: true,
+                                    dotData: FlDotData(show: false),
+                                    belowBarData: BarAreaData(show: false),
+                                  ),
+                                ],
                               ),
-                              borderData: FlBorderData(show: false),
-                              minX: 0,
-                              maxX: 24,
-                              minY: 400,
-                              lineBarsData: [
-                                LineChartBarData(
-                                  spots: getSpots(snapshot.data!),
-                                  isCurved: true,
-                                  barWidth: 3,
-                                  isStrokeCapRound: true,
-                                  dotData: FlDotData(show: false),
-                                  belowBarData: BarAreaData(show: false),
-                                ),
-                              ],
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-                        return UI.spinText(
-                            AppLocalizations.of(context)!.predictionLoading);
-                      }),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return UI.spinText(
+                              AppLocalizations.of(context)!.predictionLoading);
+                        }),
+                  ),
                 ),
               ),
             ],
@@ -138,7 +141,7 @@ class PredictionPlaceState extends State<PredictionPlace> {
       fontWeight: FontWeight.bold,
       color: Colors.black87,
       fontFamily: 'Digital',
-      fontSize: 16,
+      fontSize: 12,
     );
     return SideTitleWidget(
       axisSide: meta.axisSide,

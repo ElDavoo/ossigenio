@@ -41,24 +41,30 @@ class AirQualityState extends State<AirQuality> {
           Container(
             decoration: BoxDecoration(color: C.colors.isHeatingBg),
             width: double.infinity,
-            child: Center(
-              child: Row(
-                children: [
-                  const Text(
-                    '⚠️ ',
-                    style: TextStyle(fontSize: 40),
-                  ),
-                  Center(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      AppLocalizations.of(context)!.sensorWarmingWarning,
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 1.0, horizontal: 4),
+              child: Center(
+                child: Row(
+                  children: [
+                    const Text(
+                      '⚠️ ',
+                      style: TextStyle(fontSize: 40),
+                    ),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          AppLocalizations.of(context)!.sensorWarmingWarning,
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 18,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -72,7 +78,7 @@ class AirQualityState extends State<AirQuality> {
 
         // FIXME
         SizedBox(
-          height: 450,
+          height: 500,
           child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -87,7 +93,7 @@ class AirQualityState extends State<AirQuality> {
                         // Insert temperature
                         _buildExplanationText(
                             widget.co2, widget.temperature, widget.humidity),
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ),
                   ],

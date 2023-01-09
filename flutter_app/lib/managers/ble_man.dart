@@ -211,6 +211,9 @@ class BLEManager extends ChangeNotifier {
   ///
   /// Restituisce uno [Stream] che emette un [int] ogni 2 secondi.
   static Stream<int> rssiStream(Device device) async* {
+    // Fix per dispositivi che non supportano l'rssi
+    await Future.delayed(const Duration(seconds: 1));
+    yield -10;
     for (;;) {
       yield await device.device.readRssi();
       await Future.delayed(const Duration(seconds: 2));

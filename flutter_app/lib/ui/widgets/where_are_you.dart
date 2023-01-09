@@ -30,7 +30,7 @@ class WhereAreYouState extends State<WhereAreYou> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(AppLocalizations.of(context)!.whereAreYou,
-            style: const TextStyle(fontSize: 22)),
+            style: const TextStyle(fontSize: 18)),
         ValueListenableBuilder(
             valueListenable: GpsManager().placeStream,
             builder: (context, place, _) {
@@ -41,13 +41,14 @@ class WhereAreYouState extends State<WhereAreYou> {
                   place.map<DropdownMenuItem<Place>>((Place value) {
                 return DropdownMenuItem<Place>(
                   value: value,
-                  child: Text(value.name),
+                  child: Text(value.name, style: const TextStyle(fontSize: 14)),
                 );
               }).toList();
               // Add a "None" item to the list
               items.add(DropdownMenuItem<Place>(
                 value: null,
-                child: Text(AppLocalizations.of(context)!.noPlaceSelected),
+                child: Text(AppLocalizations.of(context)!.noPlaceSelected,
+                    style: const TextStyle(fontSize: 14)),
               ));
               return DropdownButton<Place>(
                 // Check if the value is in the value list

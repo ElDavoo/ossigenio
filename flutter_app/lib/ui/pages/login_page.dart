@@ -104,7 +104,7 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   Container(
                       height: 80,
-                      padding: const EdgeInsets.fromLTRB(150, 30, 150, 0),
+                      padding: const EdgeInsets.fromLTRB(130, 30, 130, 0),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size.fromHeight(50),

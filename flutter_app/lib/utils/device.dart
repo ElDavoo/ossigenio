@@ -90,7 +90,7 @@ class Device extends ChangeNotifier {
       if (isHeating) {
         // Il sensore è pronto se la differenza tra la temperatura
         // del sensore vicino e quella del sensore lontano è maggiore di 3
-        isHeating = (msg.rawData - msg.temperature).abs() <= 3;
+        isHeating = (msg.rawData - msg.temperature).abs() <= 4;
         // Fix, quando il sensore sta partendo, la temperatura è 0
         if (msg.rawData == 0) {
           isHeating = true;
