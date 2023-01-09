@@ -17,18 +17,16 @@ class AirQualityPlace extends StatefulWidget {
 }
 
 class AirQualityPlaceState extends State<AirQualityPlace> {
-  late Future<Place> future;
 
   @override
   void initState() {
     super.initState();
-    future = AccountManager().getPlace(widget.placeId);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Place>(
-        future: future,
+        future: AccountManager().getPlace(widget.placeId),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return AirQuality(

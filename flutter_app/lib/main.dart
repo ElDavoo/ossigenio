@@ -8,7 +8,6 @@ import 'package:flutter_app/utils/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
-import '../managers/ble_man.dart';
 import 'ui/pages/home_page.dart';
 
 void main() {
@@ -20,38 +19,32 @@ void main() {
       .then((_) {
     // Iniziamo a inizializzare i manager
     PrefManager();
-    BLEManager();
     PermissionManager().checkPermissions();
-    runApp(const App());
+    // Se l'utente è già loggato, avviamo la HomePage
+    PrefManager().read(C.pref.cookie).then((value) {
+      if (value != null) {
+        AccountManager().login();
+        runApp(const App(initialWidget: HomePage()));
+      } else {
+        runApp(const App(initialWidget: LoginPage()));
+      }
+    });
   });
 }
 
 class App extends StatefulWidget {
-  const App({Key? key}) : super(key: key);
+  final Widget initialWidget;
+
+  const App({Key? key, required this.initialWidget}) : super(key: key);
 
   @override
   AppState createState() => AppState();
 }
 
 class AppState extends State<App> {
-  late final Widget initialWidget;
-
   @override
   void initState() {
     super.initState();
-    // Se l'utente è già loggato, avviamo la HomePage
-    PrefManager().read(C.pref.cookie).then((value) {
-      if (value != null) {
-        AccountManager().login();
-        setState(() {
-          initialWidget = const HomePage();
-        });
-      } else {
-        setState(() {
-          initialWidget = const LoginPage();
-        });
-      }
-    });
   }
 
   @override
@@ -64,7 +57,7 @@ class AppState extends State<App> {
         // Colore principale dell'applicazione
         primarySwatch: Colors.blue,
       ),
-      home: initialWidget,
+      home: widget.initialWidget,
     );
   }
 }

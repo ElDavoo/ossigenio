@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_app/utils/constants.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -18,9 +19,12 @@ class PermissionManager {
 
   /// Controlla se l'app ha i permessi necessari
   Future<bool> checkPermissions() async {
-    Map<Permission, PermissionStatus> statuses =
-        await C.perm.permissions.request();
-
+    Map<Permission, PermissionStatus> statuses;
+    try {
+      statuses = await C.perm.permissions.request();
+    } on PlatformException {
+      return false;
+    }
     _hasPermission = statuses.values.every((status) => status.isGranted);
 
     Log.d("Permission status: $_hasPermission");

@@ -117,6 +117,8 @@ class NewHomePageState extends State<NewHomePage>
               UI.buildCard(WhereAreYou(
                 onPlaceSelected: _onSelectedPlace,
               )),
+              // Se non c'è un sensore collegato e viene selezionato un luogo,
+              // mostra la qualità dell'aria del luogo selezionato
               ValueListenableBuilder(
                   valueListenable: MqttManager.place,
                   builder: (context, place, _) {
@@ -125,12 +127,7 @@ class NewHomePageState extends State<NewHomePage>
                     }
                     return const SizedBox();
                   }),
-              // Se non c'è un sensore collegato e viene selezionato un luogo,
-              // mostra la qualità dell'aria del luogo selezionato
-              if (MqttManager.place.value != null &&
-                  BLEManager().dvc.value == null)
-                UI.buildCard(
-                    AirQualityPlace(placeId: MqttManager.place.value!.id)),
+
               ValueListenableBuilder(
                   valueListenable: BLEManager().dvc,
                   builder: (context, dvc, _) {
