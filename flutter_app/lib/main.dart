@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/managers/account_man.dart';
@@ -31,7 +34,7 @@ void initFMTC() async {
 
 void main() {
   final WidgetsBinding widgetsBinding =
-      WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
@@ -42,6 +45,17 @@ void main() {
     initFMTC();
     // Se l'utente è già loggato, avviamo la HomePage
     PrefManager().read(C.pref.cookie).then((value) {
+      // If we are in android < 8
+      if (Platform.isAndroid) {
+        DeviceInfoPlugin().androidInfo.then((value) async {
+          if (value.version.sdkInt <= 25) {
+            ByteData data = await PlatformAssetBundle()
+                .load('assets/ca/lets-encrypt-r3.pem');
+            SecurityContext.defaultContext
+                .setTrustedCertificatesBytes(data.buffer.asUint8List());
+          }
+        });
+      }
       if (value != null) {
         AccountManager().login();
         runApp(const App(initialWidget: HomePage()));
