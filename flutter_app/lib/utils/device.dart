@@ -100,7 +100,7 @@ class Device extends ChangeNotifier {
           // meno frequentemente
           timer.cancel();
           timer = Timer.periodic(
-              const Duration(seconds: 120), (_) => periodicallyRequest);
+              const Duration(seconds: 120), (_) => periodicallyRequest());
         }
       }
       Log.v("Diff: ${(msg.rawData - msg.temperature).abs()}");

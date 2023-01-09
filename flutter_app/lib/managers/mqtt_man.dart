@@ -125,6 +125,9 @@ class MqttManager {
     // Ritorna se il client non è connesso
     if (client.connectionStatus?.state != MqttConnectionState.connected) {
       Log.d('Not connected to mqtt server');
+      if (client.connectionStatus?.state != MqttConnectionState.connecting) {
+        tryLogin();
+      }
       return;
     }
     // Aggiunge il posto selezionato, se presente
