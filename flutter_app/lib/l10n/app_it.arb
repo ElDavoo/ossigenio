@@ -167,27 +167,27 @@
     "@excellentExplanation": {
         "description": "Spiegazione qualità dell'aria eccellente"
     },
-    "verygoodExplanation": "La qualità dell'aria è ottima. Non ci sono particolari problemi di inquinamento.",
+    "verygoodExplanation": "La qualità dell'aria è ottima. Normali valori riscontrabili all'aperto in città.",
     "@verygoodExplanation": {
         "description": "Spiegazione qualità dell'aria ottima"
     },
-    "goodExplanation": "La qualità dell'aria è buona. Non ci sono particolari problemi di inquinamento.",
+    "goodExplanation": "La qualità dell'aria è buona. Normali valori riscontrabili al chiuso.",
     "@goodExplanation": {
         "description": "Spiegazione qualità dell'aria buona"
     },
-    "acceptableExplanation": "La qualità dell'aria è accettabile. Non ci sono particolari problemi di inquinamento.",
+    "acceptableExplanation": "La qualità dell'aria è accettabile. Non ci sono particolari problemi di inquinamento; i soggetti con patologie respiratorie croniche potrebbero respirare con maggiore fatica.",
     "@acceptableExplanation": {
         "description": "Spiegazione qualità dell'aria accettabile"
     },
-    "badExplanation": "La qualità dell'aria è scarsa. Ci sono problemi di inquinamento.",
+    "badExplanation": "La qualità dell'aria è scarsa. I soggetti con patologie respiratorie croniche potrebbero lamentare problemi di dispnea e/o tosse.",
     "@badExplanation": {
         "description": "Spiegazione qualità dell'aria scarsa"
     },
-    "verybadExplanation": "La qualità dell'aria è pessima. Ci sono problemi di inquinamento.",
+    "verybadExplanation": "La qualità dell'aria è pessima. Si può andare incontro a problemi cognitivi e a sostenere attività fisica.",
     "@verybadExplanation": {
         "description": "Spiegazione qualità dell'aria pessima"
     },
-    "dangerousExplanation": "La qualità dell'aria è pericolosa. Ci sono problemi di inquinamento.",
+    "dangerousExplanation": "La qualità dell'aria è pericolosa. Altissimi rischi per la propria salute!",
     "@dangerousExplanation": {
         "description": "Spiegazione qualità dell'aria pericolosa"
     },
