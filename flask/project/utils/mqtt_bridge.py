@@ -67,15 +67,21 @@ def on_message(client, userdata, msg):
         cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, lat, lon) "
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)", (sensor_id, timestamp, co2, humidity, rawdata, temperature, 0, 0))
         conn.commit()
-        if place_id:
-            cur = conn.cursor()
-            cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES(%s, %s, %s);",
-                        (place_id, timestamp, co2)
-                        )
-            conn.commit()
     except Exception as e:
         print(e)
         conn.rollback()
+    
+    cur = conn.cursor()
+    if place_id:
+        try:
+            cur = conn.cursor()
+            cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES (%s, %s, %s);",
+                        (place_id, timestamp, co2)
+                        )
+            conn.commit()
+        except Exception as e:
+            print(e)
+            conn.rollback()
 
 
 client = mqtt.Client()
