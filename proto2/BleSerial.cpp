@@ -1,6 +1,8 @@
+/*
+Libreria esterna BLESerial.cpp, implementa la comunicazione seriale su bluetooth low energy
+*/
 #include "BleSerial.h"
 using namespace std;
-
 
 bool BleSerial::connected()
 {

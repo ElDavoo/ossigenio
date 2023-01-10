@@ -1,5 +1,4 @@
 /*
-/*!
 air-quality-monitor (aka Ossigenio)
 @file     proto2.ino
 @author   Antonio Solida
@@ -14,7 +13,7 @@ v0.2: first version based on ESP32
 #include <SPI.h>
 #include <stdint.h>
 #include <Wire.h>
-// start general include section
+// end general include section
 
 // start BLE include section
 #include "BleSerial.h"
@@ -61,6 +60,7 @@ int raw; //seems not possible to read raw data from ccs811; used for ens210 temp
 
 boolean debug = false; //to enable debug mode
 
+// funzione per il setup del ble
 void ble_setup(){
   ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here //DISABLE IN PRODUCTION
   //ble.begin("Ossigenio", true, ledPin); //ENABLE IN PRODUCTION ONLY
@@ -79,16 +79,20 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   unsigned long currentMillis = millis();
   cHS300x::Measurements m;
   int t_data, t_status, h_data, h_status; //necessary for ens210
 
+  // it reads enviroment data from sensors every CampTime seconds
   if (currentMillis - lastExecutedMillis >= campTime) {
     lastExecutedMillis = currentMillis; // save the last executed time
+
+    // temperature and humidity section
     if (gHs300x.getTemperatureHumidity(m)){
       m.extract(temperature, humidity); // read temperature and humidity values
     }
+
+    // co2 section (read also co2 sensor temperature for reliability purpose)
     if (mySensor.dataAvailable()) {
       mySensor.readAlgorithmResults();
       co2 = (float) mySensor.getCO2(); // read co2 value
@@ -107,9 +111,11 @@ void loop() {
   // ble read section
   uint8_t buf[4] = {0x00,0x00,0x00,0x00};
   while (ble.available() > 0){
-    int rlen = ble.readBytes(buf, 4);
+    int rlen = ble.readBytes(buf, 4); //read 4 bytes from seruak
   }
+
   unsigned long currentMillisCount = millis();
+   //sends a message with sensor data over ble every autoSend seconds
   if (currentMillisCount - lastExecutedMillisCount >= autoSend){
     lastExecutedMillisCount = currentMillisCount;
     getMsg1((int) temperature,(int) humidity,(int) co2);
@@ -120,25 +126,30 @@ void loop() {
   */
   if(buf[0] == 0xAA && buf[2] == 0xFF){
     switch(buf[1]){
-      case 0x1F:
+      case 0x1F: //AA1FFF MESSAGE
+        //environment temperature, humidity and co2 sensor temperature
         getMsg0((int) temperature, (int) humidity, raw);
         break;
 
-      case 0x1E:
+      case 0x1E: //AA1EFF MESSAGE
+        //environment temperature, humidity and co2
         getMsg1((int) temperature,(int) humidity,(int) co2);
         break;
 
-      case 0x1C:
+      case 0x1C: //AA1CFF MESSAGE
+        //model, version, serial number and battery value
         getMsg3();
         break;
 
-      case 0x1B:
+      case 0x1B: //AA1BFF MESSAGE (trigger debug mode activation)
         feedback = 123;
+        //environment temperature, humidity, co2 and feedback placeholder value
         getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
         feedback = 0;
         debug = !debug; // enable/disable debug mode
         if (debug == true) {
           ble.print("Debug mode enabled.");
+          //enabling debug mode, it sends automatically data every seconds instead of 10 seconds
           autoSend = 1000;
         }
         else {
@@ -148,5 +159,4 @@ void loop() {
         break;
     }
   }
-
 }

@@ -27,6 +27,7 @@ extern const uint32_t serialNumber;
 #define lowByte(w) ((uint8_t) ((w) & 0xff)) // esp32 seems not have lowByte and highByte functions ootb
 #define highByte(w) ((uint8_t) ((w) >> 8)) // declared in this way to save memory
 
+//Answer to AA1FFF MESSAGE
 void getMsg0(int temp, int humidity, int raw_data){
     uint8_t buffer[8];
 
@@ -50,6 +51,7 @@ void getMsg0(int temp, int humidity, int raw_data){
     ble.write(buffer,8);
 }
 
+//Answer to AA1EFF MESSAGE
 void getMsg1(int temp, int humidity, int co2) {
 
     uint8_t buffer[8];
@@ -76,6 +78,7 @@ void getMsg2(/*NOT YET IMPLEMENTED*/){
     //RESERVED FOR FUTURE USE
 }
 
+//Answer to AA1CFF MESSAGE
 void getMsg3(){
     uint8_t battery = 100;
     uint8_t buffer[11];
@@ -107,6 +110,7 @@ void getMsg3(){
     ble.write(buffer,11); 
 }
 
+//Answer to AA1BFF MESSAGE
 void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     uint8_t buffer[9];
 
@@ -132,6 +136,7 @@ void getMsg4(int temp, int humidity, int co2, uint8_t feedback) {
     ble.write(buffer,9);
 }
 
+// checksum calculator
 uint8_t checksumCalculator(uint8_t *data, uint8_t length){
    uint8_t curr_crc = 0x0000;
    uint8_t sum1 = (uint8_t) curr_crc;
@@ -145,18 +150,17 @@ uint8_t checksumCalculator(uint8_t *data, uint8_t length){
    return (sum2 << 8) | sum1;
 }
 
+//functions associated to isr section
+//feed variable set to true to avoid sending multiple feedbacks at the same time
 void positive(){
-    //ble.print("Think positive!"); //DEBUG
     feedback=1;
     feed = true;
 }
 void neutral(){
-    //ble.print("N"); //DEBUG
     feedback=2;
     feed = true;
 }
 void negative(){
-    //ble.print(":("); //DEBUG
     feedback=3;
     feed = true;
 }

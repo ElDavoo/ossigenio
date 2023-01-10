@@ -1,3 +1,6 @@
+/*
+Header file usato da BleSerial.cpp
+*/
 #pragma once
 #include <Arduino.h>
 

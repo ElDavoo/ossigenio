@@ -1,3 +1,8 @@
+/*
+Header file for model, version and serialNumber values.
+Used by serialProtocol.cpp
+*/
+
 #ifndef SERIALNUMBER_H_
 #define SERIALNUMBER_H_ 
 #define MODEL 2

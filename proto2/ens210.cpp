@@ -4,7 +4,6 @@
   2017 Aug  2  v1  Maarten Pennings  Created
 */
 
-
 #include <assert.h>
 #include <Arduino.h>
 #include <Wire.h>
