@@ -50,6 +50,11 @@ MQ135 mqSensor(co2Pin);
 #include "serialProtocol.h"
 // end serial parsing section
 
+// start stepper section
+#include "step.h"
+extern Stepper myStepper;
+// end stepepr section
+
 // start global variables section
 #define campTime 1000
 int autoSend = 10000;
@@ -164,6 +169,10 @@ void loop() {
     raw = mqSensor.getResistance();
   }
 
+  //step trigger (ONLY FOR PROTO2 FIXED VERSION)
+  if (co2 >= 2000) myStepper.step(stepsOpen); //open window
+  if (co2 < 2000) myStepper.step(-stepsOpen); //close window
+
   // feedback interrupt result management
   if (feedback == 1 || feedback == 2 || feedback == 3) {
     getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
@@ -215,23 +224,5 @@ void loop() {
         break;
     }
   }
-
-
-  /*if (buf[3] == 'F') {
-    getMsg0((int) temperature, (int) humidity, raw);
-  }
-  if (buf[3] == 'E' || watchDog[0] == 'E') {
-    getMsg1((int) temperature,(int) humidity,(int) co2);
-  }
-  if (buf[3] == 'C') getMsg3(); //VERSION MESSAGE
-  if (buf[3] == 'B') { //forced sending feedback message -- Debug purpose only
-    feedback = 123;
-    getMsg4((int) temperature,(int) humidity,(int) co2, feedback);
-    feedback = 0;
-    debug = !debug; // enable/disable debug mode
-    if (debug == true) ble.print("Debug mode enabled.");
-    else ble.print("Debug mode disabled.");
-  }*/
-  //if(debug == true) ble.print("Check!"); //ONLY FOR DEBUG PURPOSE!
 
 }
