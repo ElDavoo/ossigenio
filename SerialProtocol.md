@@ -47,8 +47,9 @@ In case of a string, the length of the string must be prefixed.
 4. Payload
 	1. temperature
 	2. humidity
-	3. raw_data
-5. End string (FFFF)
+	3. raw_data high byte
+	4. raw_data low byte
+5. End string (FF)
 6. CRC8 value
 
 #### msg1 packet
@@ -59,8 +60,9 @@ In case of a string, the length of the string must be prefixed.
 4. Payload
 	1. temperature
 	2. humidity
-	3. co2
-5. End string (FFFF)
+	3. co2 high byte
+	4. co2 low byte
+5. End string (FF)
 6. CRC8 value
 
 #### msg3 packet
@@ -71,8 +73,12 @@ In case of a string, the length of the string must be prefixed.
 4. Payload
 	1. model
 	2. version
-	3. battery
-5. End string (FFFF)
+	3. serial number first byte
+	4. serial number second byte
+	5. serial number third byte
+	6. serial number fourth byte
+	7. battery
+5. End string (FF)
 6. CRC8 value
 
 #### msg4 packet
@@ -83,9 +89,10 @@ In case of a string, the length of the string must be prefixed.
 4. Payload
 	1. temperature
 	2. humidity
-	3. co2
-	4. feedback value (positive=1, neutral=2, negative=3);
-5. End string (FFFF)
+	3. co2 high byte
+	4. co2 low byte
+	5. feedback value (positive=1, neutral=2, negative=3);
+5. End string (FF)
 6. CRC8 value
 
 ### Data types
