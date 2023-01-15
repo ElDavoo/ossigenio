@@ -8,3 +8,4 @@
 - BleSerial (external)
 - SparkFunCCS811.h (available in Arduino library manager)
 - HS300x (external)
+- Serial.h (available in Arduino library manager)
