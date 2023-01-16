@@ -96,10 +96,9 @@ class MqttManager {
   /// Se la connessione ha successo, viene salvato il client MQTT
   Future<MqttServerClient> _connect(String username, String password) async {
     client =
-        MqttServerClient.withPort(C.mqtt.server, username, C.mqtt.mqttPort);
+        MqttServerClient.withPort(C.mqtt.server, username, C.mqtt.mqttsPort);
 
-    // TODO attivare mqtt criptato
-    //client.secure = true;
+    client.secure = true;
     client.logging(on: false);
 
     try {

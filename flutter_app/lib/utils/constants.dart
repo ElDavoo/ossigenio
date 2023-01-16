@@ -74,11 +74,11 @@ class AccConsts {
 
   // TODO use this list instead of the others
   static List<Server> servers = [
-    const Server("modena.davidepalma.it", 443),
-    const Server("modena.davidepalma.it", 80),
+    const Server("ossigenio.it", 443),
+    const Server("ossigenio.it", 80),
   ];
 
-  String get server => 'modena.davidepalma.it';
+  String get server => 'ossigenio.it';
 
   String get httpPort => '80';
 
@@ -141,7 +141,7 @@ class BTConsts {
 class MqttConsts {
   const MqttConsts();
 
-  String get server => 'modena.davidepalma.it';
+  String get server => 'mqtt.ossigenio.it';
 
   int get mqttsPort => 8080;
 
