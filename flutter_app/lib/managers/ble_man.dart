@@ -50,6 +50,9 @@ class BLEManager extends ChangeNotifier {
     startBLEScan();
   }
 
+  /// Timer per riavviare la scansione ogni 10 secondi
+  Timer? _scanTimer;
+
   /// Inizia la scansione dei dispositivi.
   ///
   /// Questo metodo inizia a cercare dispositivi a cui connettersi.
@@ -66,6 +69,17 @@ class BLEManager extends ChangeNotifier {
     if (!hasPermissions) {
       return Future.error("Permessi non concessi");
     }
+
+    // Se il timer è già attivo, lo cancelliamo
+    if (_scanTimer != null) {
+      _scanTimer!.cancel();
+    }
+
+    _scanTimer = Timer.periodic(const Duration(seconds: 10), (timer) async {
+      stopBLEScan();
+      await Future.delayed(const Duration(seconds: 1));
+      startBLEScan();
+    });
 
     _flutterBlue.startScan();
 
@@ -103,6 +117,8 @@ class BLEManager extends ChangeNotifier {
         })
         .where((results) => results.isNotEmpty)
         .first;
+
+    _scanTimer!.cancel();
 
     _flutterBlue.stopScan();
 
