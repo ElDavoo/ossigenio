@@ -11,7 +11,7 @@
     "@signup": {
       "description": "Signup button"
     },
-    "signupFailed": "Registrazione fallita",
+    "signupFailed": "Registration failed",
     "@signupFailed": {
       "description": "Registrazione fallita"
     },
@@ -51,11 +51,11 @@
     "@password": {
       "description": "Password field"
     },
-    "greeting": "Hi, {name}",
+    "greeting": "Hi, ",
     "@greeting": {
         "description": "Greets the user"
     },
-    "predictionPlaceSummary": "Al momento a {name} ci sono {ppm} ppm di CO2",
+    "predictionPlaceSummary": "At {name} there are {ppm} of CO2",
     "@predictionPlaceSummary": {
         "description": "Riassunto della previsione per un luogo",
         "placeholders": {
@@ -69,19 +69,19 @@
             }
         }
     },
-    "predictionIntro": "Le previsioni per le prossime 24 ore sono:",
+    "predictionIntro": "Forecasts for next 24 hours:",
     "@predictionIntro": {
         "description": "Introduzione alle previsioni"
     },
-    "predictionLoading": "Sto predicendo il futuro",
+    "predictionLoading": "Predicting the future",
     "@predictionLoading": {
         "description": "Messaggio di caricamento delle previsioni"
     },
-    "username": "Nome",
+    "username": "Name",
     "@username": {
         "description": "Nome utente"
     },
-    "placeSelected": "Luogo selezionato: {place}",
+    "placeSelected": "Selected place: {place}",
     "@placeSelected": {
         "description": "Messaggio di luogo selezionato",
         "placeholders": {
@@ -91,11 +91,11 @@
             }
         }
     },
-    "placeNotSelected": "Nessun luogo selezionato",
+    "placeNotSelected": "No place selected",
     "@placeNotSelected": {
         "description": "Messaggio di nessun luogo selezionato"
     },
-    "actualCO2": "CO2 attuale: {co2} ppm",
+    "actualCO2": "CO2 right now: {co2} ppm",
     "@actualCO2": {
         "description": "Messaggio di CO2 attuale",
         "placeholders": {
@@ -105,19 +105,19 @@
             }
         }
     },
-    "predictions": "Previsioni",
+    "predictions": "Predictions",
     "@predictions": {
         "description": "Previsioni"
     },
-    "sensorWarmingWarning": "Il sensore si sta riscaldando.\nI valori potrebbero non essere precisi",
+    "sensorWarmingWarning": "Sensor is heating up.\nValues might not be accurate.",
     "@sensorWarmingWarning": {
         "description": "Messaggio di avviso di riscaldamento sensore"
     },
-    "airQualityIs": "La qualità dell'aria è",
+    "airQualityIs": "Air quality is",
     "@airQualityIs": {
         "description": "Messaggio di qualità dell'aria"
     },
-    "tempHum": "Temperatura: {temp}°C\nUmidità: {hum}%",
+    "tempHum": "Temperature: {temp}°C\nHumidity: {hum}%",
     "@tempHum": {
         "description": "Messaggio di temperatura e umidità",
         "placeholders": {
