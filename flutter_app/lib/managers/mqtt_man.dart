@@ -95,8 +95,8 @@ class MqttManager {
   ///
   /// Se la connessione ha successo, viene salvato il client MQTT
   Future<MqttServerClient> _connect(String username, String password) async {
-    client =
-        MqttServerClient.withPort(C.mqtt.server, username, C.mqtt.mqttsPort);
+    client = MqttServerClient.withPort(
+        C.mqtt.server, mac.toInt().toString(), C.mqtt.mqttsPort);
 
     client.secure = true;
     client.logging(on: false);
