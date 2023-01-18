@@ -47,8 +47,8 @@ class Nearby(MethodView):
     @login_required
     @places.response(200, PlaceSchema(many=True))
     def post(self, args):
-        # Get the places closer than 1km
-        places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})") < 100)\
+        # Get the places closer than 200m
+        places = Place.query.filter(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})") < 200)\
             .order_by(Place.location.ST_DistanceSphere(f"POINT({args['lat']} {args['lon']})")).limit(10).all()
         places_list = []
         for place in places:
