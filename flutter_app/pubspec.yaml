@@ -77,6 +77,8 @@ flutter_icons:
   ios: true
   image_path: "assets/icon/icon.png"
   remove_alpha_ios: true
+  adaptive_icon_background: "#42a5f5"
+  adaptive_icon_foreground: "assets/icon/icon-zoomedout.png"
 
 # https://github.com/JaffaKetchup/flutter_map_tile_caching/issues/77
 dependency_overrides:
@@ -99,7 +101,7 @@ flutter:
 
   assets:
     - assets/ca/
-    - assets/icon/
+    - assets/icon/icon.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -152,7 +154,7 @@ flutter_native_splash:
 
   # The image parameter allows you to specify an image used in the splash screen.  It must be a
   # png file and should be sized for 4x pixel density.
-  #image: assets/splash.png
+  image: assets/icon/icon.png
 
   # The branding property allows you to specify an image used as branding in the splash screen.
   # It must be a png file. It is supported for Android, iOS and the Web.  For Android 12,
