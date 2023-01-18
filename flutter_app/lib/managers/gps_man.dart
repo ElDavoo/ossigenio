@@ -63,10 +63,10 @@ class GpsManager {
       return pos.accuracy < 80 && pos.speed < 15 && !pos.isMocked;
     }
 
-    // Non considerare posizioni a meno di 20 metri dall'ultima
+    // Non considerare posizioni a meno di 100 metri dall'ultima
     if (Geolocator.distanceBetween(pos.latitude, pos.longitude,
             position.value!.latitude, position.value!.longitude) <
-        20) {
+        100) {
       return false;
     }
 
