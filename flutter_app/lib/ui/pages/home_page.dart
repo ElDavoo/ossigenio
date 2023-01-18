@@ -7,6 +7,7 @@ import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:lottie/lottie.dart';
 import 'package:new_gradient_app_bar/new_gradient_app_bar.dart';
 
 import '../../../managers/ble_man.dart';
@@ -29,8 +30,7 @@ class HomePage extends StatefulWidget {
 }
 
 /// Lo stato della home page dell'app
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final StreamSubscription _log;
 
   void _init() {
@@ -174,14 +174,15 @@ class _HomePageState extends State<HomePage>
 
   void _showOverlay(BuildContext context,
       {required FeedbackValues fbvalue}) async {
-    // Convert the fbvalue to an emoji with a dict
-    // TODO usare delle foto di emoji, resa grafica migliore
-    final Map<FeedbackValues, String> emojiDict = {
-      FeedbackValues.negative: "🙁",
-      FeedbackValues.neutral: "😐",
-      FeedbackValues.positive: "😉",
+    final Map<FeedbackValues, LottieBuilder> lottieDict = {
+      FeedbackValues.negative:
+          Lottie.asset('assets/images/negative.json', repeat: false),
+      FeedbackValues.neutral:
+          Lottie.asset('assets/images/neutral.json', repeat: false),
+      FeedbackValues.positive:
+          Lottie.asset('assets/images/positive.json', repeat: false),
     };
-    final String emoji = emojiDict[fbvalue]!;
+    final LottieBuilder lottie = lottieDict[fbvalue]!;
 
     OverlayState? overlayState = Overlay.of(context);
     OverlayEntry overlayEntry;
@@ -200,11 +201,10 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           child: Center(
-            child: Material(
-              child: Text(
-                emoji,
-                style: const TextStyle(fontSize: 80),
-              ),
+            child: SizedBox(
+              width: 200,
+              height: 200,
+              child: lottie,
             ),
           ),
         ),
@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage>
     // inserting overlay entry
     overlayState!.insert(overlayEntry);
     _animationController!.forward();
-    await Future.delayed(const Duration(seconds: 1))
+    await Future.delayed(const Duration(milliseconds: 1500))
         .whenComplete(() => _animationController!.reverse())
         // removing overlay entry after stipulated time.
         .whenComplete(() => overlayEntry.remove());

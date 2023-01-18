@@ -5,6 +5,7 @@ import 'package:flutter_app/Messages/debug_message.dart';
 import 'package:flutter_app/utils/serial.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
+import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
 import '../managers/ble_man.dart';
 import '../managers/mqtt_man.dart';
@@ -53,6 +54,21 @@ class Device extends ChangeNotifier {
           return null;
         })
         .where((message) => message != null)
+        .where((message) {
+          // Filta i messaggi di feedback
+          // Se un altro ricevuto meno di 5 secondi fa, lo scarta
+          if (message!.message is FeedbackMessage) {
+            try {
+              final lastFeedback = messages
+                  .lastWhere((element) => element.message is FeedbackMessage);
+              final diff = message.timestamp.difference(lastFeedback.timestamp);
+              return diff.inSeconds > 5;
+            } on StateError {
+              return true;
+            }
+          }
+          return true;
+        })
         .cast<MessageWithDirection>()
         .asBroadcastStream();
 
@@ -90,7 +106,7 @@ class Device extends ChangeNotifier {
       if (isHeating) {
         // Il sensore è pronto se la differenza tra la temperatura
         // del sensore vicino e quella del sensore lontano è maggiore di 3
-        isHeating = (msg.rawData - msg.temperature).abs() <= 4;
+        isHeating = (msg.rawData - msg.temperature).abs() <= 3;
         // Fix, quando il sensore sta partendo, la temperatura è 0
         if (msg.rawData == 0) {
           isHeating = true;
