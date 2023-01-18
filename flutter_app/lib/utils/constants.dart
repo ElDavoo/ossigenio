@@ -28,6 +28,24 @@ class C {
   static const String tileUrl =
       "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 
+  static const stylebig = TextStyle(
+    fontWeight: FontWeight.w500,
+    color: Colors.blueAccent,
+    fontSize: 90.0,
+    shadows: <Shadow>[
+      Shadow(
+        offset: Offset(0.0, 0.0),
+        blurRadius: 12.0,
+        color: Colors.blueAccent,
+      ),
+      Shadow(
+        offset: Offset(0.0, 0.0),
+        blurRadius: 200.0,
+        color: Color(0x330000FF),
+      ),
+    ],
+  );
+
   static String catchWord(BuildContext context, int co2level) {
     if (co2level <= quotas.excellent) {
       return AppLocalizations.of(context)!.excellent;

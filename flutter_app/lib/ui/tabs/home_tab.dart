@@ -64,29 +64,13 @@ class HomeTabState extends State<HomeTab>
   Widget _greetingText(String name) {
     const stylesmall = TextStyle(
         fontSize: 60.0, color: Colors.black87, fontWeight: FontWeight.w300);
-    const stylebig = TextStyle(
-      fontWeight: FontWeight.w500,
-      color: Colors.blueAccent,
-      fontSize: 90.0,
-      shadows: <Shadow>[
-        Shadow(
-          offset: Offset(0.0, 0.0),
-          blurRadius: 12.0,
-          color: Colors.blueAccent,
-        ),
-        Shadow(
-          offset: Offset(0.0, 0.0),
-          blurRadius: 200.0,
-          color: Color(0x330000FF),
-        ),
-      ],
-    );
+
     return RichText(
       text: TextSpan(
         style: stylesmall,
         children: [
           _centeredTextSpan(AppLocalizations.of(context)!.greeting, stylesmall),
-          _centeredTextSpan(name, stylebig),
+          _centeredTextSpan(name, C.stylebig),
         ],
       ),
     );

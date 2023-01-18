@@ -6,6 +6,7 @@ import 'package:flutter_app/ui/pages/home_page.dart';
 import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../utils/constants.dart';
 import '../../utils/log.dart';
 
 /// UI della pagina di registrazione
@@ -76,14 +77,20 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-                  child: const FlutterLogo(
-                    size: 120,
+                Image.asset('assets/icon/icon.png', height: 150),
+                // Big text with product name
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(60, 0, 60, 0),
+                  child: FittedBox(
+                    child: Text(
+                      AppLocalizations.of(context)!.title,
+                      style: C.stylebig,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
                   child: TextField(
                     controller: usernameinputController,
                     decoration: InputDecoration(
@@ -95,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
                   child: TextField(
                     keyboardType: TextInputType.emailAddress,
                     controller: emailinputController,
@@ -108,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
                   child: TextField(
                     controller: passwordinputController,
                     obscureText: true,

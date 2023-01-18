@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import '../../managers/account_man.dart';
+import '../../utils/constants.dart';
 import '../../utils/log.dart';
 import 'home_page.dart';
 
@@ -69,15 +70,20 @@ class LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-                    // TODO sostituire con logo
-                    child: const FlutterLogo(
-                      size: 120,
+                  Image.asset('assets/icon/icon.png', height: 150),
+                  // Big text with product name
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(60, 0, 60, 0),
+                    child: FittedBox(
+                      child: Text(
+                        AppLocalizations.of(context)!.title,
+                        style: C.stylebig,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
                     child: TextField(
                       controller: emailinputController,
                       keyboardType: TextInputType.emailAddress,
@@ -90,7 +96,7 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
                     child: TextField(
                       controller: passwordinputController,
                       obscureText: true,
