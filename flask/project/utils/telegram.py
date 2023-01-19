@@ -13,6 +13,8 @@ import datetime
 import threading
 import logging
 
+import telegram
+
 from project.models.telegram_users import TelegramUser
 from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup
 
@@ -21,7 +23,51 @@ from project.models.places import Place
 from project.models.co2history import co2_history
 from project.api.common import plausible_random
 from project.utils.datagen import start as datagen_start
-from telegram.ext import Updater, CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes
+from telegram.ext import Updater, CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler
+
+
+async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
+    # Check if the user is already in the database
+    if not await is_registered(app, update):
+        await update.message.reply_text(
+            str(update.effective_user.id) + " non sei registrato, contatta un amministratore per registrarti")
+        return
+    # Get all places handled by the user
+    with app.app_context():
+        users = db.session.query(TelegramUser).filter_by(telegram_id=update.effective_user.id).all()
+        # Try to get a place from the message and check if it's handled by the user
+        # We only have the name of the place, so we have to check if it's in the list of places handled by the user
+        # If it is, we get the place id
+        place_id = None
+        for user in users:
+            place = db.session.query(Place).filter_by(id=user.place).first()
+
+            if place.name == update.message.text:
+                place_id = place.id
+                break
+        # If the place is not handled by the user, return
+        if place_id is None:
+            await update.message.reply_text("Non puoi iscriverti a questo posto")
+            return
+
+        # Ask the user to insert the new threshold
+        await update.message.reply_text("Inserisci la nuova soglia di CO2")
+        context.user_data["place_id"] = place_id
+
+        return 1
+
+
+async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
+    # Get the place_id from the context
+    place_id = context.user_data["place_id"]
+    # ╗ Update the threshold in the database
+    with app.app_context():
+        # filter by telegram_id and place_id
+        user = db.session.query(TelegramUser).filter_by(telegram_id=update.effective_user.id, place=place_id).first()
+        user.soglia = update.message.text
+        db.session.commit()
+    await update.message.reply_text("Soglia aggiornata")
+    return ConversationHandler.END
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
@@ -30,16 +76,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
     # If yes, do nothing
 
     # Get the user's id
-    user_id = update.effective_user.id
-
-    with app.app_context():
-        # Check if user is already in the table
-        users = TelegramUser.query.filter_by(telegram_id=user_id).all()
-
-    # If not, say bye
-    if len(users) == 0:
+    users = await is_registered(app, update)
+    if users is None:
         await update.message.reply_text(
-            str(user_id) + " non sei registrato, contatta un amministratore per registrarti")
+            str(update.effective_user.id) + " non sei registrato, contatta un amministratore per registrarti")
         return
 
     reply_text = "Sei iscritto a questi posti: \n"
@@ -55,6 +95,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
     reply_text += "Seleziona un posto per modificare la soglia di CO2"
     # display the buttons
     await update.message.reply_text(reply_text, reply_markup=buttons)
+    return 0
+
+
+async def is_registered(app, update):
+    user_id = update.effective_user.id
+    users = []
+    with app.app_context():
+        # Check if user is already in the table
+        users = db.session.query(TelegramUser).filter_by(telegram_id=user_id).all()
+
+        if len(users) != 0:
+            return users
+    return None
 
 
 def run(app):
@@ -64,8 +117,15 @@ def run(app):
         raise Exception("TELEGRAM_TOKEN not found in environment variables")
     application = ApplicationBuilder().token(token).build()
 
-    # Add handlers and pass the app context as a parameter
-    application.add_handler(CommandHandler('start', partial(start, app=app)))
+    # Add conversation handler
+    application.add_handler(ConversationHandler(
+        entry_points=[CommandHandler('start', partial(start, app=app))],
+        states={
+            0: [MessageHandler(telegram.ext.filters.TEXT, partial(place_change, app=app))],
+            1: [MessageHandler(telegram.ext.filters.TEXT, partial(update_threshold, app=app))]
+        },
+        fallbacks=[]
+    ))
 
     application.run_polling(
     )
