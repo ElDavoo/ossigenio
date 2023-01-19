@@ -25,7 +25,7 @@ class Predictions(MethodView):
         # get the predictions for this place from prophet
         predicts = predict(place.id)
         if predicts is not None:
-            return jsonify(predictions)
+            return jsonify(predicts)
         # If there are no predictions, returns a random value
         if predicts is None:
             # Get the predictions
