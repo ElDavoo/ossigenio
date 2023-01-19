@@ -51,8 +51,10 @@ MQ135 mqSensor(co2Pin);
 // end serial parsing section
 
 // start stepper section
-#include "step.h"
-extern Stepper myStepper;
+#include <Servo.h>
+Servo myservo;
+#define openWindow 180
+#define closeWindow 0
 // end stepepr section
 
 // start global variables section
@@ -146,6 +148,7 @@ void setup() {
   ble_setup();
   dht.begin();
   sensor_t sensor;
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
 
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
@@ -169,9 +172,9 @@ void loop() {
     raw = mqSensor.getResistance();
   }
 
-  //step trigger (ONLY FOR PROTO2 FIXED VERSION)
-  if (co2 >= 2000) myStepper.step(stepsOpen); //open window
-  if (co2 < 2000) myStepper.step(-stepsOpen); //close window
+  //step trigger (ONLY FOR PROTO# FIXED VERSION)
+  if (co2 >= 2000) myservo.write(openWindow); //open window
+  if (co2 < 2000) myservo.write(closeWindow); //close window
 
   // feedback interrupt result management
   if (feedback == 1 || feedback == 2 || feedback == 3) {
