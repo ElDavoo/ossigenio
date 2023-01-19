@@ -3,6 +3,7 @@
 # export FLASK_DEBUG=1
 # and launch with:
 # flask run
+import threading
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -54,6 +55,9 @@ from project.api import api as api_blueprint
 app.register_blueprint(api_blueprint, url_prefix='/api')
 from project.utils.datagen import start as start_datagen
 from project.utils.mqtt_bridge import start as start_mqtt
+from project.utils.telegram import stort as start_telegram
 
 thr = start_datagen(flask_app)
 thr2 = start_mqtt()
+_thread = threading.Thread(target=start_telegram, args=(flask_app,))
+_thread.start()
