@@ -27,4 +27,3 @@ class Utente(UserMixin, db.Model):
             'name': self.name,
             'is_admin': self.admin,
         }
-

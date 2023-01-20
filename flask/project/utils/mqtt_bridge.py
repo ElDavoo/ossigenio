@@ -1,17 +1,17 @@
-""""
+"""
 This python file saves the data from the MQTT broker
 to a postgresql database.
 """
+import datetime
+import json
 import os
 import threading
 from json import JSONDecodeError
 
-import psycopg2
 import paho.mqtt.client as mqtt
-import json
-import datetime
-import certifi
+import psycopg2
 from paho.mqtt.client import ssl
+
 from project.utils.telegram import on_update
 
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
@@ -19,7 +19,7 @@ if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     exit(1)
 
 
-def conn_from_uri(uri):
+def conn_from_uri():
     # Get the postgres uri from the environment variable
     uri = os.environ.get('SQLALCHEMY_DATABASE_URI')
     # get the various parts of the uri
@@ -37,12 +37,12 @@ def conn_from_uri(uri):
     return conne
 
 
-def on_connect(mclient, userdata, flags, rc):
+def on_connect(mclient, _, __, rc):
     print("Connected with result code " + str(rc))
     mclient.subscribe("sensors/+/combined")
 
 
-def on_message(clnt, userdata, msg):
+def on_message(_, __, msg):
     print(msg.topic + " " + str(msg.payload))
     # desjsonify the payload
     try:
@@ -58,7 +58,6 @@ def on_message(clnt, userdata, msg):
     temperature = data.get('temperature', None)
     place_id = data.get('place', None)
     feedback = data.get('feedback', None)
-
 
     # set the timestamp as now
     timestamp = datetime.datetime.now()
@@ -77,7 +76,6 @@ def on_message(clnt, userdata, msg):
         print(e)
         conn.rollback()
 
-    cur = conn.cursor()
     # insert the sensor data into the co2_history table
     if place_id:
         try:
@@ -100,22 +98,22 @@ def on_message(clnt, userdata, msg):
         conn.rollback()
 
 
-conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))
+conn = conn_from_uri()
 
 
 def run():
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
-    # only verify server certificate
-    # client.tls_set(ca_certs=certifi.where(), cert_reqs=ssl.CERT_REQUIRED,
-    #               tls_version=ssl.PROTOCOL_TLSv1_2)
+    # enable ssl
+    client.tls_set(cert_reqs=ssl.CERT_REQUIRED,
+                   tls_version=ssl.PROTOCOL_TLSv1_2)
     # client.tls_insecure_set(True)
     # set username and password
     client.username_pw_set("test", "test2")
     try:
         print("Connecting to MQTT broker...")
-        client.connect("modena.davidepalma.it", 1883, 60)
+        client.connect("mqtt.ossigenio.it", 8080, 60)
         client.loop_forever()
     except Exception as e:
         print(e)

@@ -3,13 +3,13 @@ A file that, every 30 minutes, generates a random number of CO2 for every place
 and saves it into the database.
 """
 import datetime
+import threading
+import time
 
-from project.models.places import Place
-from project.models.co2history import co2_history
 from project import db
 from project.api.common import plausible_random
-import time
-import threading
+from project.models.co2history import Co2History
+from project.models.places import Place
 
 
 def generate(rnd_iter):
@@ -21,7 +21,7 @@ def generate(rnd_iter):
         # Get current time as a timestamp without timezone
         timestamp = datetime.datetime.now().replace(tzinfo=None)
         # Save it into the database
-        db.session.add(co2_history(place_id=place.id, timestamp=timestamp, co2=co2))
+        db.session.add(Co2History(place_id=place.id, timestamp=timestamp, co2=co2))
         db.session.commit()
 
 

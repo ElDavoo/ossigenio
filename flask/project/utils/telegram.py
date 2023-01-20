@@ -2,28 +2,17 @@
 Implement Telegram bot API
 """
 import asyncio
+import datetime
 import os
-import time
 from functools import partial
 
-import requests
-import json
-import random
-import datetime
-import threading
-import logging
+from telegram.ext import CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler
 
 import telegram
-
-from project.models.telegram_users import TelegramUser
-from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup
-
 from project import db
 from project.models.places import Place
-from project.models.co2history import co2_history
-from project.api.common import plausible_random
-from project.utils.datagen import start as datagen_start
-from telegram.ext import Updater, CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler
+from project.models.telegram_users import TelegramUser
+from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup
 
 
 async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
@@ -70,7 +59,7 @@ async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, a
     return ConversationHandler.END
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
+async def start(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
     # Check to see if user is already in the table "telegram_users"
     # If not, add them
     # If yes, do nothing
@@ -100,7 +89,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
 
 async def is_registered(app, update):
     user_id = update.effective_user.id
-    users = []
     with app.app_context():
         # Check if user is already in the table
         users = db.session.query(TelegramUser).filter_by(telegram_id=user_id).all()

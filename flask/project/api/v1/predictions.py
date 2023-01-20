@@ -6,7 +6,7 @@ from flask_login import login_required
 from flask_smorest import Blueprint
 
 from project.api.common import plausible_random, predict
-from project.models.co2history import co2_history
+from project.models.co2history import Co2History
 from project.models.places import Place
 
 predictions = Blueprint('predictions', __name__)
@@ -21,7 +21,7 @@ class Predictions(MethodView):
         if place is None:
             return "Place not found", 404
         # Get the last co2 value of this place from the co2_history table
-        last_co2 = co2_history.query.filter_by(place_id=place.id).order_by(co2_history.timestamp.desc()).first()
+        last_co2 = Co2History.query.filter_by(place_id=place.id).order_by(Co2History.timestamp.desc()).first()
         # get the predictions for this place from prophet
         predicts = predict(place.id)
         if predicts is not None:

@@ -1,11 +1,12 @@
 from flask import jsonify
 from flask.views import MethodView
+from flask_login import login_user, login_required, current_user
 from flask_smorest import Blueprint, abort
-from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import login_user, login_required, logout_user, current_user
-from project.models.user import Utente, UserResponseSchema
 from marshmallow import Schema, fields
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from project import db
+from project.models.user import Utente, UserResponseSchema
 
 auth = Blueprint('auth', __name__)
 
@@ -29,7 +30,7 @@ class Login(MethodView):
             'type': 'string',
         }
     })
-    @auth.alt_response(401, None)
+    @auth.alt_response(401, 'Invalid credentials')
     def post(self, args):
         """Esegue il login
 
@@ -40,7 +41,6 @@ class Login(MethodView):
         user = Utente.query.filter_by(email=args['email']).first()
         if not user or not check_password_hash(user.password, args['password']):
             abort(401, message='Invalid email or password')
-        remember = args['remember'] if 'remember' in args else False
         if login_user(user, remember=args['remember']):
             return None
         else:
@@ -61,7 +61,7 @@ class SignupSchema(Schema):
 class Signup(MethodView):
     @auth.arguments(SignupSchema)
     @auth.response(200, None)
-    @auth.alt_response(401, None)
+    @auth.alt_response(401, 'Invalid credentials')
     def post(self, args):
         """Esegue la registrazione
 
@@ -72,7 +72,6 @@ class Signup(MethodView):
         user = Utente.query.filter_by(email=args['email']).first()
         if user:
             abort(401, message='Email already exists')
-        # TODO password salting
         # TODO email confirmation
 
         new_user = Utente(email=args['email'], name=args['name'],

@@ -1,6 +1,6 @@
 from .auth import *
-from .places import *
 from .device import *
+from .places import *
 from .predictions import *
 
 # Creiamo un blueprint di nome "api", che verrà poi inglobato nel blueprint generico delle api
