@@ -62,8 +62,8 @@ boolean debug = false; //to enable debug mode
 
 // funzione per il setup del ble
 void ble_setup(){
-  ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here //DISABLE IN PRODUCTION
-  //ble.begin("Ossigenio", true, ledPin); //ENABLE IN PRODUCTION ONLY
+  //ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here //DISABLE IN PRODUCTION
+  ble.begin("Ossigenio", true, ledPin); //ENABLE IN PRODUCTION ONLY
 }
 
 void setup() {
