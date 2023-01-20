@@ -60,11 +60,6 @@ int raw; //seems not possible to read raw data from ccs811; used for ens210 temp
 
 boolean debug = false; //to enable debug mode
 
-// start stepper section
-#include "step.h"
-extern Stepper myStepper;
-// end stepepr section
-
 // funzione per il setup del ble
 void ble_setup(){
   ble.begin("AirQualityMonitorEBV", true, ledPin); //put ble adv name here //DISABLE IN PRODUCTION
@@ -106,10 +101,6 @@ void loop() {
     }
     feed = false; //re-enabling feedback disabled into isr
   }
-
-  //step trigger (ONLY FOR PROTO2 FIXED VERSION)
-  if (co2 >= 2000) myStepper.step(stepsOpen); //open window
-  if (co2 < 2000) myStepper.step(-stepsOpen); //close window
 
   // feedback interrupt result management
   if ((feedback == 1 || feedback == 2 || feedback == 3) && feed == false) {
