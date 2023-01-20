@@ -16,3 +16,4 @@ pandas~=1.5.3
 prophet~=1.1.1
 SQLAlchemy~=1.4.46
 python-telegram-bot~=20.0
+shapely~=2.0.0
