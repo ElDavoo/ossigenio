@@ -12,6 +12,7 @@ import json
 import datetime
 import certifi
 from paho.mqtt.client import ssl
+from project.utils.telegram import on_update
 
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     print("'SQLALCHEMY_DATABASE_URI'not set")
@@ -88,6 +89,15 @@ def on_message(clnt, userdata, msg):
         except Exception as ex:
             print(ex)
             conn.rollback()
+
+    # send the data to the telegram bot
+    cur = conn.cursor()
+    try:
+        on_update(data, cur)
+        conn.commit()
+    except Exception as e:
+        print(e)
+        conn.rollback()
 
 
 conn = conn_from_uri(os.environ.get('SQLALCHEMY_DATABASE_URI'))

@@ -110,6 +110,40 @@ async def is_registered(app, update):
     return None
 
 
+def on_update(data, conn):
+    # Initialize the bot
+    bot = telegram.Bot(token=os.environ.get('TELEGRAM_TOKEN'))
+
+    # Get all the users that are subscribed to the place
+    conn.execute("SELECT * FROM telegram_users WHERE place = %s", (data["place"],))
+    users = conn.fetchall()
+    if len(users) == 0:
+        return
+    # Get the place name
+    conn.execute("SELECT name FROM place WHERE id = %s", (data["place"],))
+    place_name = conn.fetchone()
+    # get the co2 from data
+    co2 = data["co2"]
+    # Send a message to every user
+    for user in users:
+        # Get the threshold, it's the 5th value of the tuple
+        soglia = user[3]
+        # If the co2 is above the threshold, send a message
+        if soglia != 0 and co2 > soglia:
+            # Check the last time the user was notified
+            last_notification = user[4]
+            # If the last time the user was notified is more than 5 minutes ago, send a message
+            if last_notification is None or (datetime.datetime.now() - last_notification).total_seconds() > 900:
+                # Send a message
+                loop = asyncio.new_event_loop()
+                loop.run_until_complete(bot.send_message(chat_id=user[0], text=f"CO2 in {place_name[0]} è {co2}"))
+                # Update the last_notified field in the database
+                conn.execute("UPDATE telegram_users SET last_notification = %s WHERE telegram_id = %s AND place = %s",
+                             (datetime.datetime.now(), user[0], data["place"]))
+
+    pass
+
+
 def run(app):
     asyncio.set_event_loop(asyncio.new_event_loop())
     token = os.environ.get('TELEGRAM_TOKEN')
