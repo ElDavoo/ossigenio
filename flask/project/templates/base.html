@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <!-- Base page used by other html pages -->
-<html>
+<html lang="it">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ossigenio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <!-- hash_pass used to hash password directly on client into login.html page -->
     <script>
         function hash_pass() {
-            var digest = CryptoJS.SHA256(document.getElementById('password').value);
-            for (var i = 0; i < 1000; i++) {
+            let digest = CryptoJS.SHA256(document.getElementById('password').value);
+            for (let i = 0; i < 1000; i++) {
                 digest = CryptoJS.SHA256(digest);
             }
             document.getElementById('password_hidden').value = digest;
@@ -23,53 +23,53 @@
 </head>
 
 <body>
-    <section class="hero is-info is-fullheight">
+<section class="hero is-info is-fullheight">
 
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-                    <div id="navbarMenuHeroA" class="navbar-menu">
-                        <div class="navbar-end">
-                            <a href="{{ url_for('main.index') }}" class="navbar-item">
-                                Home
-                            </a>
-                            {% if current_user.is_authenticated %}
+    <div class="hero-head">
+        <nav class="navbar">
+            <div class="container">
+                <div id="navbarMenuHeroA" class="navbar-menu">
+                    <div class="navbar-end">
+                        <a href="{{ url_for('main.index') }}" class="navbar-item">
+                            Home
+                        </a>
+                        {% if current_user.is_authenticated %}
                             <a href="{{ url_for('main.profile') }}" class="navbar-item">
                                 Profile
                             </a>
-                            {% endif %}
-                            {% if not current_user.is_authenticated %}
+                        {% endif %}
+                        {% if not current_user.is_authenticated %}
                             <a href="{{ url_for('auth.login') }}" class="navbar-item">
                                 Login
                             </a>
-                            {% endif %}
-                            {% if current_user.admin == True %}
+                        {% endif %}
+                        {% if current_user.admin == True %}
                             <a href="{{ url_for('main.devices') }}" class="navbar-item">
                                 Devices
                             </a>
-                            {% endif %}
-                            {% if current_user.admin == True %}
+                        {% endif %}
+                        {% if current_user.admin == True %}
                             <a href="{{ url_for('main.profile_admin') }}" class="navbar-item">
                                 Admin console
                             </a>
-                            {% endif %}
-                            {% if current_user.is_authenticated %}
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
                             <a href="{{ url_for('auth.logout') }}" class="navbar-item">
                                 Logout
                             </a>
-                            {% endif %}
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
-            </nav>
-        </div>
-
-        <div class="hero-body">
-            <div class="container">
-               {% block content %}
-               {% endblock %}
             </div>
+        </nav>
+    </div>
+
+    <div class="hero-body">
+        <div class="container">
+            {% block content %}
+            {% endblock %}
         </div>
-    </section>
+    </div>
+</section>
 </body>
 </html>

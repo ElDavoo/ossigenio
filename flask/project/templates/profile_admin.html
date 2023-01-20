@@ -1,44 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Admin page; used for user deletion -->
-<h1 class="title">
-  Welcome, administrator {{ name }}!
-</h1>
-{% with messages = get_flashed_messages() %}
-		{% if messages %}
-    		<div class="notification is-danger">
-        	{{ messages[0] }}.
-    		</div>
-		{% endif %}
-	  {% endwith %}
-<table id="data" class="table table-striped is-fullwidth">
-  <thead>
-    <tr>
-      <th>Id</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Is an administrator?</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for user in users %}
-      <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.admin }}</td>
-        <td><a href="{{url_for('main.delete', id=user.id)}}" class="btn btn-danger" style="color:red">Delete</a></td>
-        <td><a href="{{url_for('main.toggle', id=user.id)}}" class="btn btn-danger" style="color:blue">Admin/not admin</a></td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<div>
-  <p>
-    <strong>AirQualityMonitor</strong> by AlfaSierra92 & ElDavoo.</br> &copy; All Rights Reserved 2023.
-  </p>
-</div>
+    <!-- Admin page; used for user deletion -->
+    <h1 class="title">
+        Welcome, administrator {{ name }}!
+    </h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="notification is-danger">
+                {{ messages[0] }}.
+            </div>
+        {% endif %}
+    {% endwith %}
+    <table id="data" class="table table-striped is-fullwidth">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Is an administrator?</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.admin }}</td>
+                <td><a href="{{ url_for('main.delete', id=user.id) }}" class="btn btn-danger"
+                       style="color:red">Delete</a></td>
+                <td><a href="{{ url_for('main.toggle', id=user.id) }}" class="btn btn-danger" style="color:blue">Admin/not
+                    admin</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <p>
+            <strong>AirQualityMonitor</strong> by AlfaSierra92 & ElDavoo.<br/> &copy; All Rights Reserved 2023.
+        </p>
+    </div>
 {% endblock %}
