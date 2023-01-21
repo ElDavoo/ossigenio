@@ -73,7 +73,6 @@ def on_message(_, __, msg):
                     "place)"
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                     (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, place_id))
-        conn.commit()
     except Exception as e:
         print(e)
         conn.rollback()
@@ -85,7 +84,6 @@ def on_message(_, __, msg):
             cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES (%s, %s, %s);",
                         (place_id, timestamp, co2)
                         )
-            conn.commit()
         except Exception as ex:
             print(ex)
             conn.rollback()

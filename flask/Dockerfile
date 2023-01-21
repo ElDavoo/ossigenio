@@ -13,7 +13,7 @@ RUN apt-get -y upgrade && apt-get -y full-upgrade
 RUN apt-get install -y libpq-dev build-essential python3-pandas libgeos-dev zlib1g-dev python3-shapely gunicorn
 RUN apt-get install -y python3-pip
 RUN apt-get install -y python3-flask python3-sqlalchemy python3-flask-sqlalchemy python3-flask-login
-RUN apt-get install -y python3-psycopg2 python3-paho-mqtt python3-geoalchemy2
+RUN apt-get install -y python3-paho-mqtt python3-geoalchemy2
 RUN pip freeze
 RUN rm -rf /var/lib/apt/lists/*
 
