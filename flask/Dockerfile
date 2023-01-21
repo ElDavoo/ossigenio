@@ -29,5 +29,5 @@ WORKDIR /root/
 
 
 EXPOSE 5000
-
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 CMD ["gunicorn","-b","0.0.0.0:5000","--access-logfile","-","project:flask_app"]
