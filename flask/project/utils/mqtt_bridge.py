@@ -73,6 +73,7 @@ def on_message(_, __, msg):
                     "place)"
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                     (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, place_id))
+        print("Inserted: " + str(cur.rowcount))
     except Exception as e:
         print(e)
         conn.rollback()
@@ -86,16 +87,13 @@ def on_message(_, __, msg):
                         )
         except Exception as ex:
             print(ex)
-            conn.rollback()
 
     # send the data to the telegram bot
     cur = conn.cursor()
     try:
         on_update(data, cur)
-        conn.commit()
     except Exception as e:
         print(e)
-        conn.rollback()
     print("Data sent to telegram")
 
 
