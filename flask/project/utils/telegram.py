@@ -149,8 +149,7 @@ def run(app):
         fallbacks=[]
     ))
 
-    application.run_polling(
-    )
+    application.run_polling(stop_signals=None)
 
 
 def stort(app):
