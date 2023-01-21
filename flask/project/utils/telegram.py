@@ -6,7 +6,7 @@ import datetime
 import os
 from functools import partial
 
-from telegram.ext import CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler
+from telegram.ext import CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler, filters
 
 import telegram
 from project import db
@@ -125,7 +125,8 @@ def on_update(data, conn):
             if last_notification is None or (datetime.datetime.now() - last_notification).total_seconds() > 900:
                 # Send a message
                 loop = asyncio.new_event_loop()
-                loop.run_until_complete(bot.send_message(chat_id=user[0], text=f"CO2 in {place_name[0]} è {co2}"))
+                loop.run_until_complete(bot.send_message(chat_id=user[0], text=f"CO2 in {place_name[0]} è {co2}, "
+                                                                               f"maggiore della soglia di {soglia}"))
                 # Update the last_notified field in the database
                 conn.execute("UPDATE telegram_users SET last_notification = %s WHERE telegram_id = %s AND place = %s",
                              (datetime.datetime.now(), user[0], data["place"]))
@@ -142,10 +143,11 @@ def run(app):
     application.add_handler(ConversationHandler(
         entry_points=[CommandHandler('start', partial(start, app=app))],
         states={
-            0: [MessageHandler(telegram.ext.filters.TEXT, partial(place_change, app=app))],
-            1: [MessageHandler(telegram.ext.filters.TEXT, partial(update_threshold, app=app))]
+            0: [MessageHandler(filters.TEXT & ~filters.COMMAND, partial(place_change, app=app))],
+            1: [MessageHandler(filters.TEXT & ~filters.COMMAND, partial(update_threshold, app=app))]
         },
-        fallbacks=[]
+        fallbacks=[],
+        allow_reentry=True
     ))
 
     application.run_polling(stop_signals=None)
