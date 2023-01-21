@@ -1,6 +1,7 @@
 FROM debian:bookworm
 
 ENV PIP_ROOT_USER_ACTION=ignore
+ENV TZ="Europe/Rome"
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
