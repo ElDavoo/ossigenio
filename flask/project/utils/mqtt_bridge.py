@@ -34,6 +34,7 @@ def conn_from_uri():
     db = uri_parts[1].split('/')[1].split('?')[0]
     # connect to the database with ssl
     conne = psycopg2.connect(dbname=db, user=user, password=password, host=host, port=port, sslmode='require')
+    conne.autocommit = True
     return conne
 
 
