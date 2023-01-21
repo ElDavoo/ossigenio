@@ -67,6 +67,7 @@ def on_message(_, __, msg):
     cur = conn.cursor()
     # insert the sensor data into the database
     try:
+        print("Inserting data...")
         cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, "
                     "place)"
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
@@ -75,7 +76,7 @@ def on_message(_, __, msg):
     except Exception as e:
         print(e)
         conn.rollback()
-
+    print("Data inserted")
     # insert the sensor data into the co2_history table
     if place_id:
         try:
@@ -96,6 +97,7 @@ def on_message(_, __, msg):
     except Exception as e:
         print(e)
         conn.rollback()
+    print("Data sent to telegram")
 
 
 conn = conn_from_uri()

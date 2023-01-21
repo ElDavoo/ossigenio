@@ -113,6 +113,7 @@ def on_update(data, conn):
     # get the co2 from data
     co2 = data["co2"]
     # Send a message to every user
+    print("Sending message to users")
     for user in users:
         # Get the threshold, it's the 5th value of the tuple
         soglia = user[3]
@@ -128,8 +129,6 @@ def on_update(data, conn):
                 # Update the last_notified field in the database
                 conn.execute("UPDATE telegram_users SET last_notification = %s WHERE telegram_id = %s AND place = %s",
                              (datetime.datetime.now(), user[0], data["place"]))
-
-    pass
 
 
 def run(app):
