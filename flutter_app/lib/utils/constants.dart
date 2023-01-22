@@ -114,13 +114,13 @@ class AccConsts {
 
   String get urlCheckMac => '$_devices/associate';
 
-  String get places => '/places';
+  String get places => '/places/';
 
-  String get urlGetPlaces => '/by-radius';
+  String get urlGetPlaces => "${places}by-radius";
 
   String get urlPlace => places;
 
-  String get urlPlaces => '$places/by-distance';
+  String get urlPlaces => '${places}by-distance';
 
   String get urlPredictions => '/predictions';
 
