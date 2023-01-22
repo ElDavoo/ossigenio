@@ -1,4 +1,4 @@
-from .auth import *
+from .users import *
 from .device import *
 from .places import *
 from .predictions import *
@@ -7,7 +7,8 @@ from .predictions import *
 api = Blueprint('api_v1', __name__)
 
 # Registriamo tutte le componenti delle API
-api.register_blueprint(auth)
+api.register_blueprint(users)
+places.register_blueprint(predictions)
 api.register_blueprint(places)
 api.register_blueprint(device)
-api.register_blueprint(predictions)
+

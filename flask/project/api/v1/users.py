@@ -9,7 +9,7 @@ from project import db
 from project.api.common import login_required_cookie
 from project.models.user import Utente, UserResponseSchema, LoginSchema, SignupSchema
 
-auth = Blueprint('auth', __name__)
+users = Blueprint('auth', __name__, url_prefix='/users')
 
 
 class ResponseSchema(Schema):
@@ -35,16 +35,16 @@ ResponseDict = {'description': 'Risposta per segnalare la non autenticazione del
                 }
 
 
-@auth.route('/login', methods=['POST'])
+@users.route('/login', methods=['POST'])
 class Login(MethodView):
-    @auth.arguments(LoginSchema, description='Schema per il login (password cifrata 1001 volte con sha256)')
-    @auth.response(200, None, headers={
+    @users.arguments(LoginSchema, description='Schema per il login (password cifrata 1001 volte con sha256)')
+    @users.response(200, None, headers={
         'Set-Cookie': {
             'description': 'Il cookie di sessione',
             'type': 'string',
         }
     })
-    @auth.alt_response(401, ResponseDict)
+    @users.alt_response(401, ResponseDict)
     def post(self, args):
         """Esegue il login dell'utente
 
@@ -63,16 +63,16 @@ class Login(MethodView):
         abort(401)
 
 
-@auth.route('/signup', methods=['POST'])
+@users.route('/signup', methods=['POST'])
 class Signup(MethodView):
-    @auth.arguments(SignupSchema, description='Schema per la registrazione (password cifrata 1001 volte con sha256)')
-    @auth.response(200, headers={
+    @users.arguments(SignupSchema, description='Schema per la registrazione (password cifrata 1001 volte con sha256)')
+    @users.response(200, headers={
         'Set-Cookie': {
             'description': 'Il cookie di sessione',
             'type': 'string',
         }
     })
-    @auth.alt_response(401, ResponseDict)
+    @users.alt_response(401, ResponseDict)
     def post(self, args):
         """Esegue la registrazione dell'utente
 
@@ -97,11 +97,11 @@ class Signup(MethodView):
         abort(401)
 
 
-@auth.route('/profile', methods=['GET'])
+@users.route('/profile', methods=['GET'])
 class User(MethodView):
-    @auth.response(200, UserResponseSchema, description='Risposta che contiene i dati dell\'utente')
-    @auth.alt_response(401, ResponseDict)
-    @login_required_cookie(auth)
+    @users.response(200, UserResponseSchema, description='Risposta che contiene i dati dell\'utente')
+    @users.alt_response(401, ResponseDict)
+    @login_required_cookie(users)
     def get(self):
         """Restituisce i dati dell'utente collegato
 

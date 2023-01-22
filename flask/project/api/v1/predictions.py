@@ -24,7 +24,7 @@ class PredictionSchema(Schema):
     co2 = fields.Float(required=True)
 
 
-@predictions.route('/predictions/<int:place_id>', methods=['GET'])
+@predictions.route('/<int:place_id>/predictions', methods=['GET'])
 class Predictions(MethodView):
     @login_required_cookie(predictions)
     @predictions.response(200, PredictionSchema(many=True), description='Lista di previsioni')

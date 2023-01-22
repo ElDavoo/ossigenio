@@ -8,7 +8,7 @@ from project import db
 from project.api.common import login_required_cookie, StatusSchema
 from project.models.device import Device as DeviceModel
 
-device = Blueprint('device', __name__)
+device = Blueprint('device', __name__, url_prefix='/devices')
 
 
 class IdSchema(Schema):
@@ -41,7 +41,7 @@ class Device(MethodView):
                          )
     def post(self, args):
         """
-        Associa un dispositivo a un utente.
+        Associa un dispositivo a un utente
 
         Usare questo endpoint per associare un sensore Ossigenio
         a un utente. In questo modo, si attesta che il dispositivo

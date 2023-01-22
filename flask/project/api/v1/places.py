@@ -7,7 +7,7 @@ from project.api.common import login_required_cookie, StatusSchema
 from project.models.co2history import Co2History
 from project.models.places import Place, PlaceSchema
 
-places = Blueprint('places', __name__)
+places = Blueprint('places', __name__, url_prefix='/places')
 
 
 class LatLonSchema(Schema):
@@ -23,7 +23,22 @@ class LatLonSchema(Schema):
     lon = fields.Float(required=True)
 
 
-@places.route('/places', methods=['POST'])
+def add_co2(plc):
+    """
+    Aggiunge la co2 a un luogo, o None se non è disponibile
+    :param plc: Il luogo a cui aggiungere la co2
+    :return: Il luogo con la co2 aggiunta
+    """
+    place = plc.serialize()
+    last_co2 = Co2History.query.filter_by(place_id=plc.id).order_by(Co2History.timestamp.desc()).first()
+    if last_co2 is not None:
+        place['co2'] = last_co2.co2
+    else:
+        place['co2'] = None
+    return place
+
+
+@places.route('/by-distance', methods=['POST'])
 class Placs(MethodView):
     @places.arguments(LatLonSchema, description='Coordinate geografiche')
     @login_required_cookie(places)
@@ -51,22 +66,7 @@ class Placs(MethodView):
         return jsonify(places_list)
 
 
-def add_co2(plc):
-    """
-    Aggiunge la co2 a un luogo, o con None se non è disponibile
-    :param plc: Il luogo a cui aggiungere la co2
-    :return: Il luogo con la co2 aggiunta
-    """
-    place = plc.serialize()
-    last_co2 = Co2History.query.filter_by(place_id=plc.id).order_by(Co2History.timestamp.desc()).first()
-    if last_co2 is not None:
-        place['co2'] = last_co2.co2
-    else:
-        place['co2'] = None
-    return place
-
-
-@places.route('/nearby', methods=['POST'])
+@places.route('/by-radius', methods=['POST'])
 class Nearby(MethodView):
     @places.arguments(LatLonSchema, description='Coordinate geografiche')
     @login_required_cookie(places)
@@ -91,7 +91,7 @@ class Nearby(MethodView):
         return jsonify(places_list)
 
 
-@places.route('/place/<int:place_id>', methods=['GET'])
+@places.route('/<int:place_id>', methods=['GET'])
 class Plc(MethodView):
     @login_required_cookie(places)
     @places.response(200, PlaceSchema, description='Luogo cercato')
