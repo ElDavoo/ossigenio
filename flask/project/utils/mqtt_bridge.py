@@ -48,7 +48,7 @@ def conn_from_uri():
 
 def on_connect(mclient, _, __, rc):
     print("Connected with result code " + str(rc))
-    mclient.subscribe("sensors/+/combined")
+    mclient.subscribe("places/+/+/combined")
 
 
 def on_message(_, __, msg):
@@ -65,13 +65,13 @@ def on_message(_, __, msg):
     humidity = data.get('humidity', None)
     rawdata = data.get('rawdata', None)
     temperature = data.get('temperature', None)
-    place_id = data.get('place', None)
+    place_id = msg.topic.split('/')[1]
     feedback = data.get('feedback', None)
 
     # set the timestamp as now
     timestamp = datetime.datetime.now()
     # get the sensor id from the topic
-    sensor_id = msg.topic.split('/')[1]
+    sensor_id = msg.topic.split('/')[2]
 
     cur = conn.cursor()
     # insert the sensor data into the database
