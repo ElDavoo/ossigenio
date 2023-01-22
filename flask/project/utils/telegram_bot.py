@@ -107,7 +107,7 @@ def on_update(data, conn, place_id):
     bot = Bot(token=os.environ.get('TELEGRAM_TOKEN'))
 
     # Get all the users that are subscribed to the place
-    conn.execute("SELECT telegram_id FROM telegram_users WHERE place = %s", (place_id,))
+    conn.execute("SELECT * FROM telegram_users WHERE place = %s", (place_id,))
     users = conn.fetchall()
     if len(users) == 0:
         return
@@ -129,7 +129,7 @@ def on_update(data, conn, place_id):
             if last_notification is None or (datetime.datetime.now() - last_notification).total_seconds() > 900:
                 # Send a message
                 loop = asyncio.new_event_loop()
-                text = f"La quantità di CO₂ a {place_name[0]} ha superato i {soglia} ppm ed è ora di {co2} ppm!\n"
+                text = f"La quantità di CO₂ a {place_name[0]} ha superato i {soglia} ppm ed è ora a {co2} ppm!\n"
                 text += "Si consiglia di aprire le finestre per ventilare l'ambiente."
                 loop.run_until_complete(bot.send_message(chat_id=user[0], text=text))
                 # Update the last_notified field in the database
