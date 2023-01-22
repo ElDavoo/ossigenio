@@ -11,7 +11,7 @@ from telegram.ext import CommandHandler, MessageHandler, ApplicationBuilder, Con
 
 from project import db
 from project.models.places import Place
-from project.models.telegram_users import TelegramUser
+from project.models.telegram_users import TelegramUsers
 
 
 async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
@@ -22,7 +22,7 @@ async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
         return
     # Get all places handled by the user
     with app.app_context():
-        users = db.session.query(TelegramUser).filter_by(telegram_id=update.effective_user.id).all()
+        users = db.session.query(TelegramUsers).filter_by(telegram_id=update.effective_user.id).all()
         # Try to get a place from the message and check if it's handled by the user
         # We only have the name of the place, so we have to check if it's in the list of places handled by the user
         # If it is, we get the place id
@@ -51,7 +51,7 @@ async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, a
     # ╗ Update the threshold in the database
     with app.app_context():
         # filter by telegram_id and place_id
-        user = db.session.query(TelegramUser).filter_by(telegram_id=update.effective_user.id, place=place_id).first()
+        user = db.session.query(TelegramUsers).filter_by(telegram_id=update.effective_user.id, place=place_id).first()
         user.soglia = update.message.text
         # Reset the last notification time
         user.last_notification = None
@@ -92,7 +92,7 @@ async def is_registered(app, update):
     user_id = update.effective_user.id
     with app.app_context():
         # Check if user is already in the table
-        users = db.session.query(TelegramUser).filter_by(telegram_id=user_id).all()
+        users = db.session.query(TelegramUsers).filter_by(telegram_id=user_id).all()
 
         if len(users) != 0:
             return users
