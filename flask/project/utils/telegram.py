@@ -39,8 +39,8 @@ async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
             await update.message.reply_text("Non puoi iscriverti a questo posto")
             return
 
-        # Ask the user to insert the new threshold
-        await update.message.reply_text("Inserisci la nuova soglia di CO2")
+        # Ask the user to insert the new threshold and delete the keyboard
+        await update.message.reply_text("Inserisci la nuova soglia di CO2", reply_markup=ReplyKeyboardRemove())
         context.user_data["place_id"] = place_id
 
         return 1
@@ -54,6 +54,8 @@ async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, a
         # filter by telegram_id and place_id
         user = db.session.query(TelegramUser).filter_by(telegram_id=update.effective_user.id, place=place_id).first()
         user.soglia = update.message.text
+        # Reset the last notification time
+        user.last_notification = None
         db.session.commit()
     await update.message.reply_text("Soglia aggiornata")
     return ConversationHandler.END
