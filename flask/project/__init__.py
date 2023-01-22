@@ -33,6 +33,7 @@ login_manager.init_app(flask_app)
 
 from project.models.user import Utente
 
+
 @login_manager.user_loader
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use it in the query for the user
@@ -57,7 +58,7 @@ from project.utils.datagen import start as start_datagen
 from project.utils.mqtt_bridge import start as start_mqtt
 from project.utils.telegram import stort as start_telegram
 
-#thr = start_datagen(flask_app)
+thr = start_datagen(flask_app)
 thr2 = start_mqtt()
 _thread = threading.Thread(target=start_telegram, args=(flask_app,))
 _thread.start()

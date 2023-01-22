@@ -4,6 +4,26 @@ from marshmallow import Schema, fields
 from project import db
 
 
+class LoginSchema(Schema):
+    class Meta:
+        strict = True
+        ordered = True
+
+    email = fields.String(required=True)
+    password = fields.String(required=True)
+    remember = fields.Boolean(required=False, load_default=False)
+
+
+class SignupSchema(Schema):
+    class Meta:
+        strict = True
+        ordered = True
+
+    email = fields.String(required=True)
+    password = fields.String(required=True)
+    name = fields.String(required=True)
+
+
 class UserResponseSchema(Schema):
     class Meta:
         strict = True
