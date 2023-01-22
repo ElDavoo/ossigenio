@@ -345,7 +345,8 @@ class AccountManager {
 
     final String cookie = await PrefManager().read("cookie") as String;
 
-    return get(C.acc.urlPredictions + id.toString(), cookie).then((response) {
+    return get(C.acc.places + id.toString() + C.acc.urlPredictions, cookie)
+        .then((response) {
       if (response.statusCode == 200) {
         // Parsa tutte le predizioni dal json e le restituisce
         List<Prediction> predictions = [];

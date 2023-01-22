@@ -102,21 +102,27 @@ class AccConsts {
 
   String get httpsPort => '443';
 
-  String get urlLogin => '/login';
+  String get _users => '/users';
 
-  String get urlRegister => '/signup';
+  String get urlLogin => '$_users/login';
 
-  String get urlCheckMac => '/checkMac';
+  String get urlRegister => '$_users/signup';
 
-  String get urlGetPlaces => '/nearby';
+  String get urlUserInfo => '$_users/profile';
 
-  String get urlUserInfo => '/user';
+  String get _devices => '/devices';
 
-  String get urlPlace => '/place/';
+  String get urlCheckMac => '$_devices/associate';
 
-  String get urlPlaces => '/places';
+  String get places => '/places';
 
-  String get urlPredictions => '/predictions/';
+  String get urlGetPlaces => '/by-radius';
+
+  String get urlPlace => places;
+
+  String get urlPlaces => '$places/by-distance';
+
+  String get urlPredictions => '/predictions';
 
   int get apiVersion => 1;
 
