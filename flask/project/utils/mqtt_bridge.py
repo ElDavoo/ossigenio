@@ -83,7 +83,7 @@ def on_message(_, __, msg):
                     (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, place_id))
         # print("Inserted: " + str(cur.rowcount))
     except Exception as e:
-        print(e)
+        print("Error inserting data: " + str(e))
         conn.rollback()
     # print("Data inserted")
     # insert the sensor data into the co2_history table
@@ -94,14 +94,14 @@ def on_message(_, __, msg):
                         (place_id, timestamp, co2)
                         )
         except Exception as ex:
-            print(ex)
+            print("Error inserting into co2_history: " + str(ex))
 
     # send the data to the telegram bot
     cur = conn.cursor()
     try:
         on_update(data, cur)
     except Exception as e:
-        print(e)
+        print("Exception on sending data to telegram bot: " + str(e))
     # print("Data sent to telegram")
 
 
