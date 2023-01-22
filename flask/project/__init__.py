@@ -56,7 +56,7 @@ from project.api import api as api_blueprint
 app.register_blueprint(api_blueprint, url_prefix='/api')
 from project.utils.datagen import start as start_datagen
 from project.utils.mqtt_bridge import start as start_mqtt
-from project.utils.telegram import stort as start_telegram
+from project.utils.telegram_bot import start as start_telegram
 
 thr = start_datagen(flask_app)
 thr2 = start_mqtt()

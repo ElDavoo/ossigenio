@@ -114,7 +114,7 @@ def on_update(data, conn):
     # get the co2 from data
     co2 = data["co2"]
     # Send a message to every user
-    print("Sending message to users")
+    # print("Sending message to users")
     for user in users:
         # Get the threshold, it's the 5th value of the tuple
         soglia = user[3]
