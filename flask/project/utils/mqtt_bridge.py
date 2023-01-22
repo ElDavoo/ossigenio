@@ -12,7 +12,7 @@ import paho.mqtt.client as mqtt
 import psycopg2
 from paho.mqtt.client import ssl
 
-from project.utils.telegram import on_update
+from project.utils.telegram_bot import on_update
 
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     print("'SQLALCHEMY_DATABASE_URI'not set")
@@ -40,7 +40,8 @@ def conn_from_uri():
     }
 
     # connect to the database with ssl
-    conne = psycopg2.connect(dbname=db, user=user, password=password, host=host, port=port, sslmode='require', **keepalive_kwargs)
+    conne = psycopg2.connect(dbname=db, user=user, password=password, host=host, port=port, sslmode='require',
+                             **keepalive_kwargs)
     conne.autocommit = True
     return conne
 
@@ -51,7 +52,7 @@ def on_connect(mclient, _, __, rc):
 
 
 def on_message(_, __, msg):
-    #print(msg.topic + " " + str(msg.payload))
+    # print(msg.topic + " " + str(msg.payload))
     # desjsonify the payload
     try:
         data = json.loads(msg.payload)
@@ -75,16 +76,16 @@ def on_message(_, __, msg):
     cur = conn.cursor()
     # insert the sensor data into the database
     try:
-        #print("Inserting data...")
+        # print("Inserting data...")
         cur.execute("INSERT INTO sensor_data (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, "
                     "place)"
                     "VALUES (%s, %s, %s, %s, %s, %s, %s, %s)",
                     (sensor_id, timestamp, co2, humidity, rawdata, temperature, feedback, place_id))
-        #print("Inserted: " + str(cur.rowcount))
+        # print("Inserted: " + str(cur.rowcount))
     except Exception as e:
         print(e)
         conn.rollback()
-    #print("Data inserted")
+    # print("Data inserted")
     # insert the sensor data into the co2_history table
     if place_id:
         try:
@@ -101,7 +102,7 @@ def on_message(_, __, msg):
         on_update(data, cur)
     except Exception as e:
         print(e)
-    #print("Data sent to telegram")
+    # print("Data sent to telegram")
 
 
 conn = conn_from_uri()

@@ -5,8 +5,8 @@ from flask_smorest import Blueprint, abort
 from marshmallow import Schema, fields
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from project.api.common import login_required_cookie
 from project import db
+from project.api.common import login_required_cookie
 from project.models.user import Utente, UserResponseSchema, LoginSchema, SignupSchema
 
 auth = Blueprint('auth', __name__)
@@ -37,7 +37,7 @@ ResponseDict = {'description': 'Risposta per segnalare la non autenticazione del
 
 @auth.route('/login', methods=['POST'])
 class Login(MethodView):
-    @auth.arguments(LoginSchema)
+    @auth.arguments(LoginSchema, description='Schema per il login (password cifrata 1001 volte con sha256)')
     @auth.response(200, None, headers={
         'Set-Cookie': {
             'description': 'Il cookie di sessione',
@@ -65,7 +65,7 @@ class Login(MethodView):
 
 @auth.route('/signup', methods=['POST'])
 class Signup(MethodView):
-    @auth.arguments(SignupSchema)
+    @auth.arguments(SignupSchema, description='Schema per la registrazione (password cifrata 1001 volte con sha256)')
     @auth.response(200, headers={
         'Set-Cookie': {
             'description': 'Il cookie di sessione',
@@ -99,7 +99,7 @@ class Signup(MethodView):
 
 @auth.route('/profile', methods=['GET'])
 class User(MethodView):
-    @auth.response(200, UserResponseSchema)
+    @auth.response(200, UserResponseSchema, description='Risposta che contiene i dati dell\'utente')
     @auth.alt_response(401, ResponseDict)
     @login_required_cookie(auth)
     def get(self):

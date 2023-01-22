@@ -5,9 +5,9 @@ import json
 import os
 import random
 
+from flask_login import login_required
 from marshmallow import Schema, fields
 from pandas import read_sql_query
-from flask_login import login_required
 from prophet.serialize import model_from_json
 from sqlalchemy import create_engine
 

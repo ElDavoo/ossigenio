@@ -6,13 +6,12 @@ import datetime
 import os
 from functools import partial
 
+from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler, filters
 
-import telegram
 from project import db
 from project.models.places import Place
 from project.models.telegram_users import TelegramUser
-from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 
 async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
@@ -61,7 +60,7 @@ async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, a
     return ConversationHandler.END
 
 
-async def start(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
+async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
     # Check to see if user is already in the table "telegram_users"
     # If not, add them
     # If yes, do nothing
@@ -143,7 +142,7 @@ def run(app):
 
     # Add conversation handler
     application.add_handler(ConversationHandler(
-        entry_points=[CommandHandler('start', partial(start, app=app))],
+        entry_points=[CommandHandler('start', partial(start_conversation, app=app))],
         states={
             0: [MessageHandler(filters.TEXT & ~filters.COMMAND, partial(place_change, app=app))],
             1: [MessageHandler(filters.TEXT & ~filters.COMMAND, partial(update_threshold, app=app))]
@@ -155,5 +154,5 @@ def run(app):
     application.run_polling(stop_signals=None)
 
 
-def stort(app):
+def start(app):
     run(app)

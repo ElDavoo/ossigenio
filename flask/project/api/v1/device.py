@@ -21,28 +21,24 @@ class IdSchema(Schema):
 
 @device.route('/associate', methods=['POST'])
 class Device(MethodView):
-    @device.arguments(IdSchema)
+    @device.arguments(IdSchema, description='Il MAC address convertito in intero del dispositivo')
     @login_required_cookie(device)
     @device.response(200, content_type='application/json', schema=StatusSchema,
                      description='Risposta per segnalare che si è (già) proprietari del dispositivo. Può anche '
                                  'ritornare "Device is already yours"',
                      example={'status': 'Device is associated'})
-    @device.alt_response(404, {
-        'content_type': 'application/json',
-        'schema': StatusSchema,
-        'description': 'Risposta per segnalare che il dispositivo non esiste',
-        'example': {
-            'status': 'Device not found'
-        }
-    })
-    @device.alt_response(409, {
-        'content_type': 'application/json',
-        'schema': StatusSchema,
-        'description': 'Risposta per segnalare che il dispositivo è già associato ad un altro utente',
-        'example': {
-            'status': 'Device already associated'
-        }
-    })
+    @device.alt_response(404, content_type='application/json', schema=StatusSchema,
+                         description='Risposta per segnalare che il dispositivo non esiste',
+                         example={
+                             'status': 'Device not found'
+                         }
+                         )
+    @device.alt_response(409, content_type='application/json', schema=StatusSchema,
+                         description='Risposta per segnalare che il dispositivo è già associato ad un altro utente',
+                         example={
+                             'status': 'Device already associated'
+                         }
+                         )
     def post(self, args):
         """
         Associa un dispositivo a un utente.

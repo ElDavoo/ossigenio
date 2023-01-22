@@ -15,8 +15,7 @@ class PlaceSchema(Schema):
 
 
 class Place(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # primary keys are required by SQLAlchemy
-    # put postgis geometry
+    id = db.Column(db.Integer, primary_key=True)
     location = db.Column(Geometry(geometry_type='POINT', srid=4326))
     name = db.Column(db.String(1000))
     description = db.Column(db.String(1000))

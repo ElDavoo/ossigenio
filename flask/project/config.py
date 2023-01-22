@@ -1,5 +1,5 @@
 class Config:
-    API_TITLE = 'Air Quality Monitor'
+    API_TITLE = 'API Ossigenio'
     API_VERSION = 'v1'
     OPENAPI_VERSION = "3.0.3"
     OPENAPI_JSON_PATH = "api-spec.json"
@@ -13,14 +13,14 @@ class Config:
     OPENAPI_RAPIDOC_PATH = "/rapidoc"
     OPENAPI_RAPIDOC_URL = "https://unpkg.com/rapidoc/dist/rapidoc-min.js"
     API_SPEC_OPTIONS = {
-            "components": {
-                "securitySchemes": {
-                    "Cookie": {
-                        "type": "apiKey",
-                        "in": "cookie",
-                        "name": "session",
-                        "description": "Cookie di autenticazione restituito dall'api di login"
-                    }
+        "components": {
+            "securitySchemes": {
+                "Cookie": {
+                    "type": "apiKey",
+                    "in": "cookie",
+                    "name": "session",
+                    "description": "Cookie di autenticazione restituito dall'api di login"
                 }
-            },
-        }
+            }
+        },
+    }
