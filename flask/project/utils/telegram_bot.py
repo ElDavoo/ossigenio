@@ -39,7 +39,7 @@ async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
             return
 
         # Ask the user to insert the new threshold and delete the keyboard
-        await update.message.reply_text("Inserisci la nuova soglia di CO2", reply_markup=ReplyKeyboardRemove())
+        await update.message.reply_text("Inserisci la nuova soglia di CO₂", reply_markup=ReplyKeyboardRemove())
         context.user_data["place_id"] = place_id
 
         return 1
@@ -56,7 +56,7 @@ async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, a
         # Reset the last notification time
         user.last_notification = None
         db.session.commit()
-    await update.message.reply_text("Soglia aggiornata")
+    await update.message.reply_text("Soglia aggiornata!")
     return ConversationHandler.END
 
 
@@ -66,23 +66,26 @@ async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
     # If yes, do nothing
 
     # Get the user's id
-    users = await is_registered(app, update)
-    if users is None:
+    registration = await is_registered(app, update)
+    if registration is None:
         await update.message.reply_text(
-            str(update.effective_user.id) + " non sei registrato, contatta un amministratore per registrarti")
+            "Ciao, " + update.effective_user.first_name + ".\n" +
+            "Non sei registratə, contatta un amministratore per registrarti comunicando questo numero: " +
+            str(update.effective_user.id))
         return
 
-    reply_text = "Sei iscritto a questi posti: \n"
+    reply_text = "Ciao, " + update.effective_user.first_name + ".\n Stai attualmente ricevendo notifiche per: \n"
     # Every place handled by user is a button as a ReplyKeyboardMarkup
     buttons = []
     with app.app_context():
-        for user in users:
-            place = Place.query.filter_by(id=user.place).first()
+        for registration in registration:
+            place = Place.query.filter_by(id=registration.place).first()
             buttons.append(InlineKeyboardButton(place.name, callback_data=f"place_{place.id}"))
-            if user.soglia != 0:
-                reply_text += f"{place.name} - {user.soglia}\n"
+            if registration.soglia != 0:
+                reply_text += f"{place.name} - > {registration.soglia} ppm\n"
     buttons = ReplyKeyboardMarkup([buttons], one_time_keyboard=True, resize_keyboard=True)
-    reply_text += "Seleziona un posto per modificare la soglia di CO2"
+    reply_text += "Seleziona un luogo dalla tastiera in basso per modificare la soglia di ppm di CO₂.\n"
+    reply_text += "Se la quantità di CO₂ supera la soglia impostata, riceverai una notifica."
     # display the buttons
     await update.message.reply_text(reply_text, reply_markup=buttons)
     return 0
@@ -99,17 +102,17 @@ async def is_registered(app, update):
     return None
 
 
-def on_update(data, conn):
+def on_update(data, conn, place_id):
     # Initialize the bot
     bot = Bot(token=os.environ.get('TELEGRAM_TOKEN'))
 
     # Get all the users that are subscribed to the place
-    conn.execute("SELECT * FROM telegram_users WHERE place = %s", (data["place"],))
+    conn.execute("SELECT telegram_id FROM telegram_users WHERE place = %s", (place_id,))
     users = conn.fetchall()
     if len(users) == 0:
         return
     # Get the place name
-    conn.execute("SELECT name FROM place WHERE id = %s", (data["place"],))
+    conn.execute("SELECT name FROM place WHERE id = %s", (place_id,))
     place_name = conn.fetchone()
     # get the co2 from data
     co2 = data["co2"]
@@ -126,11 +129,12 @@ def on_update(data, conn):
             if last_notification is None or (datetime.datetime.now() - last_notification).total_seconds() > 900:
                 # Send a message
                 loop = asyncio.new_event_loop()
-                loop.run_until_complete(bot.send_message(chat_id=user[0], text=f"CO2 in {place_name[0]} è {co2}, "
-                                                                               f"maggiore della soglia di {soglia}"))
+                text = f"La quantità di CO₂ a {place_name[0]} ha superato i {soglia} ppm ed è ora di {co2} ppm!\n"
+                text += "Si consiglia di aprire le finestre per ventilare l'ambiente."
+                loop.run_until_complete(bot.send_message(chat_id=user[0], text=text))
                 # Update the last_notified field in the database
                 conn.execute("UPDATE telegram_users SET last_notification = %s WHERE telegram_id = %s AND place = %s",
-                             (datetime.datetime.now(), user[0], data["place"]))
+                             (datetime.datetime.now(), user[0], place_id))
 
 
 def run(app):

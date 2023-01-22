@@ -99,7 +99,7 @@ def on_message(_, __, msg):
     # send the data to the telegram bot
     cur = conn.cursor()
     try:
-        on_update(data, cur)
+        on_update(data, cur, place_id)
     except Exception as e:
         print("Exception on sending data to telegram bot: " + str(e))
     # print("Data sent to telegram")
