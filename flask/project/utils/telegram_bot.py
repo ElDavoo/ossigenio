@@ -6,7 +6,7 @@ import datetime
 import os
 from functools import partial
 
-from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
+from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, Bot
 from telegram.ext import CommandHandler, MessageHandler, ApplicationBuilder, ContextTypes, ConversationHandler, filters
 
 from project import db
@@ -101,7 +101,7 @@ async def is_registered(app, update):
 
 def on_update(data, conn):
     # Initialize the bot
-    bot = telegram.Bot(token=os.environ.get('TELEGRAM_TOKEN'))
+    bot = Bot(token=os.environ.get('TELEGRAM_TOKEN'))
 
     # Get all the users that are subscribed to the place
     conn.execute("SELECT * FROM telegram_users WHERE place = %s", (data["place"],))
