@@ -12,7 +12,7 @@ import telegram
 from project import db
 from project.models.places import Place
 from project.models.telegram_users import TelegramUser
-from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup
+from telegram import Update, InlineKeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
 
 async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
