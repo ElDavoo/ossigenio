@@ -5,9 +5,23 @@ import json
 import os
 import random
 
-import pandas as pd
+from marshmallow import Schema, fields
+from pandas import read_sql_query
+from flask_login import login_required
 from prophet.serialize import model_from_json
 from sqlalchemy import create_engine
+
+
+class StatusSchema(Schema):
+    """
+    Uno schema che contiene solo una risposta di stato
+    """
+
+    class Meta:
+        strict = True
+        ordered = True
+
+    status = fields.String(required=True)
 
 
 def predict(place):
@@ -20,7 +34,7 @@ def predict(place):
     engine = create_engine(os.environ['SQLALCHEMY_DATABASE_URI'])
 
     # Read model from postgresql database
-    model = pd.read_sql_query('SELECT model FROM "public"."prophet_models" WHERE place_id = ' + str(place), con=engine)
+    model = read_sql_query('SELECT model FROM "public"."prophet_models" WHERE place_id = ' + str(place), con=engine)
 
     # If there is no model for this place, return
     if len(model) == 0:
@@ -86,3 +100,19 @@ def plausible_random(start_value, start, end):
         elif number > end:
             number = end
         yield number
+
+
+def login_required_cookie(blp):
+    """
+    A decorator that checks if the user is logged in
+    and documents the endpoint as requiring a cookie
+    :param blp: The blueprint to decorate
+    :return: The decorated blueprint
+    """
+
+    def decorator(func):
+        func = login_required(func)
+        func = blp.doc(security=[{'Cookie': []}])(func)
+        return func
+
+    return decorator

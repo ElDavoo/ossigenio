@@ -1,10 +1,11 @@
 from flask import jsonify
 from flask.views import MethodView
-from flask_login import login_user, login_required, current_user
+from flask_login import login_user, current_user
 from flask_smorest import Blueprint, abort
 from marshmallow import Schema, fields
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from project.api.common import login_required_cookie
 from project import db
 from project.models.user import Utente, UserResponseSchema, LoginSchema, SignupSchema
 
@@ -100,8 +101,7 @@ class Signup(MethodView):
 class User(MethodView):
     @auth.response(200, UserResponseSchema)
     @auth.alt_response(401, ResponseDict)
-    @login_required
-    @auth.doc(security=[{'Cookie': []}])
+    @login_required_cookie(auth)
     def get(self):
         """Restituisce i dati dell'utente collegato
 
