@@ -169,7 +169,7 @@ class MqttConsts {
 
   int get mqttsPort => 8080;
 
-  String get rootTopic => 'sensors/';
+  String get rootTopic => 'places/';
 
   String get co2Topic => 'co2';
 
