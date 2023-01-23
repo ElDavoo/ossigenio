@@ -100,7 +100,7 @@ async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
     if places_list != "":
         reply_text += "Stai attualmente ricevendo notifiche per: \n" + places_list + "\n"
     reply_text += "Seleziona un luogo dalla tastiera in basso per modificare la soglia di ppm di CO₂.\n"
-    reply_text += "Se la quantità di CO₂ supera la soglia impostata, riceverai una notifica.\n"
+    reply_text += "Se la concentrazione di CO₂ supera la soglia impostata, riceverai una notifica.\n"
     reply_text += "Immettere una soglia di 0 ppm per disattivare le notifiche per quel luogo."
     # display the buttons
     await update.message.reply_text(reply_text, reply_markup=buttons)
@@ -145,7 +145,7 @@ def on_update(data, conn, place_id):
             if last_notification is None or (datetime.datetime.now() - last_notification).total_seconds() > 900:
                 # Send a message
                 loop = asyncio.new_event_loop()
-                text = f"La quantità di CO₂ a {place_name[0]} ha superato i {soglia} ppm ed è ora a {co2} ppm!\n"
+                text = f"La concentrazione di CO₂ a {place_name[0]} ha superato i {soglia} ppm ed è ora a {co2} ppm!\n"
                 text += "Si consiglia di aprire le finestre per ventilare l'ambiente."
                 loop.run_until_complete(bot.send_message(chat_id=user[0], text=text))
                 # Update the last_notified field in the database

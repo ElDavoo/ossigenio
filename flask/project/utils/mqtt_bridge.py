@@ -114,10 +114,14 @@ def run():
     try:
         print("Connecting to MQTT broker...")
         client.connect("mqtt.ossigenio.it", 8080, 60)
-        client.loop_start()
+        # Loop forever in a separate thread
+        threading.Thread(target=client.loop_forever).start()
         while True:
             sleep(300)
-            decide(conn, client)
+            try:
+                decide(conn, client)
+            except Exception as e:
+                print(e)
 
     except Exception as e:
         print(e)
