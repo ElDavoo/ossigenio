@@ -30,7 +30,7 @@ class GpsManager {
       Geolocator.getPositionStream(locationSettings: _locationSettings);
 
   /// Stream di posti vicini all'utente
-  final ValueNotifier<List<Place>> placeStream = ValueNotifier([]);
+  final ValueNotifier<List<Place>?> placeStream = ValueNotifier(null);
 
   GpsManager._internal() {
     Log.d("Inizializzazione");

@@ -29,7 +29,7 @@ class WhereAreYouState extends State<WhereAreYou> {
         ValueListenableBuilder(
             valueListenable: GpsManager().placeStream,
             builder: (context, place, _) {
-              if (place.isEmpty) {
+              if (place == null) {
                 return UI.spinText(AppLocalizations.of(context)!.loading);
               }
               List<DropdownMenuItem<Place>> items =

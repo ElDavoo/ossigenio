@@ -31,7 +31,7 @@ class HomeTabState extends State<HomeTab>
     // selezionato non è più in lista, seleziona automaticamente
     // il null place
     GpsManager().placeStream.addListener(() {
-      if (!GpsManager().placeStream.value.contains(MqttManager.place.value)) {
+      if (!GpsManager().placeStream.value!.contains(MqttManager.place.value)) {
         setState(() {
           _onSelectedPlace(null);
         });

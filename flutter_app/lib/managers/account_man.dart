@@ -208,7 +208,7 @@ class AccountManager {
 
   /// Restituisce i luoghi vicino all'utente.
   ///
-  /// Restituisce i luoghi in un raggio di 100 metri.
+  /// Restituisce i luoghi in un raggio di 200 metri.
   Future<List<Place>> getNearbyPlaces(LatLng position) async {
     if (!await ensureLoggedIn()) {
       return Future.error('Not logged in');
