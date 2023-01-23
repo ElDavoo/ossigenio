@@ -48,15 +48,27 @@ async def place_change(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
 async def update_threshold(update: Update, context: ContextTypes.DEFAULT_TYPE, app):
     # Get the place_id from the context
     place_id = context.user_data["place_id"]
+    # Get int from the message
+    try:
+        soglia = int(update.message.text)
+    except ValueError:
+        await update.message.reply_text("Soglia non valida!")
+        return ConversationHandler.END
     # ╗ Update the threshold in the database
     with app.app_context():
         # filter by telegram_id and place_id
         user = db.session.query(TelegramUsers).filter_by(telegram_id=update.effective_user.id, place=place_id).first()
-        user.soglia = update.message.text
+        old_soglia = user.soglia
+        user.soglia = soglia
         # Reset the last notification time
         user.last_notification = None
         db.session.commit()
-    await update.message.reply_text("Soglia aggiornata!")
+    if soglia == 0:
+        await update.message.reply_text("Notifiche disattivate!")
+    elif old_soglia == 0:
+        await update.message.reply_text("Notifiche riattivate!")
+    else:
+        await update.message.reply_text("Soglia aggiornata!")
     return ConversationHandler.END
 
 
@@ -89,6 +101,7 @@ async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
         reply_text += "Stai attualmente ricevendo notifiche per: \n" + places_list + "\n"
     reply_text += "Seleziona un luogo dalla tastiera in basso per modificare la soglia di ppm di CO₂.\n"
     reply_text += "Se la quantità di CO₂ supera la soglia impostata, riceverai una notifica."
+    reply_text += "Immettere una soglia di 0 ppm per disattivare le notifiche per quel luogo."
     # display the buttons
     await update.message.reply_text(reply_text, reply_markup=buttons)
     return 0
