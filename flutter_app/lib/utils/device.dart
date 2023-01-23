@@ -42,6 +42,7 @@ class Device extends ChangeNotifier {
     Log.d("Inizializzazione di ${device.name} - ${device.id}");
     // Rifa il calcolo del numero seriale
     serialNumber = BLEManager.processAdv(result.advertisementData)!;
+    MqttManager.mac = serialNumber;
 
     messagesStream = btUart.txCharacteristic.value
         .map((value) {
@@ -82,7 +83,7 @@ class Device extends ChangeNotifier {
       Log.v("Message received");
       // Manda i messaggi ricevuti su MQTT
       if (message.direction == MessageDirection.received) {
-        MqttManager(mac: serialNumber).publish(message.message);
+        MqttManager().publish(message.message);
       }
     });
 

@@ -20,11 +20,6 @@ class WhereAreYou extends StatefulWidget {
 
 class WhereAreYouState extends State<WhereAreYou> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

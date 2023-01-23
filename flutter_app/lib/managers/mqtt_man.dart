@@ -22,16 +22,13 @@ import '../utils/place.dart';
 class MqttManager {
   static final MqttManager instance = MqttManager._internal();
 
-  factory MqttManager({required mac}) {
-    instance.mac = mac;
-    return instance;
-  }
+  factory MqttManager() => instance;
 
   /// Il posto selezionato dall'utente
   static ValueNotifier<Place?> place = ValueNotifier(null);
 
   /// Il MAC address del dispositivo
-  late MacAddress mac;
+  static MacAddress? mac;
 
   /// Il client MQTT
   MqttServerClient client = MqttServerClient(C.mqtt.server, '');
@@ -95,8 +92,10 @@ class MqttManager {
   ///
   /// Se la connessione ha successo, viene salvato il client MQTT
   Future<MqttServerClient> _connect(String username, String password) async {
+    final String email = await PrefManager().read(C.pref.email) as String;
+    // Il client ID è la mail dell'utente
     client = MqttServerClient.withPort(
-        C.mqtt.server, mac.toInt().toString(), C.mqtt.mqttsPort);
+        C.mqtt.server, email, C.mqtt.mqttsPort);
 
     client.secure = true;
     client.logging(on: false);
@@ -155,7 +154,7 @@ class MqttManager {
 
   /// Pubblica un messaggio di CO2.
   void _publishCo2(CO2Message message, int placeId) {
-    final int deviceId = mac.toInt();
+    final int deviceId = mac!.toInt();
 
     final String topic = '${C.mqtt.rootTopic}$placeId/$deviceId/';
 
@@ -173,7 +172,7 @@ class MqttManager {
 
   /// Pubblica un messaggio di debug.
   void _publishDebug(DebugMessage message) {
-    final int deviceId = mac.toInt();
+    final int deviceId = mac!.toInt();
 
     final String topic = '${C.mqtt.rootTopic}$deviceId/';
 
@@ -193,7 +192,7 @@ class MqttManager {
 
   /// Pubblica un messaggio di feedback.
   void _publishFeedback(FeedbackMessage message, int placeId) {
-    final int deviceId = mac.toInt();
+    final int deviceId = mac!.toInt();
     final String topic = '${C.mqtt.rootTopic}$placeId/$deviceId/';
 
     _sendInt('$topic${C.mqtt.co2Topic}', message.co2);
@@ -211,7 +210,7 @@ class MqttManager {
 
   /// Pubblica un messaggio di startup.
   void _publishStartup(StartupMessage message) {
-    final int deviceId = mac.toInt();
+    final int deviceId = mac!.toInt();
     final String topic = '${C.mqtt.rootTopic}$deviceId/';
 
     _sendInt('$topic${C.mqtt.modelTopic}', message.model);
@@ -249,4 +248,29 @@ class MqttManager {
     }
     return result;
   }
+
+  /// Si iscrive ad un topic e chiama il callback quando riceve un messaggio
+  Future<void> subscribe(String topic, Function(String) callback) async {
+    // Wait for the client to connect
+    while (client.connectionStatus!.state != MqttConnectionState
+        .connected) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
+    client.subscribe(topic, MqttQos.atLeastOnce);
+    client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+      if (recMess.payload.message == null) {
+        return;
+      }
+      final pt =
+      MqttUtilities.bytesToStringAsString(recMess.payload.message!);
+      callback(pt);
+    });
+  }
+
+  /// Cancella l'iscrizione ad un topic
+  void unsubscribe(String topic) {
+    client.unsubscribeStringTopic(topic);
+  }
+
 }
