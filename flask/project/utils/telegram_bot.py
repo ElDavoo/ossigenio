@@ -74,7 +74,8 @@ async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
             str(update.effective_user.id))
         return
 
-    reply_text = "Ciao, " + update.effective_user.first_name + ".\n Stai attualmente ricevendo notifiche per: \n"
+    reply_text = "Ciao, " + update.effective_user.first_name + ".\n"
+    places_list = ""
     # Every place handled by user is a button as a ReplyKeyboardMarkup
     buttons = []
     with app.app_context():
@@ -82,8 +83,10 @@ async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
             place = Place.query.filter_by(id=registration.place).first()
             buttons.append(InlineKeyboardButton(place.name, callback_data=f"place_{place.id}"))
             if registration.soglia != 0:
-                reply_text += f"{place.name} - > {registration.soglia} ppm\n"
+                places_list += f"{place.name} - > {registration.soglia} ppm\n"
     buttons = ReplyKeyboardMarkup([buttons], one_time_keyboard=True, resize_keyboard=True)
+    if places_list != "":
+        reply_text += "Stai attualmente ricevendo notifiche per: \n" + places_list + "\n"
     reply_text += "Seleziona un luogo dalla tastiera in basso per modificare la soglia di ppm di CO₂.\n"
     reply_text += "Se la quantità di CO₂ supera la soglia impostata, riceverai una notifica."
     # display the buttons
