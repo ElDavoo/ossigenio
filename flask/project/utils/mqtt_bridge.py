@@ -117,7 +117,7 @@ def run():
         client.loop_start()
         while True:
             sleep(300)
-            decide(conn)
+            decide(conn, client)
 
     except Exception as e:
         print(e)

@@ -5,7 +5,7 @@ li elabora e li salva in co2_history.
 import datetime
 
 
-def decide(conn):
+def decide(conn, mqtt_client):
     """
     Decide i valori di co2 per ogni posto e li pubblica su MQTT.
     """
@@ -34,3 +34,5 @@ def decide(conn):
         # Se c'è, salva il dato nella tabella co2_history
         cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES (%s, %s, %s)",
                     (place[0], datetime.datetime.now(), co2[0][2]))
+        # Pubblica il dato su MQTT con retain
+        mqtt_client.publish("places/{}/co2".format(place[0]), co2[0][2], retain=True)
