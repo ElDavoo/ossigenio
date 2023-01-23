@@ -29,8 +29,8 @@ def decide(conn, mqtt_client):
         if len(co2) == 0:
             continue
         # Se il valore è meno recente di 30 minuti, salta il posto
-        if co2[0][1] < datetime.datetime.now() - datetime.timedelta(minutes=30):
-            continue
+        # if co2[0][1] < datetime.datetime.now() - datetime.timedelta(minutes=30):
+        #    continue
         # Se c'è, salva il dato nella tabella co2_history
         cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES (%s, %s, %s)",
                     (place[0], datetime.datetime.now(), co2[0][2]))

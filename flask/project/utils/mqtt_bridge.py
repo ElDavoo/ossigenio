@@ -13,8 +13,8 @@ import paho.mqtt.client as mqtt
 import psycopg2
 from paho.mqtt.client import ssl
 
-from project.utils.telegram_bot import on_update
 from project.utils.data_decide import decide
+from project.utils.telegram_bot import on_update
 
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     print("'SQLALCHEMY_DATABASE_URI'not set")
