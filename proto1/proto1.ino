@@ -176,17 +176,16 @@ void loop() {
 
   //step trigger (ONLY FOR PROTO# FIXED VERSION)
   if (co2 >= 2000 && open == false) {
-    for (pos = closeWindow; pos <= openWindow; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(50);                       // waits 15 ms for the servo to reach the position
+    for (pos = closeWindow; pos <= openWindow; pos += 1) { // goes from 0 degrees to 180 degrees in steps of 1 degree
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(50);                       // waits 15 ms for the servo to reach the position
     }
     open = true; //window opened
   }
   if (co2 < 2000 && open == true) {
     for (pos = openWindow; pos >= closeWindow; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(50);                       // waits 15 ms for the servo to reach the position
+      myservo.write(pos);              // tell servo to go to position in variable 'pos'
+      delay(50);                       // waits 15 ms for the servo to reach the position
     }
     open = false; //window closed
   }
@@ -198,7 +197,6 @@ void loop() {
   }
   
   // ble read section
-  //String c = ble.readString();
   uint8_t buf[4] = {0x00,0x00,0x00,0x00};
   while (ble.available() > 0){
     int rlen = ble.readBytes(buf, 4);
