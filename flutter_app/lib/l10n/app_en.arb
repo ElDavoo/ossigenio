@@ -95,11 +95,11 @@
     "@placeNotSelected": {
         "description": "Messaggio di nessun luogo selezionato"
     },
-    "actualCO₂": "CO₂ right now: {CO₂} ppm",
-    "@actualCO₂": {
+    "actualCO2": "CO₂ right now: {CO2} ppm",
+    "@actualCO2": {
         "description": "Messaggio di CO₂ attuale",
         "placeholders": {
-            "CO₂": {
+            "CO2": {
                 "type": "int",
                 "example": "400"
             }
@@ -131,8 +131,8 @@
             }
         }
     },
-    "CO₂Explanation": "Misurare la concentrazione di anidride carbonica nell'aria è importante per assicurare un ambiente sano e confortevole. Un livello di CO₂ troppo alto può causare sonnolenza, mal di testa, perdita di concentrazione e altri sintomi. La CO₂ viene misurata in PPM (parti per milione).",
-    "@CO₂Explanation": {
+    "co2Explanation": "Misurare la concentrazione di anidride carbonica nell'aria è importante per assicurare un ambiente sano e confortevole. Un livello di CO₂ troppo alto può causare sonnolenza, mal di testa, perdita di concentrazione e altri sintomi. La CO₂ viene misurata in PPM (parti per milione).",
+    "@co2Explanation": {
         "description": "Spiegazione CO₂"
     },
     "excellent": "excellent!",
