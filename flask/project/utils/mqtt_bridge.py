@@ -7,12 +7,14 @@ import json
 import os
 import threading
 from json import JSONDecodeError
+from time import sleep
 
 import paho.mqtt.client as mqtt
 import psycopg2
 from paho.mqtt.client import ssl
 
 from project.utils.telegram_bot import on_update
+from project.utils.data_decide import decide
 
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     print("'SQLALCHEMY_DATABASE_URI'not set")
@@ -86,15 +88,6 @@ def on_message(_, __, msg):
         print("Error inserting data: " + str(e))
         conn.rollback()
     # print("Data inserted")
-    # insert the sensor data into the co2_history table
-    if place_id:
-        try:
-            cur = conn.cursor()
-            cur.execute("INSERT INTO co2_history (place_id, timestamp, co2) VALUES (%s, %s, %s);",
-                        (place_id, timestamp, co2)
-                        )
-        except Exception as ex:
-            print("Error inserting into co2_history: " + str(ex))
 
     # send the data to the telegram bot
     cur = conn.cursor()
@@ -121,7 +114,11 @@ def run():
     try:
         print("Connecting to MQTT broker...")
         client.connect("mqtt.ossigenio.it", 8080, 60)
-        client.loop_forever()
+        client.loop_start()
+        while True:
+            sleep(300)
+            decide(conn)
+
     except Exception as e:
         print(e)
 
