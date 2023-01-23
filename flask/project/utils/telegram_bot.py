@@ -100,7 +100,7 @@ async def start_conversation(update: Update, _: ContextTypes.DEFAULT_TYPE, app):
     if places_list != "":
         reply_text += "Stai attualmente ricevendo notifiche per: \n" + places_list + "\n"
     reply_text += "Seleziona un luogo dalla tastiera in basso per modificare la soglia di ppm di CO₂.\n"
-    reply_text += "Se la quantità di CO₂ supera la soglia impostata, riceverai una notifica."
+    reply_text += "Se la quantità di CO₂ supera la soglia impostata, riceverai una notifica.\n"
     reply_text += "Immettere una soglia di 0 ppm per disattivare le notifiche per quel luogo."
     # display the buttons
     await update.message.reply_text(reply_text, reply_markup=buttons)
