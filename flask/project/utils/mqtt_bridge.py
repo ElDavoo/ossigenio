@@ -14,7 +14,6 @@ import psycopg2
 from paho.mqtt.client import ssl
 
 from project.utils.data_decide import decide
-from project.utils.telegram_bot import on_update
 
 if 'SQLALCHEMY_DATABASE_URI' not in os.environ:
     print("'SQLALCHEMY_DATABASE_URI'not set")
@@ -88,14 +87,6 @@ def on_message(_, __, msg):
         print("Error inserting data: " + str(e))
         conn.rollback()
     # print("Data inserted")
-
-    # send the data to the telegram bot
-    cur = conn.cursor()
-    try:
-        on_update(data, cur, place_id)
-    except Exception as e:
-        print("Exception on sending data to telegram bot: " + str(e))
-    # print("Data sent to telegram")
 
 
 conn = conn_from_uri()

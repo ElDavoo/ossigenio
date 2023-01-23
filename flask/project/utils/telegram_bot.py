@@ -118,7 +118,7 @@ async def is_registered(app, update):
     return None
 
 
-def on_update(data, conn, place_id):
+def on_update(conn, place_id, co2):
     # Initialize the bot
     bot = Bot(token=os.environ.get('TELEGRAM_TOKEN'))
 

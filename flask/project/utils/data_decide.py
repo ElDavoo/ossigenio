@@ -4,6 +4,8 @@ li elabora e li salva in co2_history.
 """
 import datetime
 
+from utils.telegram_bot import on_update
+
 
 def decide(conn, mqtt_client):
     """
@@ -36,3 +38,9 @@ def decide(conn, mqtt_client):
                     (place[0], datetime.datetime.now(), co2[0][2]))
         # Pubblica il dato su MQTT con retain
         mqtt_client.publish("places/{}/co2".format(place[0]), co2[0][2], retain=True)
+        # send the data to the telegram bot
+        try:
+            on_update(cur, place[0], co2[0][2])
+        except Exception as e:
+            print("Exception on sending data to telegram bot: " + str(e))
+        # print("Data sent to telegram")
