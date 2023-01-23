@@ -111,9 +111,19 @@ void ble_setup(){
     }
   }
   
-  if ( !ble.sendCommandCheckOK(F("AT+GAPDEVNAME=AirQualityMonitor")) ){
+  if ( !ble.sendCommandCheckOK(F("AT+GAPDEVNAME=Ossigenio")) ){
     error(F("Couldn't change Bluefruit name :("));
   }
+  
+  //ble.sendCommandCheckOK(F("AT+BLEBEACON=0xf175,01-12-23-34-45-56-67-78-89-9A-AB-BC-CD-DE-EF-F0,0x0000,0x0000,-59"));
+  //ble.getAddress()
+  //ble.atcommandIntReply("AT+BLEGETPEERADDR", reply);
+  //ble.sendCommandCheckOK(F("AT+BLEGETPEERADDR"));
+  //ble.atcommand("AT+BLEGETADDR?");
+  //String response = ble.readline();
+  ble.sendCommandCheckOK(F("AT+GAPSETADVDATA=09-FF-75-F1-EF-41-B7-0D-1F-6C"));
+  //ble.sendCommandCheckOK("AT+GAPSETADVDATA=09-FF-75-F1"+response);
+  //Serial.println(response);
   
   /* Disable command echo from Bluefruit */
   ble.echo(false);
@@ -137,11 +147,10 @@ void ble_setup(){
     Serial.println(F("Change LED activity to " MODE_LED_BEHAVIOUR));
     ble.sendCommandCheckOK("AT+HWModeLED=" MODE_LED_BEHAVIOUR);
   }
-
+  
   // Set module to DATA mode
   Serial.println( F("Switching to DATA mode!") );
   ble.setMode(BLUEFRUIT_MODE_DATA);
-
   Serial.println(F("******************************"));
 }
 
@@ -151,6 +160,7 @@ void setup() {
   dht.begin();
   sensor_t sensor;
   myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  myservo.write(0);
 
   pinMode(positiveButtonPin, INPUT);
   pinMode(neutralButtonPin, INPUT);
@@ -175,14 +185,14 @@ void loop() {
   }
 
   //step trigger (ONLY FOR PROTO# FIXED VERSION)
-  if (co2 >= 2000 && open == false) {
+  if (co2 >= 20 && open == false) {
     for (pos = closeWindow; pos <= openWindow; pos += 1) { // goes from 0 degrees to 180 degrees in steps of 1 degree
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(50);                       // waits 15 ms for the servo to reach the position
     }
     open = true; //window opened
   }
-  if (co2 < 2000 && open == true) {
+  if (co2 < 20 && open == true) {
     for (pos = openWindow; pos >= closeWindow; pos -= 1) { // goes from 180 degrees to 0 degrees
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
       delay(50);                       // waits 15 ms for the servo to reach the position
