@@ -110,10 +110,10 @@ def run():
                    tls_version=ssl.PROTOCOL_TLSv1_2)
     # client.tls_insecure_set(True)
     # set username and password
-    client.username_pw_set("test", "test2")
+    client.username_pw_set(os.environ.get('MQTT_USER'), os.environ.get('MQTT_PASS'))
     try:
         print("Connecting to MQTT broker...")
-        client.connect("mqtt.ossigenio.it", 8080, 60)
+        client.connect(os.environ.get('MQTT_SERV'), int(os.environ.get('MQTT_PORT')), 60)
         # Loop forever in a separate thread
         threading.Thread(target=client.loop_forever).start()
         while True:

@@ -1,4 +1,4 @@
-### Flask app requirements
+### Requisiti per il backend
 flask~=2.2.2
 flask-sqlalchemy 
 flask-login==0.6.2
@@ -11,7 +11,7 @@ marshmallow~=3.19.0
 webargs~=8.2.0
 apispec~=6.0.2
 flask-smorest
-GeoAlchemy2~=0.13.0
+GeoAlchemy2==0.13.1
 pandas~=1.5.3
 prophet~=1.1.1
 SQLAlchemy~=1.4.46

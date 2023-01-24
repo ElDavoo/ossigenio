@@ -1,3 +1,4 @@
+# Legacy - deprecato - usare Docker
 [Unit]
 Description=Air quality monitor backend
 After=network.target
