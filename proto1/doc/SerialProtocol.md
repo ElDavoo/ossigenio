@@ -1,4 +1,4 @@
-## The Protobuf serial protocol
+## serial protocol
 
 The serial protocol aims to have these characteristics:
 - Reduced message size
