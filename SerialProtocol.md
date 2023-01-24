@@ -1,4 +1,4 @@
-## The PDP (Protobuf Dei Poveri) serial protocol
+## The Protobuf serial protocol
 
 The serial protocol aims to have these characteristics:
 - Reduced message size
@@ -10,33 +10,25 @@ A single payload is limited to 255 bytes (length FF).
 Program has to hardcode which data are being sent and where.  
 Only 16 message types can exist, and they must be hardcoded in the program.  
 
+![Protobuf generic packet](https://user-images.githubusercontent.com/4050967/214259717-1bf1f5ae-9090-495e-82ca-f4c8f70db632.png)
+
 ### The first byte
 
-The first byte is AX, where X is the message type (from 0 to F).  
-For example A0,A1...AF.  
+The first byte is a simply start header: 0xAA.  
 
 ### The second byte
 
 The second byte is the length of the payload (so from the first byte of the payload to the last). The CRC is excluded.  
 
+### The third byte
+
+The third byte is XY, where X is the length of the payload, from the first byte of the payload to the last, without CRC field; Y is the message type (from 0 to F).  
+Examples of this byte can be 0x80, 0x81, ...,0x8F.
+
 ### CRC8
 
-CRC8 (which?) is used as checksum, **including the header and the length.**
+CRC8 selfwritten library is used as checksum, **including the header and the length.**
 
-In case of a string, the length of the string must be prefixed.
-
-```bytefield
-(def svg-attrs {:style "background-color:white"})
-(def boxes-per-row 2)
-(def box-width 70)
-(def left-margin 1)
-(draw-box "aVersion")
-(draw-box "Len")
-(draw-gap "payload")
-(draw-box "CRC8")
-(draw-bottom)
-```
-![image](https://user-images.githubusercontent.com/4050967/204576738-7696bc1a-cf01-4922-8fbb-d043fcafbe89.jpg)
 
 ### Messages explanation
 #### msg0 packet
@@ -114,7 +106,7 @@ Int = 16 bits
 |B|Request for message 4|AA1B and empty payload
 
 #### Automatic message sending
-The sensor should send a 1-type message every 30 seconds.
+The sensor should send a 1-type message every 10 seconds.
 
-#### Debug mode
-Every loop cycle it will send "Check!" message.
+#### Debug mode (currently only on proto2 model)
+By sending request B, proto2 enters debug mode: sending a first message 4 with feedback set to 123 and changing the frequency of sending messages 1 from 10 seconds to 1 second.
