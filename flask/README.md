@@ -6,11 +6,20 @@ Questa cartella contiene il codice sorgente del **server** della piattaforma Oss
 
 Il backend del progetto è diviso in queste parti:
 
-### Flask (sito web e API)
+### Flask
+
+#### Sito web
 
 - [Flask](https://flask.palletsprojects.com/en/2.2.x/)
-si occupa sia di gestire sia il portale web le API. Le API vengono utilizzate dalla [applicazione mobile](). Grazie a un sistema di *nested blueprint*, le API sono versionate: Al momento la versione corrente è la 1.  
-- [flask-smorest](https://flask-smorest.readthedocs.io/en/latest/)
+si occupa sia di gestire sia il portale web sia le API.
+![image](https://user-images.githubusercontent.com/7345120/214275776-88770939-773a-4056-b66d-b902b8a2dd53.png)  
+![image](https://user-images.githubusercontent.com/7345120/214279399-4d9fc6d9-ee28-4908-acfb-540c6c85f7a7.png)
+
+#### API
+
+![image](https://user-images.githubusercontent.com/7345120/214276559-f86ad616-6b53-4c68-a58f-1cb0fe24f5db.png)  
+Le API vengono utilizzate dalla [applicazione mobile](). Grazie a un sistema di *nested blueprint*, le API sono versionate: Al momento la versione corrente è la 1.  
+[flask-smorest](https://flask-smorest.readthedocs.io/en/latest/)
 genera **automaticamente** la documentazione
 [OpenAPI](https://www.openapis.org/) v3.0.3, accessibile a `/swagger-ui`
 [(link server pubblico)](https://ossigenio.it/swagger-ui).
@@ -24,6 +33,7 @@ Il bridge MQTT si occupa di:
 
 ### Bot Telegram
 
+![image](https://user-images.githubusercontent.com/7345120/214278182-93ec24c5-746b-4341-abee-605e82b0676a.png)  
 Il bot Telegram è pensato per i **gestori dei locali** iscritti alla piattaforma Ossigenio.  
 Il suo compito è semplice: Notificare gli utenti iscritti quando la concentrazione di CO2
 in un luogo diventa più alta della soglia configurata dall'utente.
