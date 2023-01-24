@@ -125,4 +125,4 @@ As it was necessary to enter a unique manufacturer identifier, one of the free v
 ```
 
 ### Wiring diagram
-Since everything is already connected on the pcb, please refer to the file *EBV-IoT - ESP32Secure_board_schematic.pdf*.
+Since everything is already connected on the pcb, please refer to the file [EBV-IoT - ESP32Secure_board_schematic.pdf](/doc/EBV-IoT%20-%20ESP32Secure_board_schematic.pdf).
