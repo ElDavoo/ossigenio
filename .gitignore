@@ -1,4 +1,8 @@
 **/__pycache__
 **/.idea
-flask/secrets.env
+flask/*
 mqtt.passwords
+build/*
+.vscode/arduino.json
+.vscode/settings.json
+proto2/serialNumber.h
