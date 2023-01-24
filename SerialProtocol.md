@@ -89,14 +89,14 @@ CRC8 selfwritten library is used as checksum, **including the header and the len
 
 ### Data types
 
-Int = 16 bits
+uint8_t = 8 bits
 
 ### Message types
 |Index   |Description   |Data|Notes|
 |---|---|----|----|
-|0|Standard debug message|Temp(int), hum(int),raw(int)|
+|0|Raw info message|Temp(int), hum(int),raw(int)|*It sends raw data for co2 sensor calibration (proto1: raw info from co2 sensor; proto2: co2 sensor temp)*
 |1|co2 only message|Temp(int), hum(int),co2(int)|
-|2|extended data message|Temp (int), hum(int), co2(int)...|TODO
+|2|extended data message|Temp (int), hum(int), co2(int)...|*Reserved for future use*
 |3|Startup information|Model(int),Version(int),battery(int)|battery can be 0 if sensor not present
 |4|feedback message|Temp(int), hum(int),co2(int), feedback(uint8_t)| Feedback message and debug mode toggle
 |F|Request for message 0|AA1F and empty payload
