@@ -1,6 +1,7 @@
 # Ossigenio
 A monitor for air quality, made for IoT and 3D Intelligent Systems @ UniMORE A.A. 2022-2023.
 Both implementations are based principally on ESP32, which collects some environmental information of the location (temperature, humidity, and carbon dioxide) and sends it to a bridge that is responsible for sending the collected data to the Internet and/or to control an actuator (which could operate the opening of a window to promote air recirculation). 
+More detailed documentation can be found in [doc](/doc).
 
 ### Portable version (aka proto2)
 The portable version consists of a small dongle that, having collected various data, sends it to a smartphone acting as a bridge, running a special application, between it and the Internet.
