@@ -29,7 +29,7 @@ def decide(conn, mqtt_client):
         if len(co2) == 0:
             continue
         # Calcola la media dei valori di co2
-        co2_avg = sum([x[2] for x in co2]) / len(co2)
+        co2_avg = sum([x[2] for x in co2]) // len(co2)
         # Per ogni feedback ricevuto, alza o abbassa la media
         for value in co2:
             if value[6] is None:
