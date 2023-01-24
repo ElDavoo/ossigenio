@@ -44,6 +44,14 @@ Feedback is sent by pressing one of the three feedback buttons; they trigger an 
   attachInterrupt(3, negative, RISING); //INT3 ASSOCIATO AL PIN 1 -> negativeButtonPin
 ```
 
+### Custom BLE payload
+For better compatibility, particularly with Apple devices, the mac address of the dongle was chosen to be included within a special field in the BLE advertisement package.
+As it was necessary to enter a unique manufacturer identifier, one of the free values was used: *0xF175* (https://www.bluetooth.com/specifications/assigned-numbers/). This addition was made directly in the setup() function in *proto1.ino*.
+```c
+// set custom payload with manufacturer info
+  ble.sendCommandCheckOK(F("AT+GAPSETADVDATA=09-FF-75-F1-EF-41-B7-0D-1F-6C"));
+```
+
 ## proto2
 Developed using ESP32-D board on devkit 36; chosen because of excellent cost-performance ratio and compatibility with the Arduino development environment.
 
@@ -93,4 +101,16 @@ Feedback is sent by pressing one of the three touch buttons (ESP32 provides pins
   touchAttachInterrupt(T0, positive, 40); // PIN 4 (on right side)
   touchAttachInterrupt(T2, neutral, 40); // PIN 2 (on right side)
   touchAttachInterrupt(T4, negative, 40); // PIN 13 (on left side)
+```
+
+### Custom BLE payload
+For better compatibility, particularly with Apple devices, the mac address of the dongle was chosen to be included within a special field in the BLE advertisement package.
+As it was necessary to enter a unique manufacturer identifier, one of the free values was used: *0xF175* (https://www.bluetooth.com/specifications/assigned-numbers/). This addition was made in the *BleSerial.cpp* library.
+```c
+    const uint8_t* point = esp_bt_dev_get_address();
+	char ManufacturerData[9] = {0x75,0xf1}; //0xF175; id produttore preso a caso tra quelli liberi
+	for (int i = 0; i < 6; i++) ManufacturerData[i+2] = point[i];
+	// null-terminate string
+	ManufacturerData[8] = 0x00;
+	oAdvertisementData.setManufacturerData(ManufacturerData); //to add mac into manufacter data; thanks Apple! -.-"
 ```
