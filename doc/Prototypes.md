@@ -108,9 +108,9 @@ For better compatibility, particularly with Apple devices, the mac address of th
 As it was necessary to enter a unique manufacturer identifier, one of the free values was used: *0xF175* (https://www.bluetooth.com/specifications/assigned-numbers/). This addition was made in the *BleSerial.cpp* library.
 ```c
     const uint8_t* point = esp_bt_dev_get_address();
-	char ManufacturerData[9] = {0x75,0xf1}; //0xF175; id produttore preso a caso tra quelli liberi
-	for (int i = 0; i < 6; i++) ManufacturerData[i+2] = point[i];
-	// null-terminate string
-	ManufacturerData[8] = 0x00;
-	oAdvertisementData.setManufacturerData(ManufacturerData); //to add mac into manufacter data; thanks Apple! -.-"
+    char ManufacturerData[9] = {0x75,0xf1}; //0xF175; id produttore preso a caso tra quelli liberi
+    for (int i = 0; i < 6; i++) ManufacturerData[i+2] = point[i];
+    // null-terminate string
+    ManufacturerData[8] = 0x00;
+    oAdvertisementData.setManufacturerData(ManufacturerData); //to add mac into manufacter data; thanks Apple! -.-"
 ```
