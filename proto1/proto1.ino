@@ -115,15 +115,8 @@ void ble_setup(){
     error(F("Couldn't change Bluefruit name :("));
   }
   
-  //ble.sendCommandCheckOK(F("AT+BLEBEACON=0xf175,01-12-23-34-45-56-67-78-89-9A-AB-BC-CD-DE-EF-F0,0x0000,0x0000,-59"));
-  //ble.getAddress()
-  //ble.atcommandIntReply("AT+BLEGETPEERADDR", reply);
-  //ble.sendCommandCheckOK(F("AT+BLEGETPEERADDR"));
-  //ble.atcommand("AT+BLEGETADDR?");
-  //String response = ble.readline();
+  // set custom payload with manufacturer info
   ble.sendCommandCheckOK(F("AT+GAPSETADVDATA=09-FF-75-F1-EF-41-B7-0D-1F-6C"));
-  //ble.sendCommandCheckOK("AT+GAPSETADVDATA=09-FF-75-F1"+response);
-  //Serial.println(response);
   
   /* Disable command echo from Bluefruit */
   ble.echo(false);
