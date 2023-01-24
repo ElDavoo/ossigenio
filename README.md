@@ -30,10 +30,10 @@ The [portable version](proto1/) sensor is targeted to single individuals and stu
 ![Imgur](https://user-images.githubusercontent.com/4050967/214251875-95307e63-219d-483b-baf8-008ece1dbdb0.jpg)
 
 ## Ossigenio fixed sensor (codename proto1)
-The [fixed version](proto2/) is targeted to universities and managers who want to let their places show up in the [companion app](). It consists solely and exclusively of the ESP32, which, once data is collected, controls the **opening/closing of windows**, via a servomotor, to allow **automatic air recirculation** and bring air quality levels back to an acceptable level.
-
-![Imgur](https://user-images.githubusercontent.com/4050967/214252089-7a0dd76d-0b9c-47e1-b565-18e969a560d7.jpg)
-
+The [fixed version](proto2/) is targeted to universities and managers who want to let their places show up in the [companion app](). It consists solely and exclusively of the ESP32, which, once data is collected, controls the **opening/closing of windows**, via a servomotor, to allow **automatic air recirculation** and bring air quality levels back to an acceptable level.  
+  
+![Imgur](https://user-images.githubusercontent.com/4050967/214252089-7a0dd76d-0b9c-47e1-b565-18e969a560d7.jpg)  
+  
 ## Ossigenio (companion app)
 ![app-landscape](https://user-images.githubusercontent.com/7345120/214387507-17b703d5-7514-4a2e-ba6b-eb31e0110eb1.jpg)
 
