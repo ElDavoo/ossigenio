@@ -90,7 +90,7 @@ server {
 
 2) Configurare il server MQTT  
 
-[Esempio]()
+[Esempio](mosquitto-ossigenio.conf)
 di file di configurazione per **mosquitto**.
 
 > Il server MQTT deve accettare solo **connessioni criptate.**
