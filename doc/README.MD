@@ -12,8 +12,8 @@ A special communication protocol was implemented to ensure reliable communicatio
 
 ### Sensors chosen
 For environmental data sampling, we chose these sensors:
-* DHT11 (temperature and humidity);
-* MQ135 (carbon dioxide).
+* [DHT11](/doc/DHT11-Datasheet.pdf) (temperature and humidity);
+* [MQ135](/doc/MQ135-datasheet.pdf) (carbon dioxide).
 In particular MQ135 did not seem to be very reliable and was one of the main reasons in which alternatives were sought.
 
 ### Window actuator
@@ -35,7 +35,7 @@ if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally 
 ```
 
 ### Wiring diagram
-See [proto1_wiring_diagram.pdf](/doc/proto1_wiring_diagram.pdf).
+See [proto1_wiring_diagram.pdf](/doc/proto1_wiring_diagram.pdf). See also [Adafruit pinout](/doc/Adafruit%20Feather%2032u4%20Bluefruit%20LE%20Pinout.pdf).
 
 ### Feedback buttons
 Feedback is sent by pressing one of the three feedback buttons; they trigger an interrupt that sets a variable to a certain value that will then be sent to the app bridge (if proto1 is used as a portable version).
@@ -68,9 +68,9 @@ Again, a special serial communication protocol was used as the communication pro
 
 ### Sensors chosen
 For environmental data sampling, we chose to rely on some of the sensors available on the EBV sensor board, which were found to be much more accurate than those used on the proto1 model:
-* HS3001 (temperature and humidity);
-* CCS811 (carbon dioxide);
-* ENS210 (temperature of the above sensor).
+* [HS3001](/doc/HS300x-Datasheet.pdf) (temperature and humidity);
+* [CCS811](/doc/CCS811_Datasheet.pdf) (carbon dioxide);
+* [ENS210](/doc/ENS210_Datasheet.pdf) (temperature of the above sensor).
 Other sensors did not seem useful for our purpose.
 Some software libraries used were sourced from the Internet as open-source if not already available out-of-the-box with the Arduino ide. See [Requirements.md](/doc/Requirements.md) for further details. 
 
@@ -134,3 +134,4 @@ Estimated sensor consumptions:
 
 ### Wiring diagram
 Since everything is already connected on the pcb, please refer to the file [EBV-IoT - ESP32Secure_board_schematic.pdf](/doc/EBV-IoT%20-%20ESP32Secure_board_schematic.pdf).
+See also [ESP32](/doc/esp32_datasheet_en.pdf).
