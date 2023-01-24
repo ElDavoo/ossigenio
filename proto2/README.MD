@@ -4,17 +4,17 @@ Developed using ESP32-D board on devkit 36; chosen because of excellent cost-per
 ![Imgur](https://user-images.githubusercontent.com/4050967/214251875-95307e63-219d-483b-baf8-008ece1dbdb0.jpg)
 
 ## Firmware development
-The Arduino core was used to write the firmware so that much of the code that had been written for the previous model could be reused, i.e., proto1, which was then relegated to being a prototype for the fixed version. Software requirements are available on [Requirements.md](/doc/Requirements.md). Development directly on the Espressif core would have been possible, allowing much more efficient use of the hardware, but it would have required a rewrite of the code from scratch, and it was therefore chosen to shelve that solution.
+The Arduino core was used to write the firmware so that much of the code that had been written for the previous model could be reused, i.e., proto1, which was then relegated to being a prototype for the fixed version. Software requirements are available on [Requirements.md](/proto2/doc/Requirements.md). Development directly on the Espressif core would have been possible, allowing much more efficient use of the hardware, but it would have required a rewrite of the code from scratch, and it was therefore chosen to shelve that solution.
 For communication via Bluetooth LE, the choice fell on the implementation of a virtual serial that emulates the operation of the traditional UART; it is based on an available open-source library.
-Again, a special serial communication protocol was used as the communication protocol and please see [SerialProtocol.md](/doc/SerialProtocol.md) for details.
+Again, a special serial communication protocol was used as the communication protocol and please see [SerialProtocol.md](/proto2/doc/SerialProtocol.md) for details.
 
 ## Sensors chosen
 For environmental data sampling, we chose to rely on some of the sensors available on the EBV sensor board, which were found to be much more accurate than those used on the proto1 model:
-* [HS3001](/doc/HS300x-Datasheet.pdf) (temperature and humidity);
-* [CCS811](/doc/CCS811_Datasheet.pdf) (carbon dioxide);
-* [ENS210](/doc/ENS210_Datasheet.pdf) (temperature of the above sensor).
+* [HS3001](/proto2/doc/HS300x-Datasheet.pdf) (temperature and humidity);
+* [CCS811](/proto2/doc/CCS811_Datasheet.pdf) (carbon dioxide);
+* [ENS210](/proto2/doc/ENS210_Datasheet.pdf) (temperature of the above sensor).
 Other sensors did not seem useful for our purpose.
-Some software libraries used were sourced from the Internet as open-source if not already available out-of-the-box with the Arduino ide. See [Requirements.md](/doc/Requirements.md) for further details. 
+Some software libraries used were sourced from the Internet as open-source if not already available out-of-the-box with the Arduino ide. See [Requirements.md](/proto2/doc/Requirements.md) for further details. 
 
 ## Data reading
 Communication with and reading from sensors is possible through higher-level libraries; communication with the sensors is via I2C protocol. The respective libraries abstract this by giving the developer a much more convenient interface for talking to the various sensors.
@@ -75,5 +75,5 @@ Estimated sensor consumptions:
 * HS3001: 24.4 microA with 14-bit resolution.
 
 ## Wiring diagram
-Since everything is already connected on the pcb, please refer to the file [EBV-IoT - ESP32Secure_board_schematic.pdf](/doc/EBV-IoT%20-%20ESP32Secure_board_schematic.pdf).
-See also [ESP32](/doc/esp32_datasheet_en.pdf).
+Since everything is already connected on the pcb, please refer to the file [EBV-IoT - ESP32Secure_board_schematic.pdf](/proto2/doc/EBV-IoT%20-%20ESP32Secure_board_schematic.pdf).
+See also [ESP32](/proto2/doc/esp32_datasheet_en.pdf).

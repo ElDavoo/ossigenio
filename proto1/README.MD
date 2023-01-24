@@ -5,14 +5,14 @@ Discarded later because of low performance and unreliability of sensors, particu
 ![Imgur](https://user-images.githubusercontent.com/4050967/214252089-7a0dd76d-0b9c-47e1-b565-18e969a560d7.jpg)
 
 ## Firmware development
-Due to Arduino compatibility, this environment was used for its development. Software requirements are available on [Requirements.md](/doc/Requirements.md).
+Due to Arduino compatibility, this environment was used for its development. Software requirements are available on [Requirements.md](/proto1/doc/Requirements.md).
 The BLE part is based on the Nordic nrf51 chip, consequently, custom libraries from Adafruit were used which based, in turn, on the libraries of the RF chip. They provide serial-type communication similar in operation to the common UART.
-A special communication protocol was implemented to ensure reliable communication between the prototype and the bridge (smartphone); see [SerialProtocol.md](/doc/SerialProtocol.md) for details.
+A special communication protocol was implemented to ensure reliable communication between the prototype and the bridge (smartphone); see [SerialProtocol.md](/proto1/doc/SerialProtocol.md) for details.
 
 ## Sensors chosen
 For environmental data sampling, we chose these sensors:
-* [DHT11](/doc/DHT11-Datasheet.pdf) (temperature and humidity);
-* [MQ135](/doc/MQ135-datasheet.pdf) (carbon dioxide).
+* [DHT11](/proto1/doc/DHT11-Datasheet.pdf) (temperature and humidity);
+* [MQ135](/proto1/doc/MQ135-datasheet.pdf) (carbon dioxide).
 In particular MQ135 did not seem to be very reliable and was one of the main reasons in which alternatives were sought.
 
 ## Window actuator
@@ -34,7 +34,7 @@ if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally 
 ```
 
 ## Wiring diagram
-See [proto1_wiring_diagram.pdf](/doc/proto1_wiring_diagram.pdf). See also [Adafruit pinout](/doc/Adafruit%20Feather%2032u4%20Bluefruit%20LE%20Pinout.pdf).
+See [proto1_wiring_diagram.pdf](/proto1/doc/proto1_wiring_diagram.pdf). See also [Adafruit pinout](/proto1/doc/Adafruit%20Feather%2032u4%20Bluefruit%20LE%20Pinout.pdf).
 
 ## Feedback buttons
 Feedback is sent by pressing one of the three feedback buttons; they trigger an interrupt that sets a variable to a certain value that will then be sent to the app bridge (if proto1 is used as a portable version).
@@ -49,7 +49,7 @@ Feedback is sent by pressing one of the three feedback buttons; they trigger an 
 
 ## Custom BLE payload
 For better compatibility, particularly with Apple devices, the mac address of the dongle was chosen to be included within a special field in the BLE advertisement package.
-As it was necessary to enter a unique manufacturer identifier, one of the free values was used: *0xF175* (https://www.bluetooth.com/specifications/assigned-numbers/). This addition was made directly in the setup() function in [proto1.ino](/proto1/proto1.ino).
+As it was necessary to enter a unique manufacturer identifier, one of the free values was used: *0xF175* (https://www.bluetooth.com/specifications/assigned-numbers/). This addition was made directly in the setup() function in [proto1.ino](/proto1/proto1/proto1.ino).
 ```c
 // set custom payload with manufacturer info
   ble.sendCommandCheckOK(F("AT+GAPSETADVDATA=09-FF-75-F1-EF-41-B7-0D-1F-6C"));
