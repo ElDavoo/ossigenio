@@ -98,6 +98,7 @@ class MqttManager {
         C.mqtt.server, email, C.mqtt.mqttsPort);
 
     client.secure = true;
+    client.autoReconnect = true;
     client.logging(on: false);
 
     try {

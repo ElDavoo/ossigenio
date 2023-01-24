@@ -31,6 +31,21 @@ Il bridge MQTT si occupa di:
 - Effettuare **subscription** a tutti i luoghi, in modo da raccogliere i dati dei sensori e salvarli nella tabella SQL *sensor_data*.
 - Chiedere periodicamente al *data_decide.py* di calcolare per ogni luogo una stima della concentrazione della CO2 e di salvare i risultati nella tabella *co2_history* e nel topic MQTT di quel luogo (attraverso un messaggio *retained*).
 
+#### Topic MQTT
+
+**Il Server pubblica** la co2 di un luogo, con *retain*, in:
+
+`/places/{place_id}/co2`
+
+**Il Server si iscrive** a:
+
+`/places/+/+/combined`
+
+per ricevere i dati di tutti i sensori che si trovano in tutti i luoghi.
+
+I ruoli sono invertiti per l'[app](../flutter_app/README.md#funzionamento).
+
+
 ### Bot Telegram
 
 ![image](https://user-images.githubusercontent.com/7345120/214278182-93ec24c5-746b-4341-abee-605e82b0676a.png)  
