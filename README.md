@@ -3,13 +3,13 @@
 # Get clean air. Study better.
 
 
-Ossigenio is a platform for **monitoring air quality** in your surroundings and to check out which study rooms/libraries have and will have the **best air quality**, in order to [live a better life]()!
+Ossigenio is a platform for **monitoring air quality** in your surroundings and to check out which study rooms/libraries have and will have the **best air quality**, in order to live a better life!
 
 This is a university project made for the subject "IoT and 3D Intelligent Systems", for Università degli studi di Modena e Reggio Emilia. , year 2022-2023.
 
 ## Why?
 
-[Carbon dioxide](https://en.wikipedia.org/wiki/Carbon_dioxide) is a silent performance killer: It is colorless and odorless at low concentration, but [heavily affects](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7420173/) the capacity for students and workers to focus. Performance can be greatly improved but doing something as simple as open the windows, but it can be difficult to understand the optimal opening time to maximize dispersion of CO2 while minimizing the heat loss. Moreover, this process can be automated. Users might also want to monitor the air quality in their personal spaces (for example, their rooms).
+[Carbon dioxide](https://en.wikipedia.org/wiki/Carbon_dioxide) is a silent performance killer: It is colorless and odorless at low concentration, but [heavily affects](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7420173/) the capacity for students and workers to focus. This has been proved by [several studies](https://commercial.velux.com/blog/learning-environments/why-indoor-air-quality-is-important-and-how-to-improve-it). Performance can be greatly improved but doing something as simple as open the windows, but it can be difficult to understand the optimal opening time to maximize dispersion of CO2 while minimizing the heat loss. Moreover, this process can be automated. Users might also want to monitor the air quality in their personal spaces (for example, their rooms).
 
 ## Status of the project
 
