@@ -242,10 +242,6 @@ class Clrs {
 
   Color get blue2 => Colors.blueAccent;
 
-  Color get startLerp => Colors.blueAccent;
-
-  Color get endLerp => Colors.red;
-
   Color get excellent => Colors.green;
 
   Color get veryGood => Colors.greenAccent;
