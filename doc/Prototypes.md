@@ -77,9 +77,9 @@ Some software libraries used were sourced from the Internet as open-source if no
 ### Data reading
 Communication with and reading from sensors is possible through higher-level libraries; communication with the sensors is via I2C protocol. The respective libraries abstract this by giving the developer a much more convenient interface for talking to the various sensors.
 The various addresses with which the sensors are associated are given for documentation purposes only:
-* **HS3001** 0x44;
-* **CCS811** 0x5A;
-* **ENS210** 0x43.
+* HS3001 *0x44*;
+* CCS811 *0x5A*;
+* ENS210 *0x43*.
 ```c
 // used millis() function
  if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally equal to 10 seconds
