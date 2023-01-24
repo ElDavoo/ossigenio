@@ -16,6 +16,33 @@ For environmental data sampling, we chose these sensors:
 * MQ135 (carbon dioxide).
 In particular MQ135 did not seem to be very reliable and was one of the main reasons in which alternatives were sought.
 
+### Window actuator
+As it is relegated to the fixed version, it semicompletely demonstrates the operation of a carbon dioxide controller that, when carbon dioxide rises above a certain value, drives a servomotor to open a window and then to close it. Given its demonstrative nature, no further functionality was chosen to be implemented.
+
+### Data reading
+```c
+// used millis() function
+if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally equal to 10 seconds
+    lastExecutedMillis = currentMillis; // save the last executed time
+    dht.temperature().getEvent(&event);
+    temperature=event.temperature;
+    dht.humidity().getEvent(&event);
+    humidity=event.relative_humidity;
+    co2 = mqSensor.getCO2PPM();
+    raw = mqSensor.getResistance();
+  }
+```
+
+### Feedback buttons
+Feedback is sent by pressing one of the three feedback buttons; they trigger an interrupt that sets a variable to a certain value that will then be sent to the app bridge (if proto1 is used as a portable version).
+```c
+  pinMode(positiveButtonPin, INPUT);
+  pinMode(neutralButtonPin, INPUT);
+  pinMode(negativeButtonPin, INPUT);
+  attachInterrupt(1, positive, RISING); //INT1 ASSOCIATO AL PIN 2 -> positiveButtonPin
+  attachInterrupt(0, neutral, RISING); //INT0 ASSOCIATO AL PIN 3 -> neutralButtonPin
+  attachInterrupt(3, negative, RISING); //INT3 ASSOCIATO AL PIN 1 -> negativeButtonPin
+```
 
 ## proto2
 Developed using ESP32-D board on devkit 36; chosen because of excellent cost-performance ratio and compatibility with the Arduino development environment.
@@ -34,3 +61,36 @@ For environmental data sampling, we chose to rely on some of the sensors availab
 * ENS210 (temperature of the above sensor).
 Other sensors did not seem useful for our purpose.
 Some software libraries used were sourced from the Internet as open-source if not already available out-of-the-box with the Arduino ide. See *Requirements.md* for further details. 
+
+### Data reading
+```c
+// used millis() function
+ if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally equal to 10 seconds
+    lastExecutedMillis = currentMillis; // save the last executed time
+
+    // temperature and humidity section
+    if (gHs300x.getTemperatureHumidity(m)){
+      m.extract(temperature, humidity); // read temperature and humidity values
+    }
+
+    // co2 section (read also co2 sensor temperature for reliability purpose)
+    if (mySensor.dataAvailable()) {
+      mySensor.readAlgorithmResults();
+      co2 = (float) mySensor.getCO2(); // read co2 value
+      ens210.measure(&t_data, &t_status, &h_data, &h_status ); //see after comment
+      raw = (int) ens210.toCelsius(t_data,10)/10.0; //temperature of co2 sensor
+    }
+    feed = false; //re-enabling feedback disabled into isr
+  }
+```
+
+### Feedback buttons
+Feedback is sent by pressing one of the three touch buttons (ESP32 provides pins that function as if they were ordinary touch-screen buttons); they trigger an interrupt that sets a variable to a certain value that will then be sent to the app bridge (if proto1 is used as a portable version).
+```c
+  // first argument is the PIN used
+  // second argument is the isr associated
+  // third argument is a value that sets the limit between button pressed/not pressed
+  touchAttachInterrupt(T0, positive, 40); // PIN 4 (on right side)
+  touchAttachInterrupt(T2, neutral, 40); // PIN 2 (on right side)
+  touchAttachInterrupt(T4, negative, 40); // PIN 13 (on left side)
+```
