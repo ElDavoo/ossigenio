@@ -1,0 +1,7 @@
+# Per velocizzare la costruzione del container Docker,
+# molte dipendenze sono installate tramite apt. Per
+# questo è necessario installare da pip solo alcune librerie
+psycopg2-binary~=2.9.5
+flask-smorest
+prophet~=1.1.2
+python-telegram-bot~=20.0

@@ -1,8 +1,10 @@
 **/__pycache__
 **/.idea
-flask/*
+flask/secrets.env
 mqtt.passwords
 build/*
+flask/auth/bin/python
+flask/auth/bin/python3
 .vscode/arduino.json
 .vscode/settings.json
 proto2/serialNumber.h

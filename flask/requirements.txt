@@ -1,2 +1,19 @@
-Flask==2.2.2
-psycopg2==2.9.5
+### Requisiti per il backend
+flask~=2.2.2
+flask-sqlalchemy 
+flask-login==0.6.2
+Werkzeug~=2.2.2
+psycopg2-binary~=2.9.5
+paho-mqtt~=1.6.1
+certifi==2022.12.7
+flask-apispec~=0.11.4
+marshmallow~=3.19.0
+webargs~=8.2.0
+apispec~=6.0.2
+flask-smorest
+GeoAlchemy2==0.13.1
+pandas~=1.5.3
+prophet~=1.1.1
+SQLAlchemy~=1.4.46
+python-telegram-bot~=20.0
+shapely~=2.0.0
