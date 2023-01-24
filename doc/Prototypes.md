@@ -125,7 +125,7 @@ As it was necessary to enter a unique manufacturer identifier, one of the free v
 ```
 
 ### Power saving
-In order to optimize power consumption, the choice was made to bring the CPU to the lowest allowable frequency (from 240MHz to 80MHz - lower values disable Wi-Fi/BT) and the TX power of the BLE was lowered (from the default value of 3dBm or 1.41mW to -12dBm or 0.25mW), managing to keep the current draw of the single board to minus 100mA.
+In order to optimize power consumption, the choice was made to bring the CPU to the lowest allowable frequency (from 240MHz to 80MHz - lower values disable Wi-Fi/BT) and the TX power of the BLE was lowered (from the default value of 3dBm or 1.41mW to -12dBm or 0.25mW), managing to keep the current draw of the single board to minus 100mA. 
 It was not possible to take advantage of the various sleep-modes available because their use involves disabling the RF circuitry (the most power-hungry part of the entire prototype) or, e.g., disabling one of the two available cores.
 Estimated sensor consumptions:
 * CCS811: 50mW (15mA) with mode 1 (measurement every second) - high power consumption due to internal resistance.
