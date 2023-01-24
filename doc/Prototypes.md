@@ -20,6 +20,7 @@ In particular MQ135 did not seem to be very reliable and was one of the main rea
 As it is relegated to the fixed version, it semicompletely demonstrates the operation of a carbon dioxide controller that, when carbon dioxide rises above a certain value, drives a servomotor to open a window and then to close it. Given its demonstrative nature, no further functionality was chosen to be implemented.
 
 ### Data reading
+Communication with and reading from sensors is possible through the *digitalRead()* and *analogRead()* functions; these were not used directly because the relevant sensor libraries provided a higher-level interface.
 ```c
 // used millis() function
 if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally equal to 10 seconds
@@ -32,6 +33,9 @@ if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally 
     raw = mqSensor.getResistance();
   }
 ```
+
+### Wiring diagram
+See *proto1_wiring_diagram.pdf*.
 
 ### Feedback buttons
 Feedback is sent by pressing one of the three feedback buttons; they trigger an interrupt that sets a variable to a certain value that will then be sent to the app bridge (if proto1 is used as a portable version).
@@ -71,6 +75,11 @@ Other sensors did not seem useful for our purpose.
 Some software libraries used were sourced from the Internet as open-source if not already available out-of-the-box with the Arduino ide. See *Requirements.md* for further details. 
 
 ### Data reading
+Communication with and reading from sensors is possible through higher-level libraries; communication with the sensors is via I2C protocol. The respective libraries abstract this by giving the developer a much more convenient interface for talking to the various sensors.
+The various addresses with which the sensors are associated are given for documentation purposes only:
+* **HS3001** 0x44;
+* **CCS811** 0x5A;
+* **ENS210** 0x43.
 ```c
 // used millis() function
  if (currentMillis - lastExecutedMillis >= campTime) { // with campTime normally equal to 10 seconds
@@ -108,9 +117,12 @@ For better compatibility, particularly with Apple devices, the mac address of th
 As it was necessary to enter a unique manufacturer identifier, one of the free values was used: *0xF175* (https://www.bluetooth.com/specifications/assigned-numbers/). This addition was made in the *BleSerial.cpp* library.
 ```c
     const uint8_t* point = esp_bt_dev_get_address();
-    char ManufacturerData[9] = {0x75,0xf1}; //0xF175; id produttore preso a caso tra quelli liberi
+    char ManufacturerData[9] = {0x75,0xf1}; // free id 0xF175;
     for (int i = 0; i < 6; i++) ManufacturerData[i+2] = point[i];
     // null-terminate string
     ManufacturerData[8] = 0x00;
-    oAdvertisementData.setManufacturerData(ManufacturerData); //to add mac into manufacter data; thanks Apple! -.-"
+    oAdvertisementData.setManufacturerData(ManufacturerData); //to add mac into manufacter data
 ```
+
+### Wiring diagram
+Since everything is already connected on the pcb, please refer to the file *EBV-IoT - ESP32Secure_board_schematic.pdf*.
