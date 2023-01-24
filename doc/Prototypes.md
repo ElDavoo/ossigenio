@@ -1,4 +1,4 @@
-# prototypes.md
+# Technical documentation of prototypes
 ## proto1
 First prototype developed and based upon Adafruit Feather 32u4 board; chosen because of low cost and compatibility with the Arduino development environment.
 Discarded later because of low performance and unreliability of sensors, particularly the carbon dioxide sensor. It is currently relegated for the fixed version.
