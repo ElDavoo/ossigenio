@@ -3,13 +3,13 @@
 # Get clean air. Study better.
 
 
-Ossigenio is a platform for **monitoring air quality** in your surroundings and to check out which study rooms/libraries have and will have the **best air quality**, in order to [live a better life]()!
+Ossigenio is a platform for **monitoring air quality** in your surroundings and to check out which study rooms/libraries have and will have the **best air quality**, in order to live a better life!
 
 This is a university project made for the subject "IoT and 3D Intelligent Systems", for Università degli studi di Modena e Reggio Emilia. , year 2022-2023.
 
 ## Why?
 
-[Carbon dioxide](https://en.wikipedia.org/wiki/Carbon_dioxide) is a silent performance killer: It is colorless and odorless at low concentration, but [heavily affects](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7420173/) the capacity for students and workers to focus. Performance can be greatly improved but doing something as simple as open the windows, but it can be difficult to understand the optimal opening time to maximize dispersion of CO2 while minimizing the heat loss. Moreover, this process can be automated. Users might also want to monitor the air quality in their personal spaces (for example, their rooms).
+[Carbon dioxide](https://en.wikipedia.org/wiki/Carbon_dioxide) is a silent performance killer: It is colorless and odorless at low concentration, but [heavily affects](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7420173/) the capacity for students and workers to focus. This has been proved by [several studies](https://commercial.velux.com/blog/learning-environments/why-indoor-air-quality-is-important-and-how-to-improve-it). Performance can be greatly improved but doing something as simple as open the windows, but it can be difficult to understand the optimal opening time to maximize dispersion of CO2 while minimizing the heat loss. Moreover, this process can be automated. Users might also want to monitor the air quality in their personal spaces (for example, their rooms).
 
 ## Status of the project
 
@@ -30,10 +30,10 @@ The [portable version](proto1/) sensor is targeted to single individuals and stu
 ![Imgur](https://user-images.githubusercontent.com/4050967/214251875-95307e63-219d-483b-baf8-008ece1dbdb0.jpg)
 
 ## Ossigenio fixed sensor (codename proto1)
-The [fixed version](proto2/) is targeted to universities and managers who want to let their places show up in the [companion app](). It consists solely and exclusively of the ESP32, which, once data is collected, controls the **opening/closing of windows**, via a servomotor, to allow **automatic air recirculation** and bring air quality levels back to an acceptable level.
-
-![Imgur](https://user-images.githubusercontent.com/4050967/214252089-7a0dd76d-0b9c-47e1-b565-18e969a560d7.jpg)
-
+The [fixed version](proto2/) is targeted to universities and managers who want to let their places show up in the [companion app](). It consists solely and exclusively of the ESP32, which, once data is collected, controls the **opening/closing of windows**, via a servomotor, to allow **automatic air recirculation** and bring air quality levels back to an acceptable level.  
+  
+![Imgur](https://user-images.githubusercontent.com/4050967/214252089-7a0dd76d-0b9c-47e1-b565-18e969a560d7.jpg)  
+  
 ## Ossigenio (companion app)
 ![app-landscape](https://user-images.githubusercontent.com/7345120/214387507-17b703d5-7514-4a2e-ba6b-eb31e0110eb1.jpg)
 
