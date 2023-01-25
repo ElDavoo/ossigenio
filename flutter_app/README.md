@@ -21,7 +21,8 @@ Consente di visualizzare e rimanere aggiornati sulla qualità dell'aria del luog
 ### Mappa
 
 Si possono visualizzare le informazioni raccolte dai sensori presenti nei luoghi di studio, sia
-quelli vicini sia quelli più lontani, grazie ad una mappa interattiva.
+quelli vicini sia quelli più lontani, grazie ad una mappa interattiva.  
+
 ![photo_2023-01-24_18-32-42](https://user-images.githubusercontent.com/7345120/214365893-5f6ec90d-c64c-46ba-b4cf-272317f8cd21.jpg)
 
 #### Previsioni
