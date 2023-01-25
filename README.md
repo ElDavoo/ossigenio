@@ -26,11 +26,11 @@ This project is made of four different components.
 
 ## Ossigenio portable sensor (codename proto2)
 
-The [portable version](proto1/) sensor is targeted to single individuals and students who want to have a reliable measurement of carbon dioxide that can work anywhere. It consists of a small dongle that, having collected various data, sends it to a smartphone acting as a bridge, running a special application, between it and the Internet.
+The [portable version](proto2/) sensor is targeted to single individuals and students who want to have a reliable measurement of carbon dioxide that can work anywhere. It consists of a small dongle that, having collected various data, sends it to a smartphone acting as a bridge, running a special application, between it and the Internet.
 ![Imgur](https://user-images.githubusercontent.com/4050967/214251875-95307e63-219d-483b-baf8-008ece1dbdb0.jpg)
 
 ## Ossigenio fixed sensor (codename proto1)
-The [fixed version](proto2/) is targeted to universities and managers who want to let their places show up in the [companion app](). It consists solely and exclusively of the ESP32, which, once data is collected, controls the **opening/closing of windows**, via a servomotor, to allow **automatic air recirculation** and bring air quality levels back to an acceptable level.  
+The [fixed version](proto1/) is targeted to universities and managers who want to let their places show up in the [companion app](). It consists solely and exclusively of the ESP32, which, once data is collected, controls the **opening/closing of windows**, via a servomotor, to allow **automatic air recirculation** and bring air quality levels back to an acceptable level.  
   
 ![Imgur](https://user-images.githubusercontent.com/4050967/214252089-7a0dd76d-0b9c-47e1-b565-18e969a560d7.jpg)  
   
