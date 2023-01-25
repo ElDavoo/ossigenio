@@ -17,7 +17,7 @@ Even though it is only a *prototype*, it is fully functional.
 
 Currently no further development is planned.
 
-Both implementations are based principally on ESP32, which collects some environmental information of the location (temperature, humidity, and carbon dioxide) and sends it to a bridge that is responsible for sending the collected data to the Internet and/or to control an actuator (which could operate the opening of a window to promote air recirculation). 
+Both implementations are based principally on Arduino compatible boards: proto1 on Adafruit Feather and proto2 on ESP32-D, which collects some environmental information of the location (temperature, humidity, and carbon dioxide) and sends it to a bridge that is responsible for sending the collected data to the Internet and/or to control an actuator (which could operate the opening of a window to promote air recirculation). 
 More detailed documentation can be found below.
 
 # Sub-projects
