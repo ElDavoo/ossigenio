@@ -47,7 +47,7 @@ def predict(place):
     # Create dataframe with future dates
     future = m.make_future_dataframe(periods=24, freq='H')
     # FIXME Cut the dataframe to make it faster
-    future = future.tail(1000)
+    future = future.tail(2000)
 
     print("Predicting for place " + str(place))
     # Predict future values
@@ -62,7 +62,7 @@ def predict(place):
     for index, row in forecast.iterrows():
         predicts.append({
             'timestamp': row['ds'].isoformat(),
-            'co2': row['yhat']
+            'co2': row['yhat'] if row['yhat'] > 400 else 400
         })
     return predicts
 
