@@ -8,3 +8,4 @@ flask/auth/bin/python3
 .vscode/arduino.json
 .vscode/settings.json
 proto2/serialNumber.h
+.vscode
