@@ -58,7 +58,7 @@ from project.utils.datagen import start as start_datagen
 from project.utils.mqtt_bridge import start as start_mqtt
 from project.utils.telegram_bot import start as start_telegram
 
-thr = start_datagen(flask_app)
+# thr = start_datagen(flask_app)
 thr2 = start_mqtt()
 _thread = threading.Thread(target=start_telegram, args=(flask_app,))
 _thread.start()
