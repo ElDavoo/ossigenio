@@ -122,7 +122,7 @@ di file di configurazione per **mosquitto**.
 
 3) **Scaricare** il codice sorgente
 ```bash
-git clone https://github.com/ElDavoo/air-quality-monitor.git
+git clone https://github.com/ElDavoo/ossigenio.git
 ```
 
 4) **Configurare** la base di dati
