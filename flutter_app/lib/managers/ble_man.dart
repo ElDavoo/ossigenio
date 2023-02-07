@@ -12,7 +12,7 @@ import '../utils/device.dart';
 import '../utils/log.dart';
 import '../utils/mac.dart';
 
-class BLEManager extends ChangeNotifier {
+class BLEManager {
   static final BLEManager _instance = BLEManager._internal();
 
   factory BLEManager() {
@@ -83,7 +83,7 @@ class BLEManager extends ChangeNotifier {
 
     _flutterBlue.startScan();
 
-    List<ScanResult> btdevice = await _flutterBlue.scanResults
+    List<ScanResult> btDevices = await _flutterBlue.scanResults
         .map((results) {
           List<ScanResult> list = [];
 
@@ -122,10 +122,10 @@ class BLEManager extends ChangeNotifier {
 
     _flutterBlue.stopScan();
 
-    // Nel caso molto raro in cui c'è più di un sensore,
+    // Nel caso molto raro in cui ci sia più di un sensore,
     // prendiamo quello che prende di più
-    btdevice.sort((a, b) => b.rssi.compareTo(a.rssi));
-    _scanstream.add(btdevice.first);
+    btDevices.sort((a, b) => b.rssi.compareTo(a.rssi));
+    _scanstream.add(btDevices.first);
 
     return;
   }
@@ -143,7 +143,7 @@ class BLEManager extends ChangeNotifier {
   /// Prova a connettersi a un dispositivo.
   ///
   /// Questo metodo cerca di connettersi al dispositivo.
-  /// Lo aggiunge allo stream [devicestream] se la connessione è andata a buon fine.
+  /// Lo imposta in [dvc] se la connessione è andata a buon fine.
   Future<void> connectToDevice(ScanResult result) async {
     stopBLEScan();
 

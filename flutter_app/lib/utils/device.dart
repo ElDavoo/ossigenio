@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_app/Messages/debug_message.dart';
 import 'package:flutter_app/utils/serial.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -14,7 +13,7 @@ import 'log.dart';
 import 'mac.dart';
 
 /// Una classe che rappresenta un sensore
-class Device extends ChangeNotifier {
+class Device {
   /// La seriale per scambiare messaggi con il sensore
   late BTUart btUart;
 
@@ -56,8 +55,8 @@ class Device extends ChangeNotifier {
         })
         .where((message) => message != null)
         .where((message) {
-          // Filta i messaggi di feedback
-          // Se un altro ricevuto meno di 5 secondi fa, lo scarta
+          // Filtra i messaggi di feedback
+          // Se ce n'è un altro ricevuto meno di 5 secondi fa, lo scarta
           if (message!.message is FeedbackMessage) {
             try {
               final lastFeedback = messages
@@ -74,13 +73,9 @@ class Device extends ChangeNotifier {
         .asBroadcastStream();
 
     messagesStream.listen((message) {
+      Log.v("Message received");
       // Salva i messaggi scambiati
       messages.add(message);
-      notifyListeners();
-    });
-
-    messagesStream.listen((message) {
-      Log.v("Message received");
       // Manda i messaggi ricevuti su MQTT
       if (message.direction == MessageDirection.received) {
         MqttManager().publish(message.message);

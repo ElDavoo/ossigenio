@@ -7,7 +7,7 @@ import '../../utils/device.dart';
 import '../../utils/ui.dart';
 import 'air_quality.dart';
 
-/// Un widget che wrappa AirQuality, nello StreamBuilder di un dispositivo
+/// Un widget che wrappa AirQuality nello StreamBuilder di un dispositivo
 class AirQualityDevice extends StatefulWidget {
   final Device device;
 

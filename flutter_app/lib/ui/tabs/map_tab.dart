@@ -105,7 +105,7 @@ class MapPageState extends State<MapPage>
 
   /// Chiede manualmente i luoghi al server
   void _refresh() {
-    AccountManager().getPlaces(GpsManager.position.value!).then((value) {
+    AccountManager().getPlaces(GpsManager.position!).then((value) {
       _places = value;
       _onNearbyPlacesChanged(value);
     });

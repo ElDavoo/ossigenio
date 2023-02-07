@@ -23,13 +23,13 @@ class GpsManager {
   );
 
   /// L'ultima posizione dell'utente
-  static final ValueNotifier<LatLng?> position = ValueNotifier(null);
+  static LatLng? position;
 
   /// Lo stream di posizioni
   final Stream<Position> _poStream =
       Geolocator.getPositionStream(locationSettings: _locationSettings);
 
-  /// Stream di posti vicini all'utente
+  /// Lista di posti vicini all'utente
   final ValueNotifier<List<Place>?> placeStream = ValueNotifier(null);
 
   GpsManager._internal() {
@@ -40,7 +40,7 @@ class GpsManager {
       return LatLng(event.latitude, event.longitude);
     }).listen((event) {
       Log.d('Posizione aggiornata');
-      position.value = event;
+      position = event;
       // Ottiene la lista dei luoghi vicini e la aggiunge
       AccountManager()
           .getNearbyPlaces(LatLng(event.latitude, event.longitude))
@@ -59,13 +59,13 @@ class GpsManager {
   /// meno rigidi, per velocizzare l'avvio dell'app.
   static bool _filterEvent(Position pos) {
     // Criteri se la posizione è la prima
-    if (position.value == null) {
+    if (position == null) {
       return pos.accuracy < 80 && pos.speed < 15 && !pos.isMocked;
     }
 
     // Non considerare posizioni a meno di 100 metri dall'ultima
     if (Geolocator.distanceBetween(pos.latitude, pos.longitude,
-            position.value!.latitude, position.value!.longitude) <
+            position!.latitude, position!.longitude) <
         100) {
       return false;
     }
