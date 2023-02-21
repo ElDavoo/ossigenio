@@ -1,10 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/utils/server.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Class that holds all the constants used in the app.
@@ -16,12 +13,6 @@ class C {
   static const MqttConsts mqtt = MqttConsts();
   static const Clrs colors = Clrs();
   static const RangeQuotas quotas = RangeQuotas();
-
-  /// DIEF, Modena
-  static LatLng defaultLocation = LatLng(44.6291399, 10.9488126);
-
-  /// Bound per restringere la mappa all'italia
-  static LatLngBounds italyBounds = LatLngBounds(LatLng(48, 6), LatLng(36, 19));
 
   static const String fmtcStoreName = 'fmtc_store';
 
@@ -89,12 +80,6 @@ class C {
 
 class AccConsts {
   const AccConsts();
-
-  // TODO use this list instead of the others
-  static List<Server> servers = [
-    const Server("ossigenio.it", 443),
-    const Server("ossigenio.it", 80),
-  ];
 
   String get server => 'ossigenio.it';
 

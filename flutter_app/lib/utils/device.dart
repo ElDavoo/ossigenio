@@ -7,7 +7,6 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../Messages/feedback_message.dart';
 import '../Messages/message.dart';
 import '../managers/ble_man.dart';
-import '../managers/mqtt_man.dart';
 import 'btuart.dart';
 import 'log.dart';
 import 'mac.dart';
@@ -41,7 +40,6 @@ class Device {
     Log.d("Inizializzazione di ${device.name} - ${device.id}");
     // Rifa il calcolo del numero seriale
     serialNumber = BLEManager.processAdv(result.advertisementData)!;
-    MqttManager.mac = serialNumber;
 
     messagesStream = btUart.txCharacteristic.value
         .map((value) {
@@ -76,10 +74,6 @@ class Device {
       Log.v("Message received");
       // Salva i messaggi scambiati
       messages.add(message);
-      // Manda i messaggi ricevuti su MQTT
-      if (message.direction == MessageDirection.received) {
-        MqttManager().publish(message.message);
-      }
     });
 
     // Se ci disconnettiamo dal sensore, lo rimuoviamo

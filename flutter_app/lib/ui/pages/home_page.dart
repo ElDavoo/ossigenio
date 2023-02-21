@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/Messages/startup_message.dart';
-import 'package:flutter_app/managers/account_man.dart';
-import 'package:flutter_app/managers/mqtt_man.dart';
 import 'package:flutter_app/utils/ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -17,9 +15,7 @@ import '../../utils/constants.dart';
 import '../../utils/device.dart';
 import '../../utils/log.dart';
 import '../tabs/home_tab.dart';
-import '../tabs/map_tab.dart';
 import '../widgets/debug_tab.dart';
-import 'login_page.dart';
 
 /// La UI principale dell'app, contiene la barra di navigazione e le pagine
 class HomePage extends StatefulWidget {
@@ -58,15 +54,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               if (BLEManager().dvc.value!.isHeating) {
                 Log.l(AppLocalizations.of(context)!.waitForHeating);
               } else {
-                if (MqttManager.place.value != null) {
-                  _showOverlay(context, fbvalue: event.feedback);
-                  // Mostra un messaggio di ringraziamento
-                  Future.delayed(const Duration(milliseconds: 1500), () {
-                    Log.l(AppLocalizations.of(context)!.feedbackSent);
-                  });
-                } else {
-                  Log.l(AppLocalizations.of(context)!.placeNotSelected);
-                }
+                _showOverlay(context, fbvalue: event.feedback);
               }
             });
       }
@@ -92,85 +80,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  /// La pagina corrente
-  int _selectedIndex = 0;
   AnimationController? _animationController;
   Animation<double>? animation;
-
-  /// Lista delle pagine da mostrare
-  final List<Widget> _pages = <Widget>[
-    const HomeTab(),
-    const MapPage(),
-  ];
-
-  final PageController _pageController = PageController(
-    initialPage: 0,
-    keepPage: true,
-  );
-
-  /// Cambia pagina
-  void _changePage(int index) {
-    setState(() {
-      _selectedIndex = index;
-      _pageController.animateToPage(index,
-          duration: const Duration(milliseconds: 100), curve: Curves.ease);
-    });
-  }
-
-  /// Costruisce la barra inferiore dell'app
-  BottomNavigationBar _buildBottomNavigationBar(BuildContext context) {
-    return BottomNavigationBar(
-      selectedFontSize: 15,
-      selectedIconTheme: const IconThemeData(color: Colors.blue, size: 32),
-      selectedItemColor: Colors.blue,
-      selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
-      backgroundColor: C.colors.cardBg,
-      items: <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.home),
-          label: AppLocalizations.of(context)!.home,
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.map),
-          label: AppLocalizations.of(context)!.map,
-        ),
-      ],
-      currentIndex: _selectedIndex,
-      onTap: _changePage,
-    );
-  }
-
-  /// Chiede all'utente se vuole uscire dall'applicazione
-  static void _buildLogoutDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(AppLocalizations.of(context)!.logout),
-            content: Text(AppLocalizations.of(context)!.logoutConfirmMessage),
-            actions: [
-              TextButton(
-                  child: Text(AppLocalizations.of(context)!.cancel),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  }),
-              TextButton(
-                child: Text(AppLocalizations.of(context)!.logout),
-                onPressed: () {
-                  // Logout
-                  AccountManager().logout().then((value) {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()),
-                        (route) => false);
-                  });
-                },
-              ),
-            ],
-          );
-        });
-  }
 
   void _showOverlay(BuildContext context,
       {required FeedbackValues fbvalue}) async {
@@ -211,10 +122,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       );
     });
     _animationController!.addListener(() {
-      overlayState!.setState(() {});
+      overlayState.setState(() {});
     });
     // inserting overlay entry
-    overlayState!.insert(overlayEntry);
+    overlayState.insert(overlayEntry);
     _animationController!.forward();
     await Future.delayed(const Duration(milliseconds: 1500))
         .whenComplete(() => _animationController!.reverse())
@@ -308,14 +219,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           gradient: LinearGradient(
             colors: [C.colors.blue1, C.colors.blue2],
           ),
-          leading: IconButton(
-            icon: const Icon(Icons.no_accounts),
-            color: Colors.white,
-            onPressed: () {
-              // Show a dialog to confirm logout
-              _buildLogoutDialog(context);
-            },
-          ),
           title: Text(AppLocalizations.of(context)!.title),
           actions: <Widget>[
             Padding(
@@ -329,18 +232,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ]),
       body: Container(
         decoration: UI.gradientBox(),
-        child: PageView.builder(
-          controller: _pageController,
-          onPageChanged: (index) {
-            _changePage(index);
-          },
-          itemCount: _pages.length,
-          itemBuilder: (BuildContext context, int index) {
-            return _pages[index];
-          },
-        ),
+        child: const HomeTab(),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(context),
     );
   }
 }
